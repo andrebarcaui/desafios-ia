@@ -6,7 +6,7 @@
 
   function telaChave(erro) {
     raiz = C.limpar(document.getElementById('app'));
-    var inp = el('input', { type: 'password', autocomplete: 'off', required: true, 'aria-label': 'Chave do professor' });
+    var inp = el('input', { type: 'password', autocomplete: 'off', required: true, inputmode: 'numeric', 'aria-label': 'Senha do professor' });
     var msg = el('div.aviso.aviso-erro' + (erro ? '' : '.oculto'), { role: 'alert', texto: erro || '' });
     raiz.appendChild(el('main.entrada', null, el('form.entrada-caixa', {
       onsubmit: function (e) {
@@ -14,8 +14,8 @@
         chamar('prof_estado').then(function (r) { C.guardar(CHAVE, chave); iniciar(r); })
           .catch(function (x) { msg.textContent = x.message; msg.classList.remove('oculto'); });
       }
-    }, el('h1', { texto: 'Painel do professor' }), el('p.sub', { texto: 'Use a chave que está na aba Config da planilha.' }), msg,
-      el('label.campo', null, el('span', { texto: 'Chave' }), inp), el('button.btn.btn-forte', { type: 'submit', texto: 'Abrir painel' }))));
+    }, el('h1', { texto: 'Painel do professor' }), el('p.sub', { texto: 'Acesso restrito ao professor.' }), msg,
+      el('label.campo', null, el('span', { texto: 'Senha' }), inp), el('button.btn.btn-forte', { type: 'submit', texto: 'Abrir painel' }))));
     inp.focus();
   }
 
@@ -170,7 +170,6 @@
   }
 
   chave = C.ler(CHAVE);
-  if (C.demo && !chave) chave = 'DEMO';
   if (chave) chamar('prof_estado').then(iniciar).catch(function (e) { C.guardar(CHAVE, null); telaChave(e.message); });
   else telaChave();
 })();

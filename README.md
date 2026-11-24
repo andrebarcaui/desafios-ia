@@ -21,7 +21,7 @@ O gabarito fica apenas no Apps Script. O site recebe uma versão do caso sem nen
 1. Com sua conta Google **pessoal**, crie uma planilha nova (por exemplo, "Desafios de IA").
 2. Menu **Extensões > Apps Script**. Apague o código que aparece e cole todo o conteúdo de `backend/Codigo.gs`. Salve.
 3. No seletor de funções do editor, escolha `configurar` e clique em **Executar**. Autorize o acesso quando o Google pedir.
-4. Volte à planilha: ela agora tem as abas **Grupos** (códigos dos 6 grupos e o caso de cada um), **Config** (chave do professor e duração das fases) e **Respostas**.
+4. Volte à planilha: ela agora tem as abas **Grupos** (códigos dos 6 grupos e o caso de cada um), **Config** (senha do painel do professor, `020271` por padrão, e duração das fases) e **Respostas**.
 5. No editor do Apps Script: **Implantar > Nova implantação**, tipo **App da Web**. Executar como: **Eu**. Quem pode acessar: **Qualquer pessoa**. Clique em Implantar e copie a URL que termina em `/exec`.
 
 ### 2. Ligar o site ao servidor
@@ -39,8 +39,8 @@ A partir daí, todo envio ao GitHub republica o site sozinho.
 ## Em aula
 
 1. Antes da aula, confira a aba **Grupos**: um código por grupo e o caso de cada um. Se mudar algo, espere 1 minuto para o servidor ler de novo.
-2. Projete `telao.html`. Abra `professor.html` no seu computador e entre com a chave da aba **Config**.
-3. Entregue a cada grupo o seu código. Eles entram em `index.html` com o código e os nomes dos integrantes.
+2. Projete `telao.html`. Abra `professor.html` no seu computador e entre com a senha (a da aba **Config**).
+3. Entregue a cada grupo o seu código. Eles entram em `index.html` com o código e os nomes dos integrantes (até 10 por grupo).
 4. No painel, abra uma fase de cada vez. Quando você abre a fase seguinte, o que estiver marcado na anterior é enviado automaticamente.
 5. No pitch, use **Projetar ficha** e **Sortear quem responde** em cada grupo.
 6. Ao final, **Baixar respostas (CSV)** traz respostas, justificativas, pontos e sinais de comportamento de cada grupo. A aba **Respostas** da planilha guarda cada fase enviada.

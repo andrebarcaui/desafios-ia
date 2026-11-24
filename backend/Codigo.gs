@@ -1,7 +1,7 @@
 /*
  * Desafios de IA: servidor do jogo (Google Apps Script).
  * ARQUIVO GERADO por tools/build.js. Não edite aqui: edite shared/, backend/adaptador.gs.js e casos-fonte/.
- * Gerado em 2026-11-24T12:32:01.403Z
+ * Gerado em 2026-11-24T12:51:44.855Z
  */
 
 /* Estatística do simulador. Usado no navegador e no Apps Script. */
@@ -454,7 +454,7 @@ var ServerCore = (function () {
         if (novo) g = novoGrupo(c);
         (req.membros || []).forEach(function (m) {
           var n = limpar(m, 60);
-          if (n && g.membros.length < 8 && g.membros.map(function (x) { return x.toLowerCase(); }).indexOf(n.toLowerCase()) < 0) g.membros.push(n);
+          if (n && g.membros.length < 10 && g.membros.map(function (x) { return x.toLowerCase(); }).indexOf(n.toLowerCase()) < 0) g.membros.push(n);
         });
         salvarGrupo(g); marcarVisto(g.codigo);
         if (novo) { feed(glob, g.nome + ' entrou no jogo', 'entrada'); salvarGlobal(glob); }
@@ -573,12 +573,19 @@ var ServerCore = (function () {
       prof_exportar: function () { return exportar(); }
     };
 
+    /* A planilha pode transformar "020271" em número e perder o zero à esquerda. */
+    function senhaConfere(dada, certa) {
+      var a = String(dada == null ? '' : dada).trim(), b = String(certa == null ? '' : certa).trim();
+      if (!b) return false;
+      if (a === b) return true;
+      return /^\d+$/.test(a) && /^\d+$/.test(b) && Number(a) === Number(b);
+    }
     function handle(req) {
       try {
         req = req || {};
         var a = acoes[req.acao];
         if (!a) throw new Error('Ação desconhecida.');
-        if (req.acao.indexOf('prof_') === 0 && String(req.chave || '') !== String(cfg.chaveProfessor)) throw new Error('Chave do professor inválida.');
+        if (req.acao.indexOf('prof_') === 0 && !senhaConfere(req.chave, cfg.chaveProfessor)) throw new Error('Senha do professor incorreta.');
         var leitura = req.acao === 'placar' || req.acao === 'estado' || req.acao === 'prof_estado' || req.acao === 'prof_exportar';
         return leitura ? a(req) : comTrava(function () { return a(req); });
       } catch (e) {
@@ -601,7 +608,7 @@ var CASOS = {"fuga-silenciosa":{"id":"fuga-silenciosa","exercicio":"ml-supervisi
  *
  * Abas da planilha (criadas por configurar()):
  *   Grupos     código | nome | caso
- *   Config     chave | valor   (chave_professor, duracao_f1, duracao_f2, duracao_f3, duracao_evento)
+ *   Config     chave | valor   (chave_professor = senha do painel, duracao_f1, duracao_f2, duracao_f3, duracao_evento)
  *   Respostas  registro de cada fase enviada, para a correção
  */
 
@@ -686,8 +693,9 @@ function configurar() {
   }
   var c = aba('Config');
   if (c.getLastRow() < 1) {
+    c.getRange('B1').setNumberFormat('@'); // mantém o zero à esquerda da senha
     c.getRange(1, 1, 6, 2).setValues([
-      ['chave_professor', codigoAleatorio_() + codigoAleatorio_()],
+      ['chave_professor', '020271'],
       ['duracao_f1', 6], ['duracao_f2', 12], ['duracao_f3', 8], ['duracao_evento', 6],
       ['casos disponíveis', Object.keys(CASOS).join(', ')]
     ]);
@@ -698,7 +706,7 @@ function configurar() {
     r.setFrozenRows(1);
   }
   CacheService.getScriptCache().remove('config');
-  SpreadsheetApp.getUi().alert('Pronto. Confira as abas Grupos e Config. A chave do professor está na aba Config.');
+  SpreadsheetApp.getUi().alert('Pronto. Confira as abas Grupos e Config. A senha do professor está na aba Config e pode ser trocada lá.');
 }
 
 /** Apaga o jogo em andamento (pontos, respostas e placar). A planilha Respostas é mantida. */

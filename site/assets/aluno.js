@@ -9,7 +9,7 @@
   /* ---------- Entrada ---------- */
   function telaEntrada(erro) {
     raiz = C.limpar(document.getElementById('app'));
-    var campos = [0, 1, 2, 3, 4].map(function (i) { return el('input', { type: 'text', placeholder: 'Nome ' + (i + 1), autocomplete: 'off', maxlength: 60 }); });
+    var campos = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) { return el('input', { type: 'text', placeholder: 'Nome ' + (i + 1), autocomplete: 'off', maxlength: 60 }); });
     var codigo = el('input.codigo-input', { type: 'text', placeholder: 'ABC-123', autocomplete: 'off', maxlength: 20, required: true, 'aria-label': 'Código do grupo' });
     var aceite = el('input', { type: 'checkbox', required: true });
     var msg = el('div.aviso.aviso-erro' + (erro ? '' : '.oculto'), { role: 'alert', texto: erro || '' });
@@ -33,7 +33,7 @@
       el('p.sub', { texto: 'Machine learning supervisionado. Cada grupo recebe um caso diferente.' }),
       msg,
       el('label.campo', null, el('span', { texto: 'Código do grupo' }), codigo),
-      el('fieldset.campo.membros-lista', { style: 'border:0;padding:0;margin:0 0 1rem' }, el('legend', { style: 'font-weight:700;margin-bottom:.3rem', texto: 'Integrantes do grupo' }), campos),
+      el('fieldset.campo.membros-lista', { style: 'border:0;padding:0;margin:0 0 1rem' }, el('legend', { style: 'font-weight:700;margin-bottom:.3rem', texto: 'Integrantes do grupo (até 10)' }), el('div.membros-grade', null, campos)),
       el('label', { style: 'display:flex;gap:.6rem;align-items:flex-start;margin-bottom:1.25rem;font-size:.92rem' }, aceite,
         el('span', { texto: 'Nosso grupo vai resolver o caso sem ferramentas de IA generativa. Sabemos que o site registra quando saímos da tela e quando colamos texto, e que no pitch o professor sorteia quem responde.' })),
       el('button.btn.btn-forte', { type: 'submit', texto: 'Entrar no jogo' }));
@@ -260,6 +260,55 @@
   }
 
   /* Cartas */
+  /* Arrastar com eventos de ponteiro: funciona em Chrome, Safari, Firefox, Edge e telas de toque. */
+  var arraste = { suprimir: false };
+  function iniciarArraste(e, no, soltarEm) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    var x0 = e.clientX, y0 = e.clientY, px = x0, py = y0, ativo = false, fantasma = null, alvoAtual = null, quadro = null;
+    var r = no.getBoundingClientRect(), dx = x0 - r.left, dy = y0 - r.top;
+    function posicionar() { fantasma.style.transform = 'translate(' + (px - dx) + 'px,' + (py - dy) + 'px) rotate(1.5deg)'; }
+    function rolar() {
+      if (!ativo) return;
+      var v = py < 110 ? -14 : (py > window.innerHeight - 90 ? 14 : 0);
+      if (v) { window.scrollBy(0, v); procurarAlvo(); }
+      quadro = requestAnimationFrame(rolar);
+    }
+    function procurarAlvo() {
+      var sob = document.elementFromPoint(px, py), a = sob && sob.closest('.caixa, .monte');
+      if (a !== alvoAtual) { if (alvoAtual) alvoAtual.classList.remove('alvo'); alvoAtual = a; if (a) a.classList.add('alvo'); }
+    }
+    function mexer(ev) {
+      px = ev.clientX; py = ev.clientY;
+      if (!ativo) {
+        if (Math.abs(px - x0) + Math.abs(py - y0) < 6) return;
+        ativo = true;
+        fantasma = no.cloneNode(true);
+        fantasma.classList.add('fantasma'); fantasma.classList.remove('selecionada');
+        fantasma.style.width = r.width + 'px';
+        document.body.appendChild(fantasma);
+        no.classList.add('arrastando');
+        document.body.classList.add('arrastando-carta');
+        rolar();
+      }
+      ev.preventDefault();
+      posicionar(); procurarAlvo();
+    }
+    function soltar() {
+      document.removeEventListener('pointermove', mexer);
+      document.removeEventListener('pointerup', soltar);
+      document.removeEventListener('pointercancel', soltar);
+      if (!ativo) return;
+      ativo = false; cancelAnimationFrame(quadro);
+      fantasma.remove(); no.classList.remove('arrastando'); document.body.classList.remove('arrastando-carta');
+      if (alvoAtual) alvoAtual.classList.remove('alvo');
+      arraste.suprimir = true; setTimeout(function () { arraste.suprimir = false; }, 80);
+      if (alvoAtual) soltarEm(alvoAtual);
+    }
+    document.addEventListener('pointermove', mexer, { passive: false });
+    document.addEventListener('pointerup', soltar);
+    document.addEventListener('pointercancel', soltar);
+  }
+
   function ordemCartas(it) {
     return it.cartas.slice().sort(function (a, b) { return hash(caso.id + a.id) - hash(caso.id + b.id); });
   }
@@ -280,34 +329,31 @@
       selecionada = null; pintarMesa(it, R, travado); mudou();
     }
     function carta(c) {
-      var no = el('div.carta' + (selecionada === c.id ? '.selecionada' : ''), { draggable: !travado, tabindex: travado ? null : 0, role: 'button', 'aria-label': 'Coluna ' + c.nome, dados: { carta: c.id } },
+      var no = el('div.carta' + (selecionada === c.id ? '.selecionada' : ''), { tabindex: travado ? null : 0, role: 'button', 'aria-label': 'Coluna ' + c.nome, dados: { carta: c.id } },
         el('div.carta-nome', { texto: c.nome }), el('div.carta-desc', { texto: c.descricao }),
         el('div.carta-ex', null, c.exemplos.map(function (x) { return el('span', { texto: x }); })));
       if (!travado) {
-        no.addEventListener('dragstart', function (e) { e.dataTransfer.setData('text/plain', c.id); e.dataTransfer.effectAllowed = 'move'; no.classList.add('arrastando'); });
-        no.addEventListener('dragend', function () { no.classList.remove('arrastando'); });
+        no.classList.add('movel');
         var sel = function (e) { e.stopPropagation(); selecionada = selecionada === c.id ? null : c.id; pintarMesa(it, R, travado); };
-        no.addEventListener('click', sel);
+        no.addEventListener('click', function (e) { if (arraste.suprimir) { arraste.suprimir = false; e.stopPropagation(); return; } sel(e); });
         no.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sel(e); } });
+        no.addEventListener('pointerdown', function (e) { iniciarArraste(e, no, function (alvoNo) { mover(c.id, alvoNo.dataset.caixa || null); }); });
       }
       return no;
     }
-    function alvo(no, caixa) {
+    function alvo(no) {
       if (travado) return;
-      no.addEventListener('dragover', function (e) { e.preventDefault(); no.classList.add('alvo'); });
-      no.addEventListener('dragleave', function () { no.classList.remove('alvo'); });
-      no.addEventListener('drop', function (e) { e.preventDefault(); no.classList.remove('alvo'); var id = e.dataTransfer.getData('text/plain'); if (id) mover(id, caixa); });
-      no.addEventListener('click', function () { if (selecionada) mover(selecionada, caixa); });
+      no.addEventListener('click', function () { if (selecionada) mover(selecionada, no.dataset.caixa || null); });
     }
-    var monte = el('div.monte', { 'aria-label': 'Colunas ainda sem caixa' }, soltas.length ? soltas.map(carta) : el('span.monte-vazio', { texto: 'Todas as 16 colunas estão classificadas. Cliquem numa coluna para mudá-la de caixa.' }));
-    alvo(monte, null);
+    var monte = el('div.monte', { 'aria-label': 'Colunas ainda sem caixa' }, soltas.length ? soltas.map(carta) : el('span.monte-vazio', { texto: 'Todas as 16 colunas estão classificadas. Para mudar uma de caixa, arrastem a coluna ou cliquem nela e depois na caixa nova.' }));
+    alvo(monte);
     var caixas = el('div.caixas', null, caso.caixas.map(function (cx) {
       var dentro = cartas.filter(function (c) { return mapa[c.id] === cx.id; });
       var corpo = el('div.caixa-corpo', null, dentro.map(carta));
       var no = el('div.caixa', { dados: { caixa: cx.id } },
         el('div.caixa-cab', null, el('b', { texto: cx.nome + ' (' + dentro.length + ')' }), el('small', { texto: cx.ajuda })), corpo,
         selecionada && !travado ? el('button.caixa-botao', { type: 'button', texto: 'Colocar aqui' }) : null);
-      alvo(no, cx.id);
+      alvo(no);
       return no;
     }));
     mesa.appendChild(el('div.mesa-lado', null,

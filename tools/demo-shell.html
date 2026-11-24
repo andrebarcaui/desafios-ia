@@ -37,13 +37,13 @@
 <script>/*__DADOS__*/</script>
 <script>
 (function () {
-  try { localStorage.removeItem('desafios.sessao'); } catch (e) {}
+  try { localStorage.removeItem('desafios.sessao'); localStorage.removeItem('desafios.professor'); } catch (e) {}
   var CASO = Object.keys(CASOS_COMPLETOS)[0];
   var grupos = [1, 2, 3, 4, 5, 6].map(function (i) { return { codigo: 'DEMO-' + i, nome: 'Grupo ' + i, caso: CASO }; });
   var mem = {};
   var store = { get: function (k) { return mem[k] ? JSON.parse(mem[k]) : null; }, set: function (k, v) { mem[k] = JSON.stringify(v); }, del: function (k) { delete mem[k]; } };
   window.DEMO_CASOS_PUBLICOS = DEMO_CASOS_PUBLICOS;
-  var S = ServerCore.create({ store: store, casos: CASOS_COMPLETOS, config: { chaveProfessor: 'DEMO', grupos: grupos } });
+  var S = ServerCore.create({ store: store, casos: CASOS_COMPLETOS, config: { chaveProfessor: '020271', grupos: grupos } });
   /* Antes de o professor mudar de fase, os grupos simulados que ainda não jogaram jogam na hora. */
   window.DEMO_SERVIDOR = { handle: function (req) { if (req && req.acao === 'prof_fase') jogarPendentes(); return S.handle(req); } };
 

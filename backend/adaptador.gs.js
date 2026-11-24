@@ -4,7 +4,7 @@
  *
  * Abas da planilha (criadas por configurar()):
  *   Grupos     código | nome | caso
- *   Config     chave | valor   (chave_professor, duracao_f1, duracao_f2, duracao_f3, duracao_evento)
+ *   Config     chave | valor   (chave_professor = senha do painel, duracao_f1, duracao_f2, duracao_f3, duracao_evento)
  *   Respostas  registro de cada fase enviada, para a correção
  */
 
@@ -89,8 +89,9 @@ function configurar() {
   }
   var c = aba('Config');
   if (c.getLastRow() < 1) {
+    c.getRange('B1').setNumberFormat('@'); // mantém o zero à esquerda da senha
     c.getRange(1, 1, 6, 2).setValues([
-      ['chave_professor', codigoAleatorio_() + codigoAleatorio_()],
+      ['chave_professor', '020271'],
       ['duracao_f1', 6], ['duracao_f2', 12], ['duracao_f3', 8], ['duracao_evento', 6],
       ['casos disponíveis', Object.keys(CASOS).join(', ')]
     ]);
@@ -101,7 +102,7 @@ function configurar() {
     r.setFrozenRows(1);
   }
   CacheService.getScriptCache().remove('config');
-  SpreadsheetApp.getUi().alert('Pronto. Confira as abas Grupos e Config. A chave do professor está na aba Config.');
+  SpreadsheetApp.getUi().alert('Pronto. Confira as abas Grupos e Config. A senha do professor está na aba Config e pode ser trocada lá.');
 }
 
 /** Apaga o jogo em andamento (pontos, respostas e placar). A planilha Respostas é mantida. */

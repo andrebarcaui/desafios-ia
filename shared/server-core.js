@@ -386,7 +386,7 @@ var ServerCore = (function () {
         if (novo) g = novoGrupo(c);
         (req.membros || []).forEach(function (m) {
           var n = limpar(m, 60);
-          if (n && g.membros.length < 8 && g.membros.map(function (x) { return x.toLowerCase(); }).indexOf(n.toLowerCase()) < 0) g.membros.push(n);
+          if (n && g.membros.length < 10 && g.membros.map(function (x) { return x.toLowerCase(); }).indexOf(n.toLowerCase()) < 0) g.membros.push(n);
         });
         salvarGrupo(g); marcarVisto(g.codigo);
         if (novo) { feed(glob, g.nome + ' entrou no jogo', 'entrada'); salvarGlobal(glob); }
@@ -505,12 +505,19 @@ var ServerCore = (function () {
       prof_exportar: function () { return exportar(); }
     };
 
+    /* A planilha pode transformar "020271" em número e perder o zero à esquerda. */
+    function senhaConfere(dada, certa) {
+      var a = String(dada == null ? '' : dada).trim(), b = String(certa == null ? '' : certa).trim();
+      if (!b) return false;
+      if (a === b) return true;
+      return /^\d+$/.test(a) && /^\d+$/.test(b) && Number(a) === Number(b);
+    }
     function handle(req) {
       try {
         req = req || {};
         var a = acoes[req.acao];
         if (!a) throw new Error('Ação desconhecida.');
-        if (req.acao.indexOf('prof_') === 0 && String(req.chave || '') !== String(cfg.chaveProfessor)) throw new Error('Chave do professor inválida.');
+        if (req.acao.indexOf('prof_') === 0 && !senhaConfere(req.chave, cfg.chaveProfessor)) throw new Error('Senha do professor incorreta.');
         var leitura = req.acao === 'placar' || req.acao === 'estado' || req.acao === 'prof_estado' || req.acao === 'prof_exportar';
         return leitura ? a(req) : comTrava(function () { return a(req); });
       } catch (e) {
