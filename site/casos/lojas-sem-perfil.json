@@ -179,11 +179,29 @@
      "pontosMax": 8
     },
     {
-     "id": "f1j",
-     "tipo": "texto",
-     "rotulo": "Por que não usar A, B e C",
-     "enunciado": "Em até duas frases: por que não usar a classificação A, B e C como resposta certa?",
-     "maxChars": 400
+     "id": "f1x",
+     "tipo": "escolha",
+     "rotulo": "Desafio do enquadre",
+     "enunciado": "A Cláudia pergunta: \"Por que não agrupamos os clientes em vez das lojas?\" Qual é a resposta mais adequada?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Porque o algoritmo não aguenta tantos clientes"
+      },
+      {
+       "id": "b",
+       "texto": "Agrupar clientes daria o mesmo resultado"
+      },
+      {
+       "id": "c",
+       "texto": "Agrupar clientes é útil para marketing, mas a decisão aqui é o sortimento de cada loja, então o que se agrupa são as lojas"
+      },
+      {
+       "id": "d",
+       "texto": "Porque clustering não funciona com pessoas"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -512,11 +530,29 @@
      "pontosMax": 10
     },
     {
-     "id": "f3j",
-     "tipo": "texto",
-     "rotulo": "Confiança nos grupos",
-     "enunciado": "Em até duas frases: os perfis encontrados ajudam a Cláudia a reduzir a quebra de perecíveis? Por quê?",
-     "maxChars": 400
+     "id": "f3x",
+     "tipo": "escolha",
+     "rotulo": "Desafio da modelagem",
+     "enunciado": "Um grupo saiu com só 3 lojas, todas muito diferentes das outras. O que fazer?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Investigar se são casos especiais ou erros de cadastro antes de criar um sortimento só para elas"
+      },
+      {
+       "id": "b",
+       "texto": "Criar um sortimento exclusivo para essas 3 lojas"
+      },
+      {
+       "id": "c",
+       "texto": "Fechar essas lojas"
+      },
+      {
+       "id": "d",
+       "texto": "Aumentar o número de grupos até elas sumirem"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -590,11 +626,29 @@
      "pontosMax": 4
     },
     {
-     "id": "evj",
-     "tipo": "texto",
-     "rotulo": "O que faltou antes",
-     "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de levar os perfis ao comitê?",
-     "maxChars": 400
+     "id": "evx",
+     "tipo": "escolha",
+     "rotulo": "Desafio da produção",
+     "enunciado": "Como acompanhar se as lojas continuam no perfil certo?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Manter os perfis fixos por cinco anos"
+      },
+      {
+       "id": "b",
+       "texto": "Mudar o perfil quando o gerente da loja pedir"
+      },
+      {
+       "id": "c",
+       "texto": "Olhar só a margem de cada loja"
+      },
+      {
+       "id": "d",
+       "texto": "Recalcular os perfis a cada trimestre e sinalizar as lojas cujo jeito de vender mudou"
+      }
+     ],
+     "pontosMax": 4
     }
    ],
    "dicas": []

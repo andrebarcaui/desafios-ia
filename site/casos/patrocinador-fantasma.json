@@ -208,11 +208,29 @@
      "pontosMax": 8
     },
     {
-     "id": "f1j",
-     "tipo": "texto",
-     "rotulo": "Por que esse alvo",
-     "enunciado": "Em até duas frases: por que não usar o status vermelho que os gerentes já marcam?",
-     "maxChars": 400
+     "id": "f1x",
+     "tipo": "escolha",
+     "rotulo": "Desafio do enquadre",
+     "enunciado": "Um diretor sugere usar o modelo para listar os stakeholders \"resistentes\" e substituí-los nos projetos. Qual é o problema?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Nenhum: é uma forma eficiente de reduzir atrasos"
+      },
+      {
+       "id": "b",
+       "texto": "O modelo não tem acurácia suficiente para isso"
+      },
+      {
+       "id": "c",
+       "texto": "Substituir stakeholders é responsabilidade do RH, não do PMO"
+      },
+      {
+       "id": "d",
+       "texto": "O modelo indica risco para orientar conversa e engajamento; usá-lo para punir transforma previsão em sentença e cala a discordância saudável"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -541,11 +559,29 @@
      "pontosMax": 10
     },
     {
-     "id": "f3j",
-     "tipo": "texto",
-     "rotulo": "Confiança no resultado",
-     "enunciado": "Em até duas frases: vocês confiam no resultado do treino? Por quê?",
-     "maxChars": 400
+     "id": "f3x",
+     "tipo": "escolha",
+     "rotulo": "Desafio da modelagem",
+     "enunciado": "O modelo concorda em 95% dos casos com a cor que os gerentes marcam. O que isso indica?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Que ele está validado pelos especialistas"
+      },
+      {
+       "id": "b",
+       "texto": "Que ele provavelmente aprendeu a opinião dos gerentes, e concordar com um rótulo subjetivo não prova que ele prevê afastamento"
+      },
+      {
+       "id": "c",
+       "texto": "Que a AUC também deve estar em 0,95"
+      },
+      {
+       "id": "d",
+       "texto": "Que os gerentes podem parar de marcar a cor"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -619,11 +655,29 @@
      "pontosMax": 4
     },
     {
-     "id": "evj",
-     "tipo": "texto",
-     "rotulo": "O que faltou antes",
-     "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de ir para produção?",
-     "maxChars": 400
+     "id": "evx",
+     "tipo": "escolha",
+     "rotulo": "Desafio da produção",
+     "enunciado": "O que deveria fazer parte do plano de uso do modelo desde o início?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Monitorar o desempenho todo mês, revisar o modelo em mudanças organizacionais e informar os stakeholders sobre os dados usados"
+      },
+      {
+       "id": "b",
+       "texto": "Manter o modelo em segredo para os stakeholders não mudarem de comportamento"
+      },
+      {
+       "id": "c",
+       "texto": "Revisar o modelo só quando um projeto atrasar"
+      },
+      {
+       "id": "d",
+       "texto": "Aumentar o número de reuniões de alinhamento"
+      }
+     ],
+     "pontosMax": 4
     }
    ],
    "dicas": []

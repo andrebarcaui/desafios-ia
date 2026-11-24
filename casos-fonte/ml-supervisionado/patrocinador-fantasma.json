@@ -7,7 +7,6 @@
   "empresa": "Ponte Alta Engenharia",
   "imagem": "img/patrocinador-fantasma.svg",
   "creditosIniciais": 100,
-
   "briefing": {
     "remetente": "Ricardo Menezes",
     "cargo": "Diretor de Operações, Ponte Alta Engenharia",
@@ -19,21 +18,50 @@
       "Preciso de um desenho que eu possa defender na diretoria."
     ],
     "contexto": [
-      { "titulo": "A empresa", "texto": "A Ponte Alta Engenharia toca 180 projetos ao mesmo tempo, com cerca de 3.200 stakeholders-chave mapeados: patrocinadores, diretores, clientes internos e representantes de órgãos." },
-      { "titulo": "O registro dos gerentes", "texto": "Cada gerente de projeto marca o status de relacionamento de seus stakeholders como verde, amarelo ou vermelho. Não há critério escrito para a cor." },
-      { "titulo": "Relatório do PMO", "texto": "Nos projetos atrasados, o primeiro sinal costuma ser concreto: faltas em reuniões de decisão e aprovações de gate que demoram semanas." },
-      { "titulo": "A ação possível", "texto": "Quando o PMO percebe risco, faz uma reunião de alinhamento com o stakeholder. Cada reunião custa cerca de R$ 600 em horas do gerente e do PMO. Em 35% dos casos de risco real, ela traz o stakeholder de volta." },
-      { "titulo": "Custo do afastamento", "texto": "Quando um stakeholder-chave se afasta, o atraso médio custa R$ 9 mil ao projeto. Em qualquer mês, cerca de 8% dos stakeholders-chave se afastam nos 60 dias seguintes." }
+      {
+        "titulo": "A empresa",
+        "texto": "A Ponte Alta Engenharia toca 180 projetos ao mesmo tempo, com cerca de 3.200 stakeholders-chave mapeados: patrocinadores, diretores, clientes internos e representantes de órgãos."
+      },
+      {
+        "titulo": "O registro dos gerentes",
+        "texto": "Cada gerente de projeto marca o status de relacionamento de seus stakeholders como verde, amarelo ou vermelho. Não há critério escrito para a cor."
+      },
+      {
+        "titulo": "Relatório do PMO",
+        "texto": "Nos projetos atrasados, o primeiro sinal costuma ser concreto: faltas em reuniões de decisão e aprovações de gate que demoram semanas."
+      },
+      {
+        "titulo": "A ação possível",
+        "texto": "Quando o PMO percebe risco, faz uma reunião de alinhamento com o stakeholder. Cada reunião custa cerca de R$ 600 em horas do gerente e do PMO. Em 35% dos casos de risco real, ela traz o stakeholder de volta."
+      },
+      {
+        "titulo": "Custo do afastamento",
+        "texto": "Quando um stakeholder-chave se afasta, o atraso médio custa R$ 9 mil ao projeto. Em qualquer mês, cerca de 8% dos stakeholders-chave se afastam nos 60 dias seguintes."
+      }
     ]
   },
-
   "caixas": [
-    { "id": "feature", "nome": "Usar como feature", "ajuda": "Informação que existe no momento da previsão e ajuda a prever" },
-    { "id": "vazamento", "nome": "Vazamento", "ajuda": "Só existe depois que o resultado já aconteceu" },
-    { "id": "sensivel", "nome": "Sensível ou proxy", "ajuda": "Dado protegido, invasivo ou substituto de um dado protegido" },
-    { "id": "descartar", "nome": "Descartar", "ajuda": "Não carrega padrão útil" }
+    {
+      "id": "feature",
+      "nome": "Usar como feature",
+      "ajuda": "Informação que existe no momento da previsão e ajuda a prever"
+    },
+    {
+      "id": "vazamento",
+      "nome": "Vazamento",
+      "ajuda": "Só existe depois que o resultado já aconteceu"
+    },
+    {
+      "id": "sensivel",
+      "nome": "Sensível ou proxy",
+      "ajuda": "Dado protegido, invasivo ou substituto de um dado protegido"
+    },
+    {
+      "id": "descartar",
+      "nome": "Descartar",
+      "ajuda": "Não carrega padrão útil"
+    }
   ],
-
   "simulador": {
     "baseClientes": 3200,
     "prevalencia": 0.08,
@@ -43,232 +71,775 @@
     "minPct": 1,
     "maxPct": 50,
     "termos": {
-      "unidade": "stakeholders", "um": "stakeholder", "positivos": "iam se afastar", "negativos": "seguiriam engajados", "passado": "se afastou", "passadoNeg": "seguiu engajado",
-      "aoPositivo": "a quem se afastou", "ninguem": "ninguém vai se afastar", "verboPlural": "se afastam",
-      "campanha": "ação do PMO", "verboAlcanca": "alcança", "acao": "chamados para alinhamento", "acaoTitulo": "Com reunião de alinhamento", "naoAcaoTitulo": "Sem reunião",
-      "tituloDecisao": "Com quantos stakeholders marcar reunião de alinhamento por mês", "ordem": "do maior para o menor risco de afastamento",
-      "positivosCurto": "stakeholders que iam se afastar", "negativosCurto": "reuniões com quem seguiria engajado",
-      "efeito": "voltam a se engajar", "ganho": "Atraso evitado", "pontaEsq": "Só os de maior risco", "pontaDir": "Muita gente",
-      "vp": "Acerto: reunião com quem ia se afastar", "fp": "Tempo extra: reunião com quem estava bem",
-      "fn": "Perda: se afastou sem conversa", "vn": "Acerto: ninguém ocupou a agenda de quem estava bem"
+      "unidade": "stakeholders",
+      "um": "stakeholder",
+      "positivos": "iam se afastar",
+      "negativos": "seguiriam engajados",
+      "passado": "se afastou",
+      "passadoNeg": "seguiu engajado",
+      "aoPositivo": "a quem se afastou",
+      "ninguem": "ninguém vai se afastar",
+      "verboPlural": "se afastam",
+      "campanha": "ação do PMO",
+      "verboAlcanca": "alcança",
+      "acao": "chamados para alinhamento",
+      "acaoTitulo": "Com reunião de alinhamento",
+      "naoAcaoTitulo": "Sem reunião",
+      "tituloDecisao": "Com quantos stakeholders marcar reunião de alinhamento por mês",
+      "ordem": "do maior para o menor risco de afastamento",
+      "positivosCurto": "stakeholders que iam se afastar",
+      "negativosCurto": "reuniões com quem seguiria engajado",
+      "efeito": "voltam a se engajar",
+      "ganho": "Atraso evitado",
+      "pontaEsq": "Só os de maior risco",
+      "pontaDir": "Muita gente",
+      "vp": "Acerto: reunião com quem ia se afastar",
+      "fp": "Tempo extra: reunião com quem estava bem",
+      "fn": "Perda: se afastou sem conversa",
+      "vn": "Acerto: ninguém ocupou a agenda de quem estava bem"
     }
   },
-
   "fases": [
     {
-      "id": "f1", "titulo": "Enquadre o problema", "curto": "Enquadre", "duracaoMin": 6,
+      "id": "f1",
+      "titulo": "Enquadre o problema",
+      "curto": "Enquadre",
+      "duracaoMin": 6,
       "missao": "Transformem o pedido do Ricardo num problema de machine learning bem formulado. Antes de pensar em dados, decidam o que o modelo vai prever, quando, para quê e com qual resposta certa ele vai aprender.",
       "itens": [
         {
-          "id": "f1q1", "tipo": "escolha", "rotulo": "Decisão apoiada",
+          "id": "f1q1",
+          "tipo": "escolha",
+          "rotulo": "Decisão apoiada",
           "enunciado": "Qual decisão de negócio o modelo vai apoiar?",
           "opcoes": [
-            { "id": "a", "texto": "Escolher, todo mês, com quais stakeholders o PMO faz reunião de alinhamento antes que se afastem" },
-            { "id": "b", "texto": "Trocar os patrocinadores que discordam dos projetos" },
-            { "id": "c", "texto": "Avaliar o desempenho de cada gerente de projeto" },
-            { "id": "d", "texto": "Prever o custo final de cada projeto" }
+            {
+              "id": "a",
+              "texto": "Escolher, todo mês, com quais stakeholders o PMO faz reunião de alinhamento antes que se afastem"
+            },
+            {
+              "id": "b",
+              "texto": "Trocar os patrocinadores que discordam dos projetos"
+            },
+            {
+              "id": "c",
+              "texto": "Avaliar o desempenho de cada gerente de projeto"
+            },
+            {
+              "id": "d",
+              "texto": "Prever o custo final de cada projeto"
+            }
           ],
-          "_gabarito": { "a": 6, "b": 0, "c": 0, "d": 1 }, "pontosMax": 6,
+          "_gabarito": {
+            "a": 6,
+            "b": 0,
+            "c": 0,
+            "d": 1
+          },
+          "pontosMax": 6,
           "_explicacao": "No domínio de Stakeholders do PMBOK 8, o objetivo é manter o engajamento. O modelo prioriza com quem conversar. Trocar quem discorda (b) confunde discordância com afastamento e pune quem questiona."
         },
         {
-          "id": "f1q2", "tipo": "escolha", "rotulo": "Momento da previsão",
+          "id": "f1q2",
+          "tipo": "escolha",
+          "rotulo": "Momento da previsão",
           "enunciado": "Em que momento a previsão precisa ser feita?",
           "opcoes": [
-            { "id": "a", "texto": "Uma vez por mês, prevendo quem vai se afastar nos 60 dias seguintes" },
-            { "id": "b", "texto": "No encerramento do projeto" },
-            { "id": "c", "texto": "Quando o stakeholder já faltou a várias reuniões seguidas" },
-            { "id": "d", "texto": "Uma única vez, na abertura do projeto" }
+            {
+              "id": "a",
+              "texto": "Uma vez por mês, prevendo quem vai se afastar nos 60 dias seguintes"
+            },
+            {
+              "id": "b",
+              "texto": "No encerramento do projeto"
+            },
+            {
+              "id": "c",
+              "texto": "Quando o stakeholder já faltou a várias reuniões seguidas"
+            },
+            {
+              "id": "d",
+              "texto": "Uma única vez, na abertura do projeto"
+            }
           ],
-          "_gabarito": { "a": 6, "b": 0, "c": 2, "d": 2 }, "pontosMax": 6,
+          "_gabarito": {
+            "a": 6,
+            "b": 0,
+            "c": 2,
+            "d": 2
+          },
+          "pontosMax": 6,
           "_explicacao": "É preciso antecedência para a reunião fazer efeito e regularidade porque o engajamento muda ao longo do projeto. Depois de várias faltas (c), já é tarde; uma vez só, na abertura (d), não acompanha as mudanças."
         },
         {
-          "id": "f1q3", "tipo": "escolha", "rotulo": "Tipo de problema",
+          "id": "f1q3",
+          "tipo": "escolha",
+          "rotulo": "Tipo de problema",
           "enunciado": "Que tipo de problema é esse?",
           "opcoes": [
-            { "id": "a", "texto": "Classificação: prever uma classe (vai se afastar ou não), com uma probabilidade associada" },
-            { "id": "b", "texto": "Regressão: prever um valor numérico, como o atraso do projeto em dias" },
-            { "id": "c", "texto": "Agrupamento: descobrir grupos de stakeholders parecidos, sem rótulos" },
-            { "id": "d", "texto": "Aprendizado por reforço: o sistema testa abordagens e aprende com recompensas" }
+            {
+              "id": "a",
+              "texto": "Classificação: prever uma classe (vai se afastar ou não), com uma probabilidade associada"
+            },
+            {
+              "id": "b",
+              "texto": "Regressão: prever um valor numérico, como o atraso do projeto em dias"
+            },
+            {
+              "id": "c",
+              "texto": "Agrupamento: descobrir grupos de stakeholders parecidos, sem rótulos"
+            },
+            {
+              "id": "d",
+              "texto": "Aprendizado por reforço: o sistema testa abordagens e aprende com recompensas"
+            }
           ],
-          "_gabarito": { "a": 5, "b": 1, "c": 1, "d": 0 }, "pontosMax": 5,
+          "_gabarito": {
+            "a": 5,
+            "b": 1,
+            "c": 1,
+            "d": 0
+          },
+          "pontosMax": 5,
           "_explicacao": "Se afastar ou não nos próximos 60 dias é uma classe binária; a probabilidade ordena os stakeholders por risco."
         },
         {
-          "id": "f1q4", "tipo": "escolha", "rotulo": "Variável-alvo",
+          "id": "f1q4",
+          "tipo": "escolha",
+          "rotulo": "Variável-alvo",
           "enunciado": "Qual deve ser a variável-alvo (o rótulo com que o modelo aprende)?",
           "opcoes": [
-            { "id": "a", "texto": "Status vermelho marcado pelo gerente de projeto no sistema" },
-            { "id": "b", "texto": "Faltou a 2 ou mais reuniões de decisão seguidas ou atrasou uma aprovação de gate em mais de 15 dias, nos 60 dias seguintes" },
-            { "id": "c", "texto": "Nota baixa na pesquisa anual de satisfação de stakeholders" },
-            { "id": "d", "texto": "Discordou do gerente de projeto em alguma reunião registrada em ata" }
+            {
+              "id": "a",
+              "texto": "Status vermelho marcado pelo gerente de projeto no sistema"
+            },
+            {
+              "id": "b",
+              "texto": "Faltou a 2 ou mais reuniões de decisão seguidas ou atrasou uma aprovação de gate em mais de 15 dias, nos 60 dias seguintes"
+            },
+            {
+              "id": "c",
+              "texto": "Nota baixa na pesquisa anual de satisfação de stakeholders"
+            },
+            {
+              "id": "d",
+              "texto": "Discordou do gerente de projeto em alguma reunião registrada em ata"
+            }
           ],
-          "_gabarito": { "a": 2, "b": 8, "c": 2, "d": 0 }, "pontosMax": 8,
+          "_gabarito": {
+            "a": 2,
+            "b": 8,
+            "c": 2,
+            "d": 0
+          },
+          "pontosMax": 8,
           "_explicacao": "O status vermelho (a) é a opinião de cada gerente, sem critério, e costuma marcar quem discorda dele. O modelo aprenderia essa opinião. Faltas e atrasos de aprovação (b) são comportamentos observáveis e são justamente o que atrasa o projeto. Discordar (d) não é se afastar."
         },
         {
-          "id": "f1j", "tipo": "texto", "rotulo": "Por que esse alvo",
-          "enunciado": "Em até duas frases: por que não usar o status vermelho que os gerentes já marcam?",
-          "maxChars": 400
+          "id": "f1x",
+          "tipo": "escolha",
+          "rotulo": "Desafio do enquadre",
+          "enunciado": "Um diretor sugere usar o modelo para listar os stakeholders \"resistentes\" e substituí-los nos projetos. Qual é o problema?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Nenhum: é uma forma eficiente de reduzir atrasos"
+            },
+            {
+              "id": "b",
+              "texto": "O modelo não tem acurácia suficiente para isso"
+            },
+            {
+              "id": "c",
+              "texto": "Substituir stakeholders é responsabilidade do RH, não do PMO"
+            },
+            {
+              "id": "d",
+              "texto": "O modelo indica risco para orientar conversa e engajamento; usá-lo para punir transforma previsão em sentença e cala a discordância saudável"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 1,
+            "c": 0,
+            "d": 5
+          },
+          "pontosMax": 5
         }
       ],
       "dicas": [
-        { "id": "f1d1", "titulo": "Ligar para o cientista de dados", "custo": 10, "_texto": "Perguntem quem produziu o rótulo e com que critério. Se duas pessoas olhassem o mesmo stakeholder, dariam a mesma cor?" },
-        { "id": "f1d2", "titulo": "Conversar com uma gerente de projeto", "custo": 10, "_texto": "Sendo sincera, eu marco vermelho quem me dá trabalho nas reuniões. Já o diretor que sumiu em silêncio no ano passado ficou verde até o fim." }
+        {
+          "id": "f1d1",
+          "titulo": "Ligar para o cientista de dados",
+          "custo": 10,
+          "_texto": "Perguntem quem produziu o rótulo e com que critério. Se duas pessoas olhassem o mesmo stakeholder, dariam a mesma cor?"
+        },
+        {
+          "id": "f1d2",
+          "titulo": "Conversar com uma gerente de projeto",
+          "custo": 10,
+          "_texto": "Sendo sincera, eu marco vermelho quem me dá trabalho nas reuniões. Já o diretor que sumiu em silêncio no ano passado ficou verde até o fim."
+        }
       ]
     },
-
     {
-      "id": "f2", "titulo": "Monte o dataset", "curto": "Dataset", "duracaoMin": 12,
+      "id": "f2",
+      "titulo": "Monte o dataset",
+      "curto": "Dataset",
+      "duracaoMin": 12,
       "missao": "O PMO separou 16 colunas candidatas sobre cada stakeholder. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. O dataset que vocês montarem é o que o modelo vai usar.",
       "itens": [
         {
-          "id": "f2cartas", "tipo": "cartas", "rotulo": "Colunas",
+          "id": "f2cartas",
+          "tipo": "cartas",
+          "rotulo": "Colunas",
           "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
-          "pontosPorCarta": 2, "pontosMax": 32,
+          "pontosPorCarta": 2,
+          "pontosMax": 32,
           "cartas": [
-            { "id": "c01", "nome": "faltas_reunioes_decisao_60d", "descricao": "Reuniões de decisão a que o stakeholder faltou nos 60 dias anteriores à data de referência.", "exemplos": ["0", "3", "1"], "_gabarito": "feature", "_explicacao": "Sinal forte e medido antes da data de referência." },
-            { "id": "c02", "nome": "dias_medios_aprovacao_gate", "descricao": "Tempo médio que o stakeholder levou para aprovar entregas e gates nos últimos 6 meses.", "exemplos": ["2", "19", "6"], "_gabarito": "feature", "_explicacao": "Sinal forte: aprovações cada vez mais lentas antecedem o afastamento." },
-            { "id": "c03", "nome": "mudancas_cargo_12m", "descricao": "Mudanças de cargo ou de área do stakeholder nos últimos 12 meses.", "exemplos": ["0", "2", "1"], "_gabarito": "feature", "_explicacao": "Quem muda de cadeira muda de prioridades. Disponível e útil." },
-            { "id": "c04", "nome": "projetos_que_patrocina", "descricao": "Número de projetos em que o stakeholder é patrocinador ou aprovador.", "exemplos": ["1", "7", "3"], "_gabarito": "feature", "_explicacao": "Sobrecarga de agenda é um caminho comum para o afastamento." },
-            { "id": "c05", "nome": "poder_influencia", "descricao": "Nível de poder sobre o projeto na matriz de stakeholders (1 a 4).", "exemplos": ["4", "2", "3"], "_gabarito": "feature", "_explicacao": "Parte do mapeamento de stakeholders, feito antes, com critério definido." },
-            { "id": "c06", "nome": "interesse_declarado", "descricao": "Nível de interesse no projeto registrado no mapeamento inicial (1 a 4).", "exemplos": ["3", "1", "4"], "_gabarito": "feature", "_explicacao": "Informação do mapeamento, disponível e relevante." },
-            { "id": "c07", "nome": "dias_desde_ultimo_contato_gp", "descricao": "Dias desde a última conversa registrada entre o gerente e o stakeholder.", "exemplos": ["3", "41", "12"], "_gabarito": "feature", "_explicacao": "Medido até a data de referência e ligado ao distanciamento." },
-            { "id": "c08", "nome": "mudancas_escopo_abertas", "descricao": "Pedidos de mudança de escopo em aberto que dependem do stakeholder.", "exemplos": ["0", "5", "2"], "_gabarito": "feature", "_explicacao": "Pendências acumuladas costumam gerar atrito e afastamento." },
-            { "id": "c09", "nome": "area_reorganizada_6m", "descricao": "Se a área do stakeholder passou por reorganização nos últimos 6 meses.", "exemplos": ["não", "sim", "não"], "_gabarito": "feature", "_explicacao": "Mudança organizacional anterior à previsão e associada ao afastamento." },
-            { "id": "c10", "nome": "escalonamento_ao_comite", "descricao": "Se o projeto escalonou ao comitê a falta de apoio deste stakeholder.", "exemplos": ["não", "sim", "não"], "_gabarito": "vazamento", "_explicacao": "O escalonamento acontece quando o afastamento já está evidente: é consequência, não sinal antecipado." },
-            { "id": "c11", "nome": "substituido_como_patrocinador", "descricao": "Se o stakeholder foi substituído no papel de patrocinador ou aprovador.", "exemplos": ["não", "não", "sim"], "_gabarito": "vazamento", "_explicacao": "Só acontece depois do afastamento, às vezes meses depois." },
-            { "id": "c12", "nome": "comentario_licoes_aprendidas", "descricao": "Avaliação do stakeholder escrita no relatório de lições aprendidas, no encerramento.", "exemplos": ["apoio decisivo", "ausente", "apoio irregular"], "_gabarito": "vazamento", "_explicacao": "Escrita no fim do projeto, já sabendo como tudo terminou." },
-            { "id": "c13", "nome": "sentimento_emails", "descricao": "Nota de humor calculada por IA a partir do conteúdo dos e-mails do stakeholder, sem que ele saiba.", "exemplos": ["-0,4", "0,2", "-0,8"], "_gabarito": "sensivel", "_explicacao": "Monitorar o conteúdo de e-mails sem transparência fere a LGPD e destrói a confiança se vier a público. O ganho de previsão não compensa." },
-            { "id": "c14", "nome": "idade_stakeholder", "descricao": "Idade do stakeholder, segundo o cadastro de RH.", "exemplos": ["58", "41", "36"], "_gabarito": "sensivel", "_explicacao": "Usar idade para prever quem vai se afastar pode reforçar preconceito contra profissionais mais velhos." },
-            { "id": "c15", "nome": "matricula_rh", "descricao": "Número de matrícula do stakeholder no RH.", "exemplos": ["004871", "019233", "011902"], "_gabarito": "descartar", "_explicacao": "Identificador sem significado." },
-            { "id": "c16", "nome": "empresa_do_stakeholder", "descricao": "Empresa à qual o stakeholder pertence. Esta base só tem stakeholders internos da Ponte Alta.", "exemplos": ["Ponte Alta", "Ponte Alta", "Ponte Alta"], "_gabarito": "descartar", "_explicacao": "Mesmo valor para todos: não distingue ninguém." }
+            {
+              "id": "c01",
+              "nome": "faltas_reunioes_decisao_60d",
+              "descricao": "Reuniões de decisão a que o stakeholder faltou nos 60 dias anteriores à data de referência.",
+              "exemplos": [
+                "0",
+                "3",
+                "1"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Sinal forte e medido antes da data de referência."
+            },
+            {
+              "id": "c02",
+              "nome": "dias_medios_aprovacao_gate",
+              "descricao": "Tempo médio que o stakeholder levou para aprovar entregas e gates nos últimos 6 meses.",
+              "exemplos": [
+                "2",
+                "19",
+                "6"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Sinal forte: aprovações cada vez mais lentas antecedem o afastamento."
+            },
+            {
+              "id": "c03",
+              "nome": "mudancas_cargo_12m",
+              "descricao": "Mudanças de cargo ou de área do stakeholder nos últimos 12 meses.",
+              "exemplos": [
+                "0",
+                "2",
+                "1"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Quem muda de cadeira muda de prioridades. Disponível e útil."
+            },
+            {
+              "id": "c04",
+              "nome": "projetos_que_patrocina",
+              "descricao": "Número de projetos em que o stakeholder é patrocinador ou aprovador.",
+              "exemplos": [
+                "1",
+                "7",
+                "3"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Sobrecarga de agenda é um caminho comum para o afastamento."
+            },
+            {
+              "id": "c05",
+              "nome": "poder_influencia",
+              "descricao": "Nível de poder sobre o projeto na matriz de stakeholders (1 a 4).",
+              "exemplos": [
+                "4",
+                "2",
+                "3"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Parte do mapeamento de stakeholders, feito antes, com critério definido."
+            },
+            {
+              "id": "c06",
+              "nome": "interesse_declarado",
+              "descricao": "Nível de interesse no projeto registrado no mapeamento inicial (1 a 4).",
+              "exemplos": [
+                "3",
+                "1",
+                "4"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Informação do mapeamento, disponível e relevante."
+            },
+            {
+              "id": "c07",
+              "nome": "dias_desde_ultimo_contato_gp",
+              "descricao": "Dias desde a última conversa registrada entre o gerente e o stakeholder.",
+              "exemplos": [
+                "3",
+                "41",
+                "12"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Medido até a data de referência e ligado ao distanciamento."
+            },
+            {
+              "id": "c08",
+              "nome": "mudancas_escopo_abertas",
+              "descricao": "Pedidos de mudança de escopo em aberto que dependem do stakeholder.",
+              "exemplos": [
+                "0",
+                "5",
+                "2"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Pendências acumuladas costumam gerar atrito e afastamento."
+            },
+            {
+              "id": "c09",
+              "nome": "area_reorganizada_6m",
+              "descricao": "Se a área do stakeholder passou por reorganização nos últimos 6 meses.",
+              "exemplos": [
+                "não",
+                "sim",
+                "não"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Mudança organizacional anterior à previsão e associada ao afastamento."
+            },
+            {
+              "id": "c10",
+              "nome": "escalonamento_ao_comite",
+              "descricao": "Se o projeto escalonou ao comitê a falta de apoio deste stakeholder.",
+              "exemplos": [
+                "não",
+                "sim",
+                "não"
+              ],
+              "_gabarito": "vazamento",
+              "_explicacao": "O escalonamento acontece quando o afastamento já está evidente: é consequência, não sinal antecipado."
+            },
+            {
+              "id": "c11",
+              "nome": "substituido_como_patrocinador",
+              "descricao": "Se o stakeholder foi substituído no papel de patrocinador ou aprovador.",
+              "exemplos": [
+                "não",
+                "não",
+                "sim"
+              ],
+              "_gabarito": "vazamento",
+              "_explicacao": "Só acontece depois do afastamento, às vezes meses depois."
+            },
+            {
+              "id": "c12",
+              "nome": "comentario_licoes_aprendidas",
+              "descricao": "Avaliação do stakeholder escrita no relatório de lições aprendidas, no encerramento.",
+              "exemplos": [
+                "apoio decisivo",
+                "ausente",
+                "apoio irregular"
+              ],
+              "_gabarito": "vazamento",
+              "_explicacao": "Escrita no fim do projeto, já sabendo como tudo terminou."
+            },
+            {
+              "id": "c13",
+              "nome": "sentimento_emails",
+              "descricao": "Nota de humor calculada por IA a partir do conteúdo dos e-mails do stakeholder, sem que ele saiba.",
+              "exemplos": [
+                "-0,4",
+                "0,2",
+                "-0,8"
+              ],
+              "_gabarito": "sensivel",
+              "_explicacao": "Monitorar o conteúdo de e-mails sem transparência fere a LGPD e destrói a confiança se vier a público. O ganho de previsão não compensa."
+            },
+            {
+              "id": "c14",
+              "nome": "idade_stakeholder",
+              "descricao": "Idade do stakeholder, segundo o cadastro de RH.",
+              "exemplos": [
+                "58",
+                "41",
+                "36"
+              ],
+              "_gabarito": "sensivel",
+              "_explicacao": "Usar idade para prever quem vai se afastar pode reforçar preconceito contra profissionais mais velhos."
+            },
+            {
+              "id": "c15",
+              "nome": "matricula_rh",
+              "descricao": "Número de matrícula do stakeholder no RH.",
+              "exemplos": [
+                "004871",
+                "019233",
+                "011902"
+              ],
+              "_gabarito": "descartar",
+              "_explicacao": "Identificador sem significado."
+            },
+            {
+              "id": "c16",
+              "nome": "empresa_do_stakeholder",
+              "descricao": "Empresa à qual o stakeholder pertence. Esta base só tem stakeholders internos da Ponte Alta.",
+              "exemplos": [
+                "Ponte Alta",
+                "Ponte Alta",
+                "Ponte Alta"
+              ],
+              "_gabarito": "descartar",
+              "_explicacao": "Mesmo valor para todos: não distingue ninguém."
+            }
           ]
         },
         {
-          "id": "f2mercado", "tipo": "mercado", "rotulo": "Dados externos comprados",
+          "id": "f2mercado",
+          "tipo": "mercado",
+          "rotulo": "Dados externos comprados",
           "enunciado": "Mercado de dados: fontes que podem ser compradas ou liberadas com créditos. A compra é imediata e não tem devolução.",
           "pontosMax": 8,
           "fontes": [
-            { "id": "m1", "nome": "Registro de agendas do e-mail corporativo", "descricao": "Quantidade de reuniões aceitas, recusadas e canceladas por semana, sem o conteúdo das mensagens, com aviso aos colaboradores.", "custo": 30, "_gabarito": { "pontos": 4, "auc": 0.03 }, "_explicacao": "Metadado de agenda, com transparência, mostra sobrecarga e recusas sem invadir o conteúdo." },
-            { "id": "m2", "nome": "Histórico de decisões de gate", "descricao": "Todas as aprovações, reprovações e adiamentos de gate dos últimos 5 anos, com datas.", "custo": 20, "_gabarito": { "pontos": 4, "auc": 0.03 }, "_explicacao": "Detalha o comportamento que mais antecede o afastamento." },
-            { "id": "m3", "nome": "Índice de confiança da construção civil", "descricao": "Indicador mensal do setor, por região.", "custo": 15, "_gabarito": { "pontos": 0, "auc": 0 }, "_explicacao": "Varia igual para todos os stakeholders do mês: não diferencia quem vai se afastar." },
-            { "id": "m4", "nome": "Perfis profissionais dos stakeholders", "descricao": "Atividade em redes profissionais (mudança de status, buscas de vagas), coletada por uma empresa de dados.", "custo": 25, "_gabarito": { "pontos": -4, "auc": 0.005, "flag": "redes" }, "_explicacao": "Monitora a vida profissional das pessoas fora da empresa, sem consentimento. Risco de LGPD e de confiança." }
+            {
+              "id": "m1",
+              "nome": "Registro de agendas do e-mail corporativo",
+              "descricao": "Quantidade de reuniões aceitas, recusadas e canceladas por semana, sem o conteúdo das mensagens, com aviso aos colaboradores.",
+              "custo": 30,
+              "_gabarito": {
+                "pontos": 4,
+                "auc": 0.03
+              },
+              "_explicacao": "Metadado de agenda, com transparência, mostra sobrecarga e recusas sem invadir o conteúdo."
+            },
+            {
+              "id": "m2",
+              "nome": "Histórico de decisões de gate",
+              "descricao": "Todas as aprovações, reprovações e adiamentos de gate dos últimos 5 anos, com datas.",
+              "custo": 20,
+              "_gabarito": {
+                "pontos": 4,
+                "auc": 0.03
+              },
+              "_explicacao": "Detalha o comportamento que mais antecede o afastamento."
+            },
+            {
+              "id": "m3",
+              "nome": "Índice de confiança da construção civil",
+              "descricao": "Indicador mensal do setor, por região.",
+              "custo": 15,
+              "_gabarito": {
+                "pontos": 0,
+                "auc": 0
+              },
+              "_explicacao": "Varia igual para todos os stakeholders do mês: não diferencia quem vai se afastar."
+            },
+            {
+              "id": "m4",
+              "nome": "Perfis profissionais dos stakeholders",
+              "descricao": "Atividade em redes profissionais (mudança de status, buscas de vagas), coletada por uma empresa de dados.",
+              "custo": 25,
+              "_gabarito": {
+                "pontos": -4,
+                "auc": 0.005,
+                "flag": "redes"
+              },
+              "_explicacao": "Monitora a vida profissional das pessoas fora da empresa, sem consentimento. Risco de LGPD e de confiança."
+            }
           ]
         }
       ],
       "dicas": [
-        { "id": "f2d1", "titulo": "Perguntar ao analista do PMO", "custo": 10, "_texto": "Algumas colunas são registradas quando o problema já explodiu ou quando o projeto acaba. Para cada uma, perguntem: no dia da previsão, essa informação já existe?" },
-        { "id": "f2d2", "titulo": "Consultar o Jurídico", "custo": 10, "_texto": "Ler o conteúdo de e-mails das pessoas para medir humor, sem que elas saibam, é monitoramento invasivo. A LGPD exige finalidade clara, necessidade e transparência." }
+        {
+          "id": "f2d1",
+          "titulo": "Perguntar ao analista do PMO",
+          "custo": 10,
+          "_texto": "Algumas colunas são registradas quando o problema já explodiu ou quando o projeto acaba. Para cada uma, perguntem: no dia da previsão, essa informação já existe?"
+        },
+        {
+          "id": "f2d2",
+          "titulo": "Consultar o Jurídico",
+          "custo": 10,
+          "_texto": "Ler o conteúdo de e-mails das pessoas para medir humor, sem que elas saibam, é monitoramento invasivo. A LGPD exige finalidade clara, necessidade e transparência."
+        }
       ]
     },
-
     {
-      "id": "f3", "titulo": "Treine e avalie", "curto": "Treino", "duracaoMin": 8,
+      "id": "f3",
+      "titulo": "Treine e avalie",
+      "curto": "Treino",
+      "duracaoMin": 8,
       "missao": "Hora de treinar. Decidam como separar os dados, como medir o modelo e com quantos stakeholders o PMO vai fazer reunião de alinhamento por mês.",
       "explicacao": {
         "titulo": "Como o treino funciona",
         "passos": [
-          { "titulo": "Separar os dados", "texto": "O modelo aprende com uma parte dos dados (treino) e é testado numa parte que nunca viu (teste). Se o teste for fácil demais, a nota engana." },
-          { "titulo": "Escolher como medir", "texto": "Antes de olhar o resultado, decidam o que significa um modelo bom para o PMO. A medida errada aprova um modelo inútil." },
-          { "titulo": "Treinar e ler o resultado", "texto": "O modelo dá a cada stakeholder uma nota de risco de afastamento. O teste mostra o quanto essas notas separam quem se afastou de quem seguiu engajado." },
-          { "titulo": "Decidir com quem conversar", "texto": "Com os stakeholders em fila, do maior para o menor risco, vocês decidem até onde o PMO vai. Cada reunião custa horas, acerte ou erre." }
+          {
+            "titulo": "Separar os dados",
+            "texto": "O modelo aprende com uma parte dos dados (treino) e é testado numa parte que nunca viu (teste). Se o teste for fácil demais, a nota engana."
+          },
+          {
+            "titulo": "Escolher como medir",
+            "texto": "Antes de olhar o resultado, decidam o que significa um modelo bom para o PMO. A medida errada aprova um modelo inútil."
+          },
+          {
+            "titulo": "Treinar e ler o resultado",
+            "texto": "O modelo dá a cada stakeholder uma nota de risco de afastamento. O teste mostra o quanto essas notas separam quem se afastou de quem seguiu engajado."
+          },
+          {
+            "titulo": "Decidir com quem conversar",
+            "texto": "Com os stakeholders em fila, do maior para o menor risco, vocês decidem até onde o PMO vai. Cada reunião custa horas, acerte ou erre."
+          }
         ]
       },
       "itens": [
         {
-          "id": "f3q1", "tipo": "escolha", "rotulo": "Divisão dos dados",
+          "id": "f3q1",
+          "tipo": "escolha",
+          "rotulo": "Divisão dos dados",
           "enunciado": "A base tem uma linha por stakeholder por mês, durante 3 anos. Como separar treino, validação e teste?",
           "entenda": "O teste precisa imitar a situação real em que o modelo vai ser usado. Pensem: quando o PMO rodar o modelo, que período ele estará tentando prever? E lembrem que o mesmo stakeholder aparece todo mês na base.",
           "opcoes": [
-            { "id": "a", "texto": "Sorteio aleatório das linhas: 70% treino, 15% validação, 15% teste" },
-            { "id": "b", "texto": "Por tempo: treinar com os meses mais antigos e validar e testar com os mais recentes" },
-            { "id": "c", "texto": "Treinar e testar com todos os dados, para aproveitar ao máximo" },
-            { "id": "d", "texto": "Usar só os últimos 2 meses, porque são os mais parecidos com o futuro" }
+            {
+              "id": "a",
+              "texto": "Sorteio aleatório das linhas: 70% treino, 15% validação, 15% teste"
+            },
+            {
+              "id": "b",
+              "texto": "Por tempo: treinar com os meses mais antigos e validar e testar com os mais recentes"
+            },
+            {
+              "id": "c",
+              "texto": "Treinar e testar com todos os dados, para aproveitar ao máximo"
+            },
+            {
+              "id": "d",
+              "texto": "Usar só os últimos 2 meses, porque são os mais parecidos com o futuro"
+            }
           ],
-          "_gabarito": { "a": 3, "b": 8, "c": 0, "d": 2 }, "pontosMax": 8,
+          "_gabarito": {
+            "a": 3,
+            "b": 8,
+            "c": 0,
+            "d": 2
+          },
+          "pontosMax": 8,
           "_explicacao": "O modelo vai prever meses futuros. No sorteio aleatório (a), o mesmo stakeholder aparece no treino e no teste em meses vizinhos e o resultado fica otimista. Dois meses (d) trazem poucos exemplos de afastamento."
         },
         {
-          "id": "f3q2", "tipo": "escolha", "rotulo": "Como avaliar",
+          "id": "f3q2",
+          "tipo": "escolha",
+          "rotulo": "Como avaliar",
           "enunciado": "Cerca de 8% dos stakeholders se afastam em 60 dias. Como avaliar se o modelo é bom?",
           "entenda": "Acurácia é o percentual de acertos no total. Precisão responde: dos stakeholders apontados como risco, quantos se afastaram mesmo? Recall responde: dos que se afastaram, quantos foram apontados? A AUC resume o quanto o modelo ordena bem os stakeholders por risco.",
           "opcoes": [
-            { "id": "a", "texto": "Pela acurácia: o percentual total de acertos" },
-            { "id": "b", "texto": "Pela precisão e pelo recall da classe \"afastamento\", olhando a matriz de confusão e a AUC" },
-            { "id": "c", "texto": "Pelo erro médio em dias de atraso" },
-            { "id": "d", "texto": "Pela concordância do modelo com o status que os gerentes marcam" }
+            {
+              "id": "a",
+              "texto": "Pela acurácia: o percentual total de acertos"
+            },
+            {
+              "id": "b",
+              "texto": "Pela precisão e pelo recall da classe \"afastamento\", olhando a matriz de confusão e a AUC"
+            },
+            {
+              "id": "c",
+              "texto": "Pelo erro médio em dias de atraso"
+            },
+            {
+              "id": "d",
+              "texto": "Pela concordância do modelo com o status que os gerentes marcam"
+            }
           ],
-          "_gabarito": { "a": 0, "b": 7, "c": 0, "d": 1 }, "pontosMax": 7,
+          "_gabarito": {
+            "a": 0,
+            "b": 7,
+            "c": 0,
+            "d": 1
+          },
+          "pontosMax": 7,
           "_explicacao": "Com 8% de afastamentos, quem diz que ninguém vai se afastar acerta 92%. E concordar com os gerentes (d) mede o quanto o modelo copia a opinião deles, não o quanto ele acerta."
         },
         {
-          "id": "f3sim", "tipo": "simulador", "rotulo": "Ação do PMO", "dependeDe": "f3q1",
+          "id": "f3sim",
+          "tipo": "simulador",
+          "rotulo": "Ação do PMO",
+          "dependeDe": "f3q1",
           "enunciado": "Treinem o modelo e decidam qual percentual dos stakeholders, do maior para o menor risco, recebe reunião de alinhamento por mês.",
           "pontosMax": 10
         },
         {
-          "id": "f3j", "tipo": "texto", "rotulo": "Confiança no resultado",
-          "enunciado": "Em até duas frases: vocês confiam no resultado do treino? Por quê?",
-          "maxChars": 400
+          "id": "f3x",
+          "tipo": "escolha",
+          "rotulo": "Desafio da modelagem",
+          "enunciado": "O modelo concorda em 95% dos casos com a cor que os gerentes marcam. O que isso indica?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Que ele está validado pelos especialistas"
+            },
+            {
+              "id": "b",
+              "texto": "Que ele provavelmente aprendeu a opinião dos gerentes, e concordar com um rótulo subjetivo não prova que ele prevê afastamento"
+            },
+            {
+              "id": "c",
+              "texto": "Que a AUC também deve estar em 0,95"
+            },
+            {
+              "id": "d",
+              "texto": "Que os gerentes podem parar de marcar a cor"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 5,
+            "c": 0,
+            "d": 0
+          },
+          "pontosMax": 5
         }
       ],
       "dicas": [
-        { "id": "f3d1", "titulo": "Ligar para o cientista de dados", "custo": 10, "_texto": "Desconfiem de resultado bom demais: prever comportamento humano com AUC acima de 0,90 quase sempre é sintoma de problema nos dados." },
-        { "id": "f3d2", "titulo": "Falar com o PMO", "custo": 10, "_texto": "Cada reunião custa umas 6 horas de gente cara. Se marcarmos com metade da empresa, a reunião vira burocracia e ninguém leva a sério." }
+        {
+          "id": "f3d1",
+          "titulo": "Ligar para o cientista de dados",
+          "custo": 10,
+          "_texto": "Desconfiem de resultado bom demais: prever comportamento humano com AUC acima de 0,90 quase sempre é sintoma de problema nos dados."
+        },
+        {
+          "id": "f3d2",
+          "titulo": "Falar com o PMO",
+          "custo": 10,
+          "_texto": "Cada reunião custa umas 6 horas de gente cara. Se marcarmos com metade da empresa, a reunião vira burocracia e ninguém leva a sério."
+        }
       ]
     },
-
     {
-      "id": "evento", "titulo": "Seis meses em produção", "curto": "Produção", "duracaoMin": 6,
+      "id": "evento",
+      "titulo": "Seis meses em produção",
+      "curto": "Produção",
+      "duracaoMin": 6,
       "missao": "O modelo de vocês foi para produção. Seis meses depois, o Ricardo chama a equipe para uma conversa difícil.",
       "itens": [
         {
-          "id": "evq1", "tipo": "escolha", "rotulo": "Diagnóstico",
+          "id": "evq1",
+          "tipo": "escolha",
+          "rotulo": "Diagnóstico",
           "enunciado": "Qual é o diagnóstico mais provável?",
           "opcoes": [
-            { "id": "a", "texto": "Vazamento de dados: o treino usou informação que não existe no momento da previsão" },
-            { "id": "b", "texto": "Rótulo subjetivo: o modelo aprendeu a opinião dos gerentes, não o afastamento" },
-            { "id": "c", "texto": "Drift: a empresa mudou e os padrões de afastamento também" },
-            { "id": "d", "texto": "Overfitting: o modelo tem camadas demais e decorou o treino" }
+            {
+              "id": "a",
+              "texto": "Vazamento de dados: o treino usou informação que não existe no momento da previsão"
+            },
+            {
+              "id": "b",
+              "texto": "Rótulo subjetivo: o modelo aprendeu a opinião dos gerentes, não o afastamento"
+            },
+            {
+              "id": "c",
+              "texto": "Drift: a empresa mudou e os padrões de afastamento também"
+            },
+            {
+              "id": "d",
+              "texto": "Overfitting: o modelo tem camadas demais e decorou o treino"
+            }
           ],
           "pontosMax": 6
         },
         {
-          "id": "evq2", "tipo": "escolha", "rotulo": "Ação",
+          "id": "evq2",
+          "tipo": "escolha",
+          "rotulo": "Ação",
           "enunciado": "O que fazer agora?",
           "opcoes": [
-            { "id": "a", "texto": "Retreinar só com colunas que existem na data da previsão" },
-            { "id": "b", "texto": "Trocar o rótulo por um comportamento observável (faltas e atrasos de aprovação) e retreinar" },
-            { "id": "c", "texto": "Retreinar com os dados mais recentes e monitorar o desempenho todo mês" },
-            { "id": "d", "texto": "Desligar o modelo e voltar a confiar só na cor que os gerentes marcam" }
+            {
+              "id": "a",
+              "texto": "Retreinar só com colunas que existem na data da previsão"
+            },
+            {
+              "id": "b",
+              "texto": "Trocar o rótulo por um comportamento observável (faltas e atrasos de aprovação) e retreinar"
+            },
+            {
+              "id": "c",
+              "texto": "Retreinar com os dados mais recentes e monitorar o desempenho todo mês"
+            },
+            {
+              "id": "d",
+              "texto": "Desligar o modelo e voltar a confiar só na cor que os gerentes marcam"
+            }
           ],
           "pontosMax": 4
         },
         {
-          "id": "evj", "tipo": "texto", "rotulo": "O que faltou antes",
-          "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de ir para produção?",
-          "maxChars": 400
+          "id": "evx",
+          "tipo": "escolha",
+          "rotulo": "Desafio da produção",
+          "enunciado": "O que deveria fazer parte do plano de uso do modelo desde o início?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Monitorar o desempenho todo mês, revisar o modelo em mudanças organizacionais e informar os stakeholders sobre os dados usados"
+            },
+            {
+              "id": "b",
+              "texto": "Manter o modelo em segredo para os stakeholders não mudarem de comportamento"
+            },
+            {
+              "id": "c",
+              "texto": "Revisar o modelo só quando um projeto atrasar"
+            },
+            {
+              "id": "d",
+              "texto": "Aumentar o número de reuniões de alinhamento"
+            }
+          ],
+          "_gabarito": {
+            "a": 4,
+            "b": 0,
+            "c": 1,
+            "d": 0
+          },
+          "pontosMax": 4
         }
       ],
       "dicas": []
     }
   ],
-
   "_modelo": {
     "aucBase": 0.77,
-    "pesoFeature": { "c01": 0.04, "c02": 0.04, "padrao": 0.01 },
+    "pesoFeature": {
+      "c01": 0.04,
+      "c02": 0.04,
+      "padrao": 0.01
+    },
     "ganhoSensivel": 0.01,
-    "ruido": { "validacao": 0.01, "producao": -0.02 },
-    "vazamento": { "aucValidacao": 0.982, "quedaProducao": 0.16 },
-    "divisao": { "item": "f3q1", "inflacao": { "a": 0.04, "b": 0, "c": 0.09, "d": -0.04 } },
-    "rotulo": { "item": "f1q4", "ruins": ["a", "c", "d"], "queda": 0.14 },
+    "ruido": {
+      "validacao": 0.01,
+      "producao": -0.02
+    },
+    "vazamento": {
+      "aucValidacao": 0.982,
+      "quedaProducao": 0.16
+    },
+    "divisao": {
+      "item": "f3q1",
+      "inflacao": {
+        "a": 0.04,
+        "b": 0,
+        "c": 0.09,
+        "d": -0.04
+      }
+    },
+    "rotulo": {
+      "item": "f1q4",
+      "ruins": [
+        "a",
+        "c",
+        "d"
+      ],
+      "queda": 0.14
+    },
     "drift": 0.05,
     "aucMin": 0.53,
     "aucMax": 0.995
   },
-
   "_evento": {
     "vazamento": {
       "titulo": "O alarme que tocava depois do incêndio",
@@ -280,7 +851,20 @@
         "O perfil dos stakeholders em produção é parecido com o do treino."
       ],
       "feed": "{grupo}: em produção, a AUC despencou de {treino} para {producao}",
-      "_gabarito": { "evq1": { "a": 6, "b": 1, "c": 0, "d": 0 }, "evq2": { "a": 4, "b": 1, "c": 1, "d": 0 } },
+      "_gabarito": {
+        "evq1": {
+          "a": 6,
+          "b": 1,
+          "c": 0,
+          "d": 0
+        },
+        "evq2": {
+          "a": 4,
+          "b": 1,
+          "c": 1,
+          "d": 0
+        }
+      },
       "_explicacao": "Escalonamento, substituição e lições aprendidas são registrados depois do afastamento. O modelo aprendeu a reconhecer o problema quando ele já tinha acontecido."
     },
     "rotulo": {
@@ -293,7 +877,20 @@
         "Nenhuma coluna chega vazia ou com valores fora do padrão."
       ],
       "feed": "{grupo}: o modelo aponta quem discorda, não quem se afasta",
-      "_gabarito": { "evq1": { "a": 1, "b": 6, "c": 1, "d": 0 }, "evq2": { "a": 0, "b": 4, "c": 1, "d": 0 } },
+      "_gabarito": {
+        "evq1": {
+          "a": 1,
+          "b": 6,
+          "c": 1,
+          "d": 0
+        },
+        "evq2": {
+          "a": 0,
+          "b": 4,
+          "c": 1,
+          "d": 0
+        }
+      },
       "_explicacao": "Um rótulo subjetivo ensina o modelo a reproduzir a opinião de quem rotulou. Aqui, isso ainda pune quem questiona e deixa passar quem some em silêncio."
     },
     "drift": {
@@ -307,11 +904,23 @@
       ],
       "feed": "{grupo}: em produção, a AUC caiu de {treino} para {producao}. A empresa se reorganizou",
       "tipoFeed": "drift",
-      "_gabarito": { "evq1": { "a": 0, "b": 1, "c": 6, "d": 0 }, "evq2": { "a": 0, "b": 1, "c": 4, "d": 0 } },
+      "_gabarito": {
+        "evq1": {
+          "a": 0,
+          "b": 1,
+          "c": 6,
+          "d": 0
+        },
+        "evq2": {
+          "a": 0,
+          "b": 1,
+          "c": 4,
+          "d": 0
+        }
+      },
       "_explicacao": "O modelo aprendeu uma organização que mudou. Mudanças estruturais pedem monitoramento e retreino, e atenção especial a quem acabou de chegar."
     }
   },
-
   "_revelacao": {
     "armadilha": "O rótulo subjetivo",
     "resumo": "O status vermelho era a opinião de cada gerente, sem critério. Treinar com ele faz o modelo apontar quem discorda, e não quem se afasta em silêncio, que é quem atrasa o projeto.",

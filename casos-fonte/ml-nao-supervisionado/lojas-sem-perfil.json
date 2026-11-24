@@ -7,7 +7,6 @@
   "empresa": "Rede Sabiá Supermercados",
   "imagem": "img/lojas-sem-perfil.svg",
   "creditosIniciais": 100,
-
   "briefing": {
     "remetente": "Cláudia Rocha",
     "cargo": "Diretora Comercial, Rede Sabiá Supermercados",
@@ -19,274 +18,1037 @@
       "Preciso de uma proposta para o comitê de expansão no próximo mês."
     ],
     "contexto": [
-      { "titulo": "A empresa", "texto": "A Rede Sabiá tem 120 supermercados em três estados: lojas de bairro, lojas em centros comerciais, lojas grandes à beira de rodovias e algumas que vendem muito por delivery." },
-      { "titulo": "Classificação atual", "texto": "A diretoria classifica as lojas em A, B e C pelo faturamento. As lojas A ganham mais espaço para lançamentos; as C, menos." },
-      { "titulo": "Os números", "texto": "O movimento vai de 8 mil a 420 mil clientes por mês, dependendo da loja. O ticket médio vai de R$ 28 a R$ 410." },
-      { "titulo": "O problema", "texto": "A quebra de perecíveis (produtos que estragam antes de vender) passou de 4% para 7% em dois anos, concentrada em lojas que vendem pouco perecível, mas recebem o mesmo volume das outras." },
-      { "titulo": "Operação", "texto": "A logística consegue montar até 5 sortimentos diferentes. Mais do que isso fica caro demais para o centro de distribuição." }
+      {
+        "titulo": "A empresa",
+        "texto": "A Rede Sabiá tem 120 supermercados em três estados: lojas de bairro, lojas em centros comerciais, lojas grandes à beira de rodovias e algumas que vendem muito por delivery."
+      },
+      {
+        "titulo": "Classificação atual",
+        "texto": "A diretoria classifica as lojas em A, B e C pelo faturamento. As lojas A ganham mais espaço para lançamentos; as C, menos."
+      },
+      {
+        "titulo": "Os números",
+        "texto": "O movimento vai de 8 mil a 420 mil clientes por mês, dependendo da loja. O ticket médio vai de R$ 28 a R$ 410."
+      },
+      {
+        "titulo": "O problema",
+        "texto": "A quebra de perecíveis (produtos que estragam antes de vender) passou de 4% para 7% em dois anos, concentrada em lojas que vendem pouco perecível, mas recebem o mesmo volume das outras."
+      },
+      {
+        "titulo": "Operação",
+        "texto": "A logística consegue montar até 5 sortimentos diferentes. Mais do que isso fica caro demais para o centro de distribuição."
+      }
     ]
   },
-
   "caixas": [
-    { "id": "agrupar", "nome": "Usar para agrupar", "ajuda": "Característica da loja que descreve como ela vende" },
-    { "id": "descrever", "nome": "Só para descrever depois", "ajuda": "Resultado ou rótulo: serve para comparar os grupos, não para formá-los" },
-    { "id": "sensivel", "nome": "Sensível ou proxy", "ajuda": "Dado protegido ou substituto de um dado protegido" },
-    { "id": "descartar", "nome": "Descartar", "ajuda": "Não carrega padrão útil" }
+    {
+      "id": "agrupar",
+      "nome": "Usar para agrupar",
+      "ajuda": "Característica da loja que descreve como ela vende"
+    },
+    {
+      "id": "descrever",
+      "nome": "Só para descrever depois",
+      "ajuda": "Resultado ou rótulo: serve para comparar os grupos, não para formá-los"
+    },
+    {
+      "id": "sensivel",
+      "nome": "Sensível ou proxy",
+      "ajuda": "Dado protegido ou substituto de um dado protegido"
+    },
+    {
+      "id": "descartar",
+      "nome": "Descartar",
+      "ajuda": "Não carrega padrão útil"
+    }
   ],
-
-  "agrupamento": { "itens": "lojas", "item": "loja", "total": 120, "kMin": 2, "kMax": 6, "rotuloComparacao": "Quebra média de perecíveis" },
-
+  "agrupamento": {
+    "itens": "lojas",
+    "item": "loja",
+    "total": 120,
+    "kMin": 2,
+    "kMax": 6,
+    "rotuloComparacao": "Quebra média de perecíveis"
+  },
   "fases": [
     {
-      "id": "f1", "titulo": "Enquadre o problema", "curto": "Enquadre", "duracaoMin": 6,
+      "id": "f1",
+      "titulo": "Enquadre o problema",
+      "curto": "Enquadre",
+      "duracaoMin": 6,
       "missao": "Transformem o pedido da Cláudia num problema de machine learning bem formulado. Antes de pensar em dados, decidam que decisão a IA vai apoiar e se existe uma resposta certa para aprender.",
       "itens": [
         {
-          "id": "f1q1", "tipo": "escolha", "rotulo": "Decisão apoiada",
+          "id": "f1q1",
+          "tipo": "escolha",
+          "rotulo": "Decisão apoiada",
           "enunciado": "Qual decisão de negócio a IA vai apoiar?",
           "opcoes": [
-            { "id": "a", "texto": "Definir perfis de loja para adaptar sortimento, layout e promoções a cada perfil" },
-            { "id": "b", "texto": "Prever o faturamento de cada loja no mês que vem" },
-            { "id": "c", "texto": "Escolher quais lojas fechar" },
-            { "id": "d", "texto": "Ranquear os gerentes de loja por desempenho" }
+            {
+              "id": "a",
+              "texto": "Definir perfis de loja para adaptar sortimento, layout e promoções a cada perfil"
+            },
+            {
+              "id": "b",
+              "texto": "Prever o faturamento de cada loja no mês que vem"
+            },
+            {
+              "id": "c",
+              "texto": "Escolher quais lojas fechar"
+            },
+            {
+              "id": "d",
+              "texto": "Ranquear os gerentes de loja por desempenho"
+            }
           ],
-          "_gabarito": { "a": 6, "b": 2, "c": 0, "d": 0 }, "pontosMax": 6,
+          "_gabarito": {
+            "a": 6,
+            "b": 2,
+            "c": 0,
+            "d": 0
+          },
+          "pontosMax": 6,
           "_explicacao": "A Cláudia quer tratar lojas diferentes de forma diferente. Prever faturamento (b) é útil, mas é outra pergunta. Fechar lojas (c) e ranquear gerentes (d) fogem do pedido."
         },
         {
-          "id": "f1q2", "tipo": "escolha", "rotulo": "Existe rótulo?",
+          "id": "f1q2",
+          "tipo": "escolha",
+          "rotulo": "Existe rótulo?",
           "enunciado": "Existe uma resposta certa e confiável para cada loja, que a IA possa usar como exemplo?",
           "opcoes": [
-            { "id": "a", "texto": "Sim: a classificação A, B e C da diretoria" },
-            { "id": "b", "texto": "Não: queremos descobrir perfis de loja que ainda não conhecemos" },
-            { "id": "c", "texto": "Sim: a margem de cada loja" },
-            { "id": "d", "texto": "Sim: a nota da última auditoria de qualidade" }
+            {
+              "id": "a",
+              "texto": "Sim: a classificação A, B e C da diretoria"
+            },
+            {
+              "id": "b",
+              "texto": "Não: queremos descobrir perfis de loja que ainda não conhecemos"
+            },
+            {
+              "id": "c",
+              "texto": "Sim: a margem de cada loja"
+            },
+            {
+              "id": "d",
+              "texto": "Sim: a nota da última auditoria de qualidade"
+            }
           ],
-          "_gabarito": { "a": 2, "b": 6, "c": 2, "d": 1 }, "pontosMax": 6,
+          "_gabarito": {
+            "a": 2,
+            "b": 6,
+            "c": 2,
+            "d": 1
+          },
+          "pontosMax": 6,
           "_explicacao": "A, B e C mede tamanho de faturamento, não jeito de vender. Uma loja de rodovia e uma loja de bairro podem ser ambas A e precisar de sortimentos opostos. Margem (c) é resultado, não perfil."
         },
         {
-          "id": "f1q3", "tipo": "escolha", "rotulo": "Tipo de problema",
+          "id": "f1q3",
+          "tipo": "escolha",
+          "rotulo": "Tipo de problema",
           "enunciado": "Que tipo de problema é esse?",
           "opcoes": [
-            { "id": "a", "texto": "Classificação: ensinar a IA a colocar cada loja em A, B ou C" },
-            { "id": "b", "texto": "Regressão: prever um valor numérico, como a margem" },
-            { "id": "c", "texto": "Agrupamento (clustering): encontrar grupos de lojas parecidas, sem rótulos" },
-            { "id": "d", "texto": "Aprendizado por reforço: a IA testa sortimentos e aprende com recompensas" }
+            {
+              "id": "a",
+              "texto": "Classificação: ensinar a IA a colocar cada loja em A, B ou C"
+            },
+            {
+              "id": "b",
+              "texto": "Regressão: prever um valor numérico, como a margem"
+            },
+            {
+              "id": "c",
+              "texto": "Agrupamento (clustering): encontrar grupos de lojas parecidas, sem rótulos"
+            },
+            {
+              "id": "d",
+              "texto": "Aprendizado por reforço: a IA testa sortimentos e aprende com recompensas"
+            }
           ],
-          "_gabarito": { "a": 1, "b": 0, "c": 5, "d": 1 }, "pontosMax": 5,
+          "_gabarito": {
+            "a": 1,
+            "b": 0,
+            "c": 5,
+            "d": 1
+          },
+          "pontosMax": 5,
           "_explicacao": "Sem uma resposta certa sobre o perfil de cada loja, o caminho é deixar os dados mostrarem quais lojas vendem de jeito parecido."
         },
         {
-          "id": "f1q4", "tipo": "escolha", "rotulo": "O que agrupar",
+          "id": "f1q4",
+          "tipo": "escolha",
+          "rotulo": "O que agrupar",
           "enunciado": "O que entra na análise, e descrito por quais informações?",
           "opcoes": [
-            { "id": "a", "texto": "Só as 20 lojas mais lucrativas, que servem de exemplo" },
-            { "id": "b", "texto": "As 120 lojas, descritas pelo padrão de vendas e pelo entorno dos últimos 12 meses" },
-            { "id": "c", "texto": "Os clientes do programa de fidelidade, descritos pelo que compram" },
-            { "id": "d", "texto": "Os produtos, para descobrir quais vendem juntos" }
+            {
+              "id": "a",
+              "texto": "Só as 20 lojas mais lucrativas, que servem de exemplo"
+            },
+            {
+              "id": "b",
+              "texto": "As 120 lojas, descritas pelo padrão de vendas e pelo entorno dos últimos 12 meses"
+            },
+            {
+              "id": "c",
+              "texto": "Os clientes do programa de fidelidade, descritos pelo que compram"
+            },
+            {
+              "id": "d",
+              "texto": "Os produtos, para descobrir quais vendem juntos"
+            }
           ],
-          "_gabarito": { "a": 2, "b": 8, "c": 3, "d": 2 }, "pontosMax": 8,
+          "_gabarito": {
+            "a": 2,
+            "b": 8,
+            "c": 3,
+            "d": 2
+          },
+          "pontosMax": 8,
           "_explicacao": "A decisão é por loja, então o que se agrupa são as lojas, todas elas. Agrupar clientes (c) ou produtos (d) são análises úteis, mas respondem a outras perguntas."
         },
         {
-          "id": "f1j", "tipo": "texto", "rotulo": "Por que não usar A, B e C",
-          "enunciado": "Em até duas frases: por que não usar a classificação A, B e C como resposta certa?",
-          "maxChars": 400
+          "id": "f1x",
+          "tipo": "escolha",
+          "rotulo": "Desafio do enquadre",
+          "enunciado": "A Cláudia pergunta: \"Por que não agrupamos os clientes em vez das lojas?\" Qual é a resposta mais adequada?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Porque o algoritmo não aguenta tantos clientes"
+            },
+            {
+              "id": "b",
+              "texto": "Agrupar clientes daria o mesmo resultado"
+            },
+            {
+              "id": "c",
+              "texto": "Agrupar clientes é útil para marketing, mas a decisão aqui é o sortimento de cada loja, então o que se agrupa são as lojas"
+            },
+            {
+              "id": "d",
+              "texto": "Porque clustering não funciona com pessoas"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 1,
+            "c": 5,
+            "d": 0
+          },
+          "pontosMax": 5
         }
       ],
       "dicas": [
-        { "id": "f1d1", "titulo": "Ligar para o cientista de dados", "custo": 10, "_texto": "Perguntem o que a classificação atual mede. Se ela já resolvesse o problema, a quebra de perecíveis estaria subindo?" },
-        { "id": "f1d2", "titulo": "Conversar com um gerente de loja", "custo": 10, "_texto": "Minha loja é A e a da rodovia também. Aqui vendo pão, fruta e frios todo dia; lá vendem fardo de refrigerante e carvão. Recebemos a mesma grade de produtos." }
+        {
+          "id": "f1d1",
+          "titulo": "Ligar para o cientista de dados",
+          "custo": 10,
+          "_texto": "Perguntem o que a classificação atual mede. Se ela já resolvesse o problema, a quebra de perecíveis estaria subindo?"
+        },
+        {
+          "id": "f1d2",
+          "titulo": "Conversar com um gerente de loja",
+          "custo": 10,
+          "_texto": "Minha loja é A e a da rodovia também. Aqui vendo pão, fruta e frios todo dia; lá vendem fardo de refrigerante e carvão. Recebemos a mesma grade de produtos."
+        }
       ]
     },
-
     {
-      "id": "f2", "titulo": "Monte o dataset", "curto": "Dataset", "duracaoMin": 12,
+      "id": "f2",
+      "titulo": "Monte o dataset",
+      "curto": "Dataset",
+      "duracaoMin": 12,
       "missao": "O time de dados separou 16 colunas sobre as lojas. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. As colunas que forem para \"Usar para agrupar\" são as que a IA vai usar para medir o quanto duas lojas se parecem.",
       "itens": [
         {
-          "id": "f2cartas", "tipo": "cartas", "rotulo": "Colunas",
+          "id": "f2cartas",
+          "tipo": "cartas",
+          "rotulo": "Colunas",
           "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
-          "pontosPorCarta": 2, "pontosMax": 32,
+          "pontosPorCarta": 2,
+          "pontosMax": 32,
           "cartas": [
-            { "id": "c01", "nome": "clientes_por_mes", "descricao": "Média de clientes que passaram no caixa por mês nos últimos 12 meses.", "exemplos": ["8.400", "212.000", "57.300"], "_gabarito": "agrupar", "_explicacao": "Descreve o movimento da loja. Só precisa ser posta na mesma escala das outras variáveis." },
-            { "id": "c02", "nome": "area_venda_m2", "descricao": "Área de vendas da loja em metros quadrados.", "exemplos": ["380", "6.200", "1.450"], "_gabarito": "agrupar", "_explicacao": "Característica física que muda o que cabe na loja." },
-            { "id": "c03", "nome": "ticket_medio", "descricao": "Valor médio de cada compra nos últimos 12 meses.", "exemplos": ["R$ 31", "R$ 388", "R$ 96"], "_gabarito": "agrupar", "_explicacao": "Diferencia compra rápida de compra do mês." },
-            { "id": "c04", "nome": "pct_vendas_pereciveis", "descricao": "Parte das vendas que vem de pães, frutas, carnes e frios.", "exemplos": ["41%", "12%", "28%"], "_gabarito": "agrupar", "_explicacao": "Uma das variáveis que mais separa as lojas, e a mais ligada ao problema da quebra." },
-            { "id": "c05", "nome": "pct_vendas_delivery", "descricao": "Parte das vendas feita por entrega em casa.", "exemplos": ["3%", "31%", "8%"], "_gabarito": "agrupar", "_explicacao": "Separa um perfil de loja que funciona quase como centro de distribuição." },
-            { "id": "c06", "nome": "pct_marca_propria", "descricao": "Parte das vendas de produtos da marca própria Sabiá.", "exemplos": ["9%", "22%", "14%"], "_gabarito": "agrupar", "_explicacao": "Indica o tipo de cliente e a sensibilidade a preço." },
-            { "id": "c07", "nome": "horario_pico", "descricao": "Faixa do dia com mais vendas.", "exemplos": ["noite", "almoço", "manhã"], "_gabarito": "agrupar", "_explicacao": "Diferencia loja de passagem de loja de compra planejada." },
-            { "id": "c08", "nome": "concorrentes_1km", "descricao": "Supermercados concorrentes num raio de 1 km.", "exemplos": ["0", "6", "2"], "_gabarito": "agrupar", "_explicacao": "Descreve o ambiente competitivo da loja." },
-            { "id": "c09", "nome": "tipo_entorno", "descricao": "Entorno predominante da loja.", "exemplos": ["residencial", "rodovia", "comercial"], "_gabarito": "agrupar", "_explicacao": "Característica do local que muda o jeito de comprar." },
-            { "id": "c10", "nome": "classe_abc_diretoria", "descricao": "Classificação A, B ou C da loja, definida pela diretoria pelo faturamento.", "exemplos": ["A", "C", "B"], "_gabarito": "descrever", "_explicacao": "É a classificação que se quer superar. Usada para agrupar, puxa os grupos de volta para A, B e C. Serve para comparar depois." },
-            { "id": "c11", "nome": "margem_liquida_ano", "descricao": "Margem líquida da loja no último ano.", "exemplos": ["2,1%", "4,8%", "-0,6%"], "_gabarito": "descrever", "_explicacao": "Resultado da loja, consequência do sortimento atual. Serve para avaliar os grupos, não para formá-los." },
-            { "id": "c12", "nome": "nota_cliente_oculto", "descricao": "Nota da última visita de cliente oculto, de 0 a 10.", "exemplos": ["8,5", "6,0", "9,2"], "_gabarito": "descrever", "_explicacao": "Resultado de qualidade do atendimento, útil para comparar perfis depois." },
-            { "id": "c13", "nome": "pct_populacao_negra_entorno", "descricao": "Percentual da população autodeclarada preta ou parda no bairro da loja, segundo o Censo.", "exemplos": ["62%", "18%", "41%"], "_gabarito": "sensivel", "_explicacao": "Usar raça para definir sortimento, preço ou promoção pode virar discriminação, mesmo sem intenção." },
-            { "id": "c14", "nome": "cpfs_clientes_fidelidade", "descricao": "Lista de CPFs dos clientes do programa de fidelidade de cada loja.", "exemplos": ["[1.204 CPFs]", "[8.877 CPFs]", "[3.150 CPFs]"], "_gabarito": "sensivel", "_explicacao": "Dado pessoal de clientes, desnecessário para descrever a loja." },
-            { "id": "c15", "nome": "codigo_loja", "descricao": "Código interno da loja.", "exemplos": ["SB-017", "SB-102", "SB-064"], "_gabarito": "descartar", "_explicacao": "Identificador sem significado para a semelhança entre lojas." },
-            { "id": "c16", "nome": "bandeira", "descricao": "Nome comercial da loja. Todas operam com a bandeira Sabiá.", "exemplos": ["Sabiá", "Sabiá", "Sabiá"], "_gabarito": "descartar", "_explicacao": "Mesmo valor para todas: não distingue nenhuma loja." }
+            {
+              "id": "c01",
+              "nome": "clientes_por_mes",
+              "descricao": "Média de clientes que passaram no caixa por mês nos últimos 12 meses.",
+              "exemplos": [
+                "8.400",
+                "212.000",
+                "57.300"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Descreve o movimento da loja. Só precisa ser posta na mesma escala das outras variáveis."
+            },
+            {
+              "id": "c02",
+              "nome": "area_venda_m2",
+              "descricao": "Área de vendas da loja em metros quadrados.",
+              "exemplos": [
+                "380",
+                "6.200",
+                "1.450"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Característica física que muda o que cabe na loja."
+            },
+            {
+              "id": "c03",
+              "nome": "ticket_medio",
+              "descricao": "Valor médio de cada compra nos últimos 12 meses.",
+              "exemplos": [
+                "R$ 31",
+                "R$ 388",
+                "R$ 96"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Diferencia compra rápida de compra do mês."
+            },
+            {
+              "id": "c04",
+              "nome": "pct_vendas_pereciveis",
+              "descricao": "Parte das vendas que vem de pães, frutas, carnes e frios.",
+              "exemplos": [
+                "41%",
+                "12%",
+                "28%"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Uma das variáveis que mais separa as lojas, e a mais ligada ao problema da quebra."
+            },
+            {
+              "id": "c05",
+              "nome": "pct_vendas_delivery",
+              "descricao": "Parte das vendas feita por entrega em casa.",
+              "exemplos": [
+                "3%",
+                "31%",
+                "8%"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Separa um perfil de loja que funciona quase como centro de distribuição."
+            },
+            {
+              "id": "c06",
+              "nome": "pct_marca_propria",
+              "descricao": "Parte das vendas de produtos da marca própria Sabiá.",
+              "exemplos": [
+                "9%",
+                "22%",
+                "14%"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Indica o tipo de cliente e a sensibilidade a preço."
+            },
+            {
+              "id": "c07",
+              "nome": "horario_pico",
+              "descricao": "Faixa do dia com mais vendas.",
+              "exemplos": [
+                "noite",
+                "almoço",
+                "manhã"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Diferencia loja de passagem de loja de compra planejada."
+            },
+            {
+              "id": "c08",
+              "nome": "concorrentes_1km",
+              "descricao": "Supermercados concorrentes num raio de 1 km.",
+              "exemplos": [
+                "0",
+                "6",
+                "2"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Descreve o ambiente competitivo da loja."
+            },
+            {
+              "id": "c09",
+              "nome": "tipo_entorno",
+              "descricao": "Entorno predominante da loja.",
+              "exemplos": [
+                "residencial",
+                "rodovia",
+                "comercial"
+              ],
+              "_gabarito": "agrupar",
+              "_explicacao": "Característica do local que muda o jeito de comprar."
+            },
+            {
+              "id": "c10",
+              "nome": "classe_abc_diretoria",
+              "descricao": "Classificação A, B ou C da loja, definida pela diretoria pelo faturamento.",
+              "exemplos": [
+                "A",
+                "C",
+                "B"
+              ],
+              "_gabarito": "descrever",
+              "_explicacao": "É a classificação que se quer superar. Usada para agrupar, puxa os grupos de volta para A, B e C. Serve para comparar depois."
+            },
+            {
+              "id": "c11",
+              "nome": "margem_liquida_ano",
+              "descricao": "Margem líquida da loja no último ano.",
+              "exemplos": [
+                "2,1%",
+                "4,8%",
+                "-0,6%"
+              ],
+              "_gabarito": "descrever",
+              "_explicacao": "Resultado da loja, consequência do sortimento atual. Serve para avaliar os grupos, não para formá-los."
+            },
+            {
+              "id": "c12",
+              "nome": "nota_cliente_oculto",
+              "descricao": "Nota da última visita de cliente oculto, de 0 a 10.",
+              "exemplos": [
+                "8,5",
+                "6,0",
+                "9,2"
+              ],
+              "_gabarito": "descrever",
+              "_explicacao": "Resultado de qualidade do atendimento, útil para comparar perfis depois."
+            },
+            {
+              "id": "c13",
+              "nome": "pct_populacao_negra_entorno",
+              "descricao": "Percentual da população autodeclarada preta ou parda no bairro da loja, segundo o Censo.",
+              "exemplos": [
+                "62%",
+                "18%",
+                "41%"
+              ],
+              "_gabarito": "sensivel",
+              "_explicacao": "Usar raça para definir sortimento, preço ou promoção pode virar discriminação, mesmo sem intenção."
+            },
+            {
+              "id": "c14",
+              "nome": "cpfs_clientes_fidelidade",
+              "descricao": "Lista de CPFs dos clientes do programa de fidelidade de cada loja.",
+              "exemplos": [
+                "[1.204 CPFs]",
+                "[8.877 CPFs]",
+                "[3.150 CPFs]"
+              ],
+              "_gabarito": "sensivel",
+              "_explicacao": "Dado pessoal de clientes, desnecessário para descrever a loja."
+            },
+            {
+              "id": "c15",
+              "nome": "codigo_loja",
+              "descricao": "Código interno da loja.",
+              "exemplos": [
+                "SB-017",
+                "SB-102",
+                "SB-064"
+              ],
+              "_gabarito": "descartar",
+              "_explicacao": "Identificador sem significado para a semelhança entre lojas."
+            },
+            {
+              "id": "c16",
+              "nome": "bandeira",
+              "descricao": "Nome comercial da loja. Todas operam com a bandeira Sabiá.",
+              "exemplos": [
+                "Sabiá",
+                "Sabiá",
+                "Sabiá"
+              ],
+              "_gabarito": "descartar",
+              "_explicacao": "Mesmo valor para todas: não distingue nenhuma loja."
+            }
           ]
         },
         {
-          "id": "f2mercado", "tipo": "mercado", "rotulo": "Dados externos comprados",
+          "id": "f2mercado",
+          "tipo": "mercado",
+          "rotulo": "Dados externos comprados",
           "enunciado": "Mercado de dados: fontes externas que podem ser compradas com créditos. A compra é imediata e não tem devolução.",
           "pontosMax": 8,
           "fontes": [
-            { "id": "m1", "nome": "Mobilidade anonimizada", "descricao": "Fluxo de pessoas por quadra e por horário, a partir de dados agregados de celulares, sem identificar ninguém.", "custo": 30, "_gabarito": { "pontos": 4, "auc": 0.02 }, "_explicacao": "Mostra se o entorno é de passagem ou de moradia, com dados agregados e anônimos." },
-            { "id": "m2", "nome": "Mapa atualizado de concorrentes", "descricao": "Supermercados, atacarejos e lojas de conveniência abertos nos últimos 12 meses, com área e formato.", "custo": 20, "_gabarito": { "pontos": 4, "auc": 0.02 }, "_explicacao": "Melhora a descrição do ambiente competitivo, que muda rápido." },
-            { "id": "m3", "nome": "Cotação de commodities agrícolas", "descricao": "Preços diários de soja, milho, café e boi gordo.", "custo": 15, "_gabarito": { "pontos": 0, "auc": 0 }, "_explicacao": "Muda igual para todas as lojas: não ajuda a distinguir uma da outra." },
-            { "id": "m4", "nome": "Lista de compradores de um banco parceiro", "descricao": "Nome, renda estimada e gastos com cartão de clientes que moram perto das lojas, vendidos por um banco parceiro.", "custo": 25, "_gabarito": { "pontos": -4, "auc": 0, "flag": "redes" }, "_explicacao": "Dados pessoais e financeiros compartilhados sem consentimento para essa finalidade." }
+            {
+              "id": "m1",
+              "nome": "Mobilidade anonimizada",
+              "descricao": "Fluxo de pessoas por quadra e por horário, a partir de dados agregados de celulares, sem identificar ninguém.",
+              "custo": 30,
+              "_gabarito": {
+                "pontos": 4,
+                "auc": 0.02
+              },
+              "_explicacao": "Mostra se o entorno é de passagem ou de moradia, com dados agregados e anônimos."
+            },
+            {
+              "id": "m2",
+              "nome": "Mapa atualizado de concorrentes",
+              "descricao": "Supermercados, atacarejos e lojas de conveniência abertos nos últimos 12 meses, com área e formato.",
+              "custo": 20,
+              "_gabarito": {
+                "pontos": 4,
+                "auc": 0.02
+              },
+              "_explicacao": "Melhora a descrição do ambiente competitivo, que muda rápido."
+            },
+            {
+              "id": "m3",
+              "nome": "Cotação de commodities agrícolas",
+              "descricao": "Preços diários de soja, milho, café e boi gordo.",
+              "custo": 15,
+              "_gabarito": {
+                "pontos": 0,
+                "auc": 0
+              },
+              "_explicacao": "Muda igual para todas as lojas: não ajuda a distinguir uma da outra."
+            },
+            {
+              "id": "m4",
+              "nome": "Lista de compradores de um banco parceiro",
+              "descricao": "Nome, renda estimada e gastos com cartão de clientes que moram perto das lojas, vendidos por um banco parceiro.",
+              "custo": 25,
+              "_gabarito": {
+                "pontos": -4,
+                "auc": 0,
+                "flag": "redes"
+              },
+              "_explicacao": "Dados pessoais e financeiros compartilhados sem consentimento para essa finalidade."
+            }
           ]
         }
       ],
       "dicas": [
-        { "id": "f2d1", "titulo": "Perguntar ao analista de dados", "custo": 10, "_texto": "Algumas colunas são resultado das lojas, e uma delas é exatamente a classificação que a Cláudia quer superar. Para cada coluna, perguntem: ela descreve como a loja vende, ou é um resultado ou um rótulo dela?" },
-        { "id": "f2d2", "titulo": "Consultar o Jurídico", "custo": 10, "_texto": "Definir o que cada loja vende a partir da raça da vizinhança é um risco jurídico e de reputação, mesmo que a correlação exista. E CPF de cliente não descreve loja." }
+        {
+          "id": "f2d1",
+          "titulo": "Perguntar ao analista de dados",
+          "custo": 10,
+          "_texto": "Algumas colunas são resultado das lojas, e uma delas é exatamente a classificação que a Cláudia quer superar. Para cada coluna, perguntem: ela descreve como a loja vende, ou é um resultado ou um rótulo dela?"
+        },
+        {
+          "id": "f2d2",
+          "titulo": "Consultar o Jurídico",
+          "custo": 10,
+          "_texto": "Definir o que cada loja vende a partir da raça da vizinhança é um risco jurídico e de reputação, mesmo que a correlação exista. E CPF de cliente não descreve loja."
+        }
       ]
     },
-
     {
-      "id": "f3", "titulo": "Agrupe e avalie", "curto": "Agrupamento", "duracaoMin": 8,
+      "id": "f3",
+      "titulo": "Agrupe e avalie",
+      "curto": "Agrupamento",
+      "duracaoMin": 8,
       "missao": "Hora de agrupar. Decidam como preparar as variáveis, como avaliar os grupos e em quantos perfis dividir as lojas.",
       "explicacao": {
         "titulo": "Como o agrupamento funciona",
         "passos": [
-          { "titulo": "Preparar as variáveis", "texto": "O algoritmo usa as colunas que vocês colocaram em \"Usar para agrupar\". Antes de rodar, é preciso decidir se elas entram como estão ou se passam por algum ajuste." },
-          { "titulo": "Medir semelhança", "texto": "Para o algoritmo, duas lojas são parecidas quando estão perto uma da outra. A distância é calculada somando as diferenças entre as duas lojas em cada variável." },
-          { "titulo": "Escolher quantos grupos", "texto": "O k-means precisa que alguém diga quantos grupos (k) procurar. Ele não sabe sozinho qual é o número certo." },
-          { "titulo": "Avaliar e dar nome", "texto": "Não existe gabarito para conferir. Os grupos são avaliados pela separação entre eles e pelo sentido que fazem para quem vai usá-los." }
+          {
+            "titulo": "Preparar as variáveis",
+            "texto": "O algoritmo usa as colunas que vocês colocaram em \"Usar para agrupar\". Antes de rodar, é preciso decidir se elas entram como estão ou se passam por algum ajuste."
+          },
+          {
+            "titulo": "Medir semelhança",
+            "texto": "Para o algoritmo, duas lojas são parecidas quando estão perto uma da outra. A distância é calculada somando as diferenças entre as duas lojas em cada variável."
+          },
+          {
+            "titulo": "Escolher quantos grupos",
+            "texto": "O k-means precisa que alguém diga quantos grupos (k) procurar. Ele não sabe sozinho qual é o número certo."
+          },
+          {
+            "titulo": "Avaliar e dar nome",
+            "texto": "Não existe gabarito para conferir. Os grupos são avaliados pela separação entre eles e pelo sentido que fazem para quem vai usá-los."
+          }
         ]
       },
       "itens": [
         {
-          "id": "f3q1", "tipo": "escolha", "rotulo": "Preparação das variáveis",
+          "id": "f3q1",
+          "tipo": "escolha",
+          "rotulo": "Preparação das variáveis",
           "enunciado": "O movimento vai de 8 mil a 420 mil clientes por mês. Os percentuais de venda vão de 0 a 100, e o número de concorrentes vai de 0 a 12. O que fazer antes de agrupar?",
           "entenda": "Pensem em como a distância entre duas lojas é calculada. Comparem: duas lojas que diferem em 50 mil clientes por mês e em 30 pontos percentuais de perecíveis. Qual das duas diferenças pesa mais numa soma simples?",
           "opcoes": [
-            { "id": "a", "texto": "Nada: o algoritmo se ajusta sozinho às unidades de cada coluna" },
-            { "id": "b", "texto": "Colocar todas as variáveis numéricas na mesma escala (padronizar) antes de agrupar" },
-            { "id": "c", "texto": "Excluir o número de clientes, que é a variável com os números maiores" },
-            { "id": "d", "texto": "Contar os clientes em milhares em vez de unidades" }
+            {
+              "id": "a",
+              "texto": "Nada: o algoritmo se ajusta sozinho às unidades de cada coluna"
+            },
+            {
+              "id": "b",
+              "texto": "Colocar todas as variáveis numéricas na mesma escala (padronizar) antes de agrupar"
+            },
+            {
+              "id": "c",
+              "texto": "Excluir o número de clientes, que é a variável com os números maiores"
+            },
+            {
+              "id": "d",
+              "texto": "Contar os clientes em milhares em vez de unidades"
+            }
           ],
-          "_gabarito": { "a": 0, "b": 8, "c": 3, "d": 1 }, "pontosMax": 8,
+          "_gabarito": {
+            "a": 0,
+            "b": 8,
+            "c": 3,
+            "d": 1
+          },
+          "pontosMax": 8,
           "_explicacao": "Sem padronizar, uma diferença de milhares de clientes engole qualquer diferença de perecíveis ou de delivery, e o agrupamento vira uma ordenação pelo movimento. Excluir a variável (c) joga fora informação; contar em milhares (d) ainda deixa o movimento dominar."
         },
         {
-          "id": "f3q2", "tipo": "escolha", "rotulo": "Como avaliar",
+          "id": "f3q2",
+          "tipo": "escolha",
+          "rotulo": "Como avaliar",
           "enunciado": "Como saber se os perfis de loja encontrados são bons?",
           "entenda": "No agrupamento não há resposta certa para conferir, então não existe acurácia. A silhueta, de -1 a 1, mede o quanto cada loja está mais perto do próprio grupo do que dos outros. Mas grupos só servem se a operação souber o que fazer com cada um.",
           "opcoes": [
-            { "id": "a", "texto": "Pela acurácia: o percentual de lojas colocadas no grupo certo" },
-            { "id": "b", "texto": "Pela separação (silhueta) e, principalmente, se cada perfil é claro e pede um sortimento diferente" },
-            { "id": "c", "texto": "Quanto mais grupos, mais personalizado e melhor" },
-            { "id": "d", "texto": "Pela maior silhueta possível, sem olhar o que há dentro dos grupos" }
+            {
+              "id": "a",
+              "texto": "Pela acurácia: o percentual de lojas colocadas no grupo certo"
+            },
+            {
+              "id": "b",
+              "texto": "Pela separação (silhueta) e, principalmente, se cada perfil é claro e pede um sortimento diferente"
+            },
+            {
+              "id": "c",
+              "texto": "Quanto mais grupos, mais personalizado e melhor"
+            },
+            {
+              "id": "d",
+              "texto": "Pela maior silhueta possível, sem olhar o que há dentro dos grupos"
+            }
           ],
-          "_gabarito": { "a": 0, "b": 7, "c": 0, "d": 2 }, "pontosMax": 7,
+          "_gabarito": {
+            "a": 0,
+            "b": 7,
+            "c": 0,
+            "d": 2
+          },
+          "pontosMax": 7,
           "_explicacao": "A logística aceita no máximo 5 sortimentos, e cada perfil precisa justificar um. Silhueta alta sozinha (d) pode esconder grupos separados por uma única variável."
         },
         {
-          "id": "f3grupos", "tipo": "agrupamento", "rotulo": "Agrupamento", "dependeDe": "f3q1",
+          "id": "f3grupos",
+          "tipo": "agrupamento",
+          "rotulo": "Agrupamento",
+          "dependeDe": "f3q1",
           "enunciado": "Rodem o agrupamento e escolham em quantos perfis dividir as lojas. Para cada número de grupos, vejam a silhueta e o perfil de cada grupo.",
-          "_gabarito": { "2": 2, "3": 6, "4": 10, "5": 7, "6": 3 }, "pontosMax": 10,
+          "_gabarito": {
+            "2": 2,
+            "3": 6,
+            "4": 10,
+            "5": 7,
+            "6": 3
+          },
+          "pontosMax": 10,
           "_explicacao": "Com as variáveis padronizadas, 4 perfis têm a melhor silhueta, são fáceis de explicar e cabem nos 5 sortimentos que a logística aceita. Com 6, aparecem perfis quase iguais."
         },
         {
-          "id": "f3j", "tipo": "texto", "rotulo": "Confiança nos grupos",
-          "enunciado": "Em até duas frases: os perfis encontrados ajudam a Cláudia a reduzir a quebra de perecíveis? Por quê?",
-          "maxChars": 400
+          "id": "f3x",
+          "tipo": "escolha",
+          "rotulo": "Desafio da modelagem",
+          "enunciado": "Um grupo saiu com só 3 lojas, todas muito diferentes das outras. O que fazer?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Investigar se são casos especiais ou erros de cadastro antes de criar um sortimento só para elas"
+            },
+            {
+              "id": "b",
+              "texto": "Criar um sortimento exclusivo para essas 3 lojas"
+            },
+            {
+              "id": "c",
+              "texto": "Fechar essas lojas"
+            },
+            {
+              "id": "d",
+              "texto": "Aumentar o número de grupos até elas sumirem"
+            }
+          ],
+          "_gabarito": {
+            "a": 5,
+            "b": 1,
+            "c": 0,
+            "d": 0
+          },
+          "pontosMax": 5
         }
       ],
       "dicas": [
-        { "id": "f3d1", "titulo": "Ligar para o cientista de dados", "custo": 10, "_texto": "Olhem a faixa de valores de cada variável antes de rodar. E desconfiem de silhueta muito alta: grupos muito separados podem estar separados por uma coisa só." },
-        { "id": "f3d2", "titulo": "Falar com a logística", "custo": 10, "_texto": "Montamos até 5 sortimentos. E cada um precisa ser diferente de verdade, senão é só trabalho a mais no centro de distribuição." }
+        {
+          "id": "f3d1",
+          "titulo": "Ligar para o cientista de dados",
+          "custo": 10,
+          "_texto": "Olhem a faixa de valores de cada variável antes de rodar. E desconfiem de silhueta muito alta: grupos muito separados podem estar separados por uma coisa só."
+        },
+        {
+          "id": "f3d2",
+          "titulo": "Falar com a logística",
+          "custo": 10,
+          "_texto": "Montamos até 5 sortimentos. E cada um precisa ser diferente de verdade, senão é só trabalho a mais no centro de distribuição."
+        }
       ]
     },
-
     {
-      "id": "evento", "titulo": "Seis meses depois", "curto": "Produção", "duracaoMin": 6,
+      "id": "evento",
+      "titulo": "Seis meses depois",
+      "curto": "Produção",
+      "duracaoMin": 6,
       "missao": "Os sortimentos baseados nos perfis de vocês estão em uso há seis meses. A Cláudia chama a equipe para uma conversa difícil.",
       "itens": [
         {
-          "id": "evq1", "tipo": "escolha", "rotulo": "Diagnóstico",
+          "id": "evq1",
+          "tipo": "escolha",
+          "rotulo": "Diagnóstico",
           "enunciado": "Qual é o diagnóstico mais provável?",
           "opcoes": [
-            { "id": "a", "texto": "Uma variável dominou o cálculo de distância por causa da escala" },
-            { "id": "b", "texto": "O agrupamento usou como entrada a classificação ou os resultados que deveria explicar" },
-            { "id": "c", "texto": "As lojas mudaram: um fato novo alterou o jeito de vender" },
-            { "id": "d", "texto": "O número de grupos foi pequeno demais" }
+            {
+              "id": "a",
+              "texto": "Uma variável dominou o cálculo de distância por causa da escala"
+            },
+            {
+              "id": "b",
+              "texto": "O agrupamento usou como entrada a classificação ou os resultados que deveria explicar"
+            },
+            {
+              "id": "c",
+              "texto": "As lojas mudaram: um fato novo alterou o jeito de vender"
+            },
+            {
+              "id": "d",
+              "texto": "O número de grupos foi pequeno demais"
+            }
           ],
           "pontosMax": 6
         },
         {
-          "id": "evq2", "tipo": "escolha", "rotulo": "Ação",
+          "id": "evq2",
+          "tipo": "escolha",
+          "rotulo": "Ação",
           "enunciado": "O que fazer agora?",
           "opcoes": [
-            { "id": "a", "texto": "Padronizar as variáveis e rodar o agrupamento de novo" },
-            { "id": "b", "texto": "Tirar a classificação e os resultados das variáveis de agrupamento e usá-los só para comparar os grupos depois" },
-            { "id": "c", "texto": "Refazer o agrupamento periodicamente e acompanhar as lojas que mudam de perfil" },
-            { "id": "d", "texto": "Voltar ao sortimento único, que era mais simples" }
+            {
+              "id": "a",
+              "texto": "Padronizar as variáveis e rodar o agrupamento de novo"
+            },
+            {
+              "id": "b",
+              "texto": "Tirar a classificação e os resultados das variáveis de agrupamento e usá-los só para comparar os grupos depois"
+            },
+            {
+              "id": "c",
+              "texto": "Refazer o agrupamento periodicamente e acompanhar as lojas que mudam de perfil"
+            },
+            {
+              "id": "d",
+              "texto": "Voltar ao sortimento único, que era mais simples"
+            }
           ],
           "pontosMax": 4
         },
         {
-          "id": "evj", "tipo": "texto", "rotulo": "O que faltou antes",
-          "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de levar os perfis ao comitê?",
-          "maxChars": 400
+          "id": "evx",
+          "tipo": "escolha",
+          "rotulo": "Desafio da produção",
+          "enunciado": "Como acompanhar se as lojas continuam no perfil certo?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Manter os perfis fixos por cinco anos"
+            },
+            {
+              "id": "b",
+              "texto": "Mudar o perfil quando o gerente da loja pedir"
+            },
+            {
+              "id": "c",
+              "texto": "Olhar só a margem de cada loja"
+            },
+            {
+              "id": "d",
+              "texto": "Recalcular os perfis a cada trimestre e sinalizar as lojas cujo jeito de vender mudou"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 1,
+            "c": 0,
+            "d": 4
+          },
+          "pontosMax": 4
         }
       ],
       "dicas": []
     }
   ],
-
   "_modelo": {
     "tipo": "agrupamento",
-    "padroniza": { "item": "f3q1", "respostas": ["b"] },
-    "pesoCarta": { "c04": 0.04, "c05": 0.04, "padrao": 0.015 },
+    "padroniza": {
+      "item": "f3q1",
+      "respostas": [
+        "b"
+      ]
+    },
+    "pesoCarta": {
+      "c04": 0.04,
+      "c05": 0.04,
+      "padrao": 0.015
+    },
     "ruido": -0.03,
     "silhueta": {
-      "drift":    { "2": 0.36, "3": 0.44, "4": 0.51, "5": 0.46, "6": 0.37 },
-      "circular": { "2": 0.42, "3": 0.6, "4": 0.47, "5": 0.41, "6": 0.35 },
-      "escala":   { "2": 0.84, "3": 0.79, "4": 0.75, "5": 0.72, "6": 0.68 }
+      "drift": {
+        "2": 0.36,
+        "3": 0.44,
+        "4": 0.51,
+        "5": 0.46,
+        "6": 0.37
+      },
+      "circular": {
+        "2": 0.42,
+        "3": 0.6,
+        "4": 0.47,
+        "5": 0.41,
+        "6": 0.35
+      },
+      "escala": {
+        "2": 0.84,
+        "3": 0.79,
+        "4": 0.75,
+        "5": 0.72,
+        "6": 0.68
+      }
     },
-    "producao": { "escala": 0.16, "circular": 0.28, "drift": 0.7 },
-    "fatorProducao": { "escala": 0, "circular": 0.5, "drift": 1 },
-    "escala": { "rotulo": "Movimento", "min": 8000, "max": 420000, "formato": "numero", "outras": "Perecíveis, delivery, ticket e entorno", "comparacao": ["6,8%", "7,1%", "6,9%"] },
-    "circular": { "rotulo": "classe", "valores": ["A", "B", "C"] },
+    "producao": {
+      "escala": 0.16,
+      "circular": 0.28,
+      "drift": 0.7
+    },
+    "fatorProducao": {
+      "escala": 0,
+      "circular": 0.5,
+      "drift": 1
+    },
+    "escala": {
+      "rotulo": "Movimento",
+      "min": 8000,
+      "max": 420000,
+      "formato": "numero",
+      "outras": "Perecíveis, delivery, ticket e entorno",
+      "comparacao": [
+        "6,8%",
+        "7,1%",
+        "6,9%"
+      ]
+    },
+    "circular": {
+      "rotulo": "classe",
+      "valores": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
     "perfis": {
       "2": [
-        { "nome": "Compras completas", "n": 70, "tracos": ["Ticket médio alto", "Muitos perecíveis ou volumes grandes", "Bairro ou rodovia"], "desvio": "6,2%" },
-        { "nome": "Compras rápidas", "n": 50, "tracos": ["Ticket médio baixo", "Pico no almoço ou à noite", "Centros comerciais e alta densidade"], "desvio": "7,9%" }
+        {
+          "nome": "Compras completas",
+          "n": 70,
+          "tracos": [
+            "Ticket médio alto",
+            "Muitos perecíveis ou volumes grandes",
+            "Bairro ou rodovia"
+          ],
+          "desvio": "6,2%"
+        },
+        {
+          "nome": "Compras rápidas",
+          "n": 50,
+          "tracos": [
+            "Ticket médio baixo",
+            "Pico no almoço ou à noite",
+            "Centros comerciais e alta densidade"
+          ],
+          "desvio": "7,9%"
+        }
       ],
       "3": [
-        { "nome": "Abastecimento de bairro", "n": 44, "tracos": ["Perecíveis acima de 35% das vendas", "Pico à noite e no fim de semana", "Entorno residencial"], "desvio": "3,9%" },
-        { "nome": "Passagem e digital misturados", "n": 50, "tracos": ["Ticket baixo ou delivery alto", "Áreas comerciais e densas", "Perfis de venda bem diferentes entre si"], "desvio": "8,4%" },
-        { "nome": "Atacarejo de rodovia", "n": 26, "tracos": ["Área acima de 4.000 m²", "Ticket acima de R$ 250", "Perecíveis abaixo de 15%"], "desvio": "11,2%" }
+        {
+          "nome": "Abastecimento de bairro",
+          "n": 44,
+          "tracos": [
+            "Perecíveis acima de 35% das vendas",
+            "Pico à noite e no fim de semana",
+            "Entorno residencial"
+          ],
+          "desvio": "3,9%"
+        },
+        {
+          "nome": "Passagem e digital misturados",
+          "n": 50,
+          "tracos": [
+            "Ticket baixo ou delivery alto",
+            "Áreas comerciais e densas",
+            "Perfis de venda bem diferentes entre si"
+          ],
+          "desvio": "8,4%"
+        },
+        {
+          "nome": "Atacarejo de rodovia",
+          "n": 26,
+          "tracos": [
+            "Área acima de 4.000 m²",
+            "Ticket acima de R$ 250",
+            "Perecíveis abaixo de 15%"
+          ],
+          "desvio": "11,2%"
+        }
       ],
       "4": [
-        { "nome": "Abastecimento de bairro", "n": 44, "tracos": ["Perecíveis acima de 35% das vendas", "Pico à noite e no fim de semana", "Entorno residencial, poucos concorrentes"], "desvio": "3,9%" },
-        { "nome": "Conveniência de passagem", "n": 31, "tracos": ["Ticket médio abaixo de R$ 45", "Pico no almoço", "Lojas pequenas em áreas comerciais"], "desvio": "6,1%" },
-        { "nome": "Loja digital", "n": 19, "tracos": ["Delivery acima de 25% das vendas", "Marca própria alta", "Bairros densos, muitos concorrentes"], "desvio": "9,8%" },
-        { "nome": "Atacarejo de rodovia", "n": 26, "tracos": ["Área acima de 4.000 m²", "Ticket acima de R$ 250", "Perecíveis abaixo de 15%"], "desvio": "11,2%" }
+        {
+          "nome": "Abastecimento de bairro",
+          "n": 44,
+          "tracos": [
+            "Perecíveis acima de 35% das vendas",
+            "Pico à noite e no fim de semana",
+            "Entorno residencial, poucos concorrentes"
+          ],
+          "desvio": "3,9%"
+        },
+        {
+          "nome": "Conveniência de passagem",
+          "n": 31,
+          "tracos": [
+            "Ticket médio abaixo de R$ 45",
+            "Pico no almoço",
+            "Lojas pequenas em áreas comerciais"
+          ],
+          "desvio": "6,1%"
+        },
+        {
+          "nome": "Loja digital",
+          "n": 19,
+          "tracos": [
+            "Delivery acima de 25% das vendas",
+            "Marca própria alta",
+            "Bairros densos, muitos concorrentes"
+          ],
+          "desvio": "9,8%"
+        },
+        {
+          "nome": "Atacarejo de rodovia",
+          "n": 26,
+          "tracos": [
+            "Área acima de 4.000 m²",
+            "Ticket acima de R$ 250",
+            "Perecíveis abaixo de 15%"
+          ],
+          "desvio": "11,2%"
+        }
       ],
       "5": [
-        { "nome": "Bairro residencial", "n": 25, "tracos": ["Perfil de abastecimento", "Sem concorrentes num raio de 1 km"], "desvio": "3,6%" },
-        { "nome": "Bairro disputado", "n": 19, "tracos": ["Perfil de abastecimento", "2 ou mais concorrentes perto", "Difere do anterior quase só na concorrência"], "desvio": "4,3%" },
-        { "nome": "Conveniência de passagem", "n": 31, "tracos": ["Ticket baixo, pico no almoço"], "desvio": "6,1%" },
-        { "nome": "Loja digital", "n": 19, "tracos": ["Delivery acima de 25%", "Marca própria alta"], "desvio": "9,8%" },
-        { "nome": "Atacarejo de rodovia", "n": 26, "tracos": ["Área grande, ticket alto", "Poucos perecíveis"], "desvio": "11,2%" }
+        {
+          "nome": "Bairro residencial",
+          "n": 25,
+          "tracos": [
+            "Perfil de abastecimento",
+            "Sem concorrentes num raio de 1 km"
+          ],
+          "desvio": "3,6%"
+        },
+        {
+          "nome": "Bairro disputado",
+          "n": 19,
+          "tracos": [
+            "Perfil de abastecimento",
+            "2 ou mais concorrentes perto",
+            "Difere do anterior quase só na concorrência"
+          ],
+          "desvio": "4,3%"
+        },
+        {
+          "nome": "Conveniência de passagem",
+          "n": 31,
+          "tracos": [
+            "Ticket baixo, pico no almoço"
+          ],
+          "desvio": "6,1%"
+        },
+        {
+          "nome": "Loja digital",
+          "n": 19,
+          "tracos": [
+            "Delivery acima de 25%",
+            "Marca própria alta"
+          ],
+          "desvio": "9,8%"
+        },
+        {
+          "nome": "Atacarejo de rodovia",
+          "n": 26,
+          "tracos": [
+            "Área grande, ticket alto",
+            "Poucos perecíveis"
+          ],
+          "desvio": "11,2%"
+        }
       ],
       "6": [
-        { "nome": "Bairro residencial", "n": 25, "tracos": ["Perfil de abastecimento", "Sem concorrentes perto"], "desvio": "3,6%" },
-        { "nome": "Bairro disputado", "n": 19, "tracos": ["Perfil de abastecimento", "Concorrentes perto"], "desvio": "4,3%" },
-        { "nome": "Passagem de almoço", "n": 17, "tracos": ["Ticket baixo", "Pico no almoço"], "desvio": "5,9%" },
-        { "nome": "Passagem de fim de tarde", "n": 14, "tracos": ["Ticket baixo", "Pico no fim da tarde", "Muito parecido com o grupo anterior"], "desvio": "6,4%" },
-        { "nome": "Loja digital", "n": 19, "tracos": ["Delivery acima de 25%"], "desvio": "9,8%" },
-        { "nome": "Atacarejo de rodovia", "n": 26, "tracos": ["Área grande, ticket alto"], "desvio": "11,2%" }
+        {
+          "nome": "Bairro residencial",
+          "n": 25,
+          "tracos": [
+            "Perfil de abastecimento",
+            "Sem concorrentes perto"
+          ],
+          "desvio": "3,6%"
+        },
+        {
+          "nome": "Bairro disputado",
+          "n": 19,
+          "tracos": [
+            "Perfil de abastecimento",
+            "Concorrentes perto"
+          ],
+          "desvio": "4,3%"
+        },
+        {
+          "nome": "Passagem de almoço",
+          "n": 17,
+          "tracos": [
+            "Ticket baixo",
+            "Pico no almoço"
+          ],
+          "desvio": "5,9%"
+        },
+        {
+          "nome": "Passagem de fim de tarde",
+          "n": 14,
+          "tracos": [
+            "Ticket baixo",
+            "Pico no fim da tarde",
+            "Muito parecido com o grupo anterior"
+          ],
+          "desvio": "6,4%"
+        },
+        {
+          "nome": "Loja digital",
+          "n": 19,
+          "tracos": [
+            "Delivery acima de 25%"
+          ],
+          "desvio": "9,8%"
+        },
+        {
+          "nome": "Atacarejo de rodovia",
+          "n": 26,
+          "tracos": [
+            "Área grande, ticket alto"
+          ],
+          "desvio": "11,2%"
+        }
       ]
     }
   },
-
   "_evento": {
     "escala": {
       "titulo": "Os perfis eram só o tamanho do movimento",
@@ -298,7 +1060,20 @@
         "Não houve mudança relevante no comportamento das lojas no período."
       ],
       "feed": "{grupo}: os perfis eram só faixas de movimento. A diretoria deu nota {nota} de 10",
-      "_gabarito": { "evq1": { "a": 6, "b": 1, "c": 0, "d": 0 }, "evq2": { "a": 4, "b": 1, "c": 0, "d": 0 } },
+      "_gabarito": {
+        "evq1": {
+          "a": 6,
+          "b": 1,
+          "c": 0,
+          "d": 0
+        },
+        "evq2": {
+          "a": 4,
+          "b": 1,
+          "c": 0,
+          "d": 0
+        }
+      },
       "_explicacao": "Sem padronizar, a distância entre duas lojas é quase só a diferença de movimento. O jeito de vender, que era o que importava para a quebra, sumiu da conta."
     },
     "circular": {
@@ -311,7 +1086,20 @@
         "As variáveis numéricas foram padronizadas corretamente."
       ],
       "feed": "{grupo}: os perfis repetiram o A, B e C. A diretoria deu nota {nota} de 10",
-      "_gabarito": { "evq1": { "a": 1, "b": 6, "c": 1, "d": 0 }, "evq2": { "a": 0, "b": 4, "c": 1, "d": 0 } },
+      "_gabarito": {
+        "evq1": {
+          "a": 1,
+          "b": 6,
+          "c": 1,
+          "d": 0
+        },
+        "evq2": {
+          "a": 0,
+          "b": 4,
+          "c": 1,
+          "d": 0
+        }
+      },
       "_explicacao": "Usar a classificação antiga ou resultados como a margem para formar os grupos faz a IA reencontrar o que já se sabia. Essas colunas servem para comparar os perfis depois."
     },
     "drift": {
@@ -325,11 +1113,23 @@
       ],
       "feed": "{grupo}: os perfis funcionaram, mas o aplicativo novo está mudando as lojas",
       "tipoFeed": "drift",
-      "_gabarito": { "evq1": { "a": 0, "b": 0, "c": 6, "d": 1 }, "evq2": { "a": 0, "b": 0, "c": 4, "d": 0 } },
+      "_gabarito": {
+        "evq1": {
+          "a": 0,
+          "b": 0,
+          "c": 6,
+          "d": 1
+        },
+        "evq2": {
+          "a": 0,
+          "b": 0,
+          "c": 4,
+          "d": 0
+        }
+      },
       "_explicacao": "Perfis descrevem as lojas de quando foram calculados. Quando o jeito de vender muda, é hora de recalcular e acompanhar quem migrou de perfil."
     }
   },
-
   "_revelacao": {
     "armadilha": "O agrupamento circular",
     "resumo": "A classificação A, B e C e a margem pareciam ótimas para agrupar. Mas são resultado e rótulo: com elas, a IA reencontra a classificação antiga, que só mede faturamento, e não descobre perfis novos.",

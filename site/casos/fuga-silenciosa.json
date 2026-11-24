@@ -208,11 +208,29 @@
      "pontosMax": 8
     },
     {
-     "id": "f1j",
-     "tipo": "texto",
-     "rotulo": "Por que esse alvo",
-     "enunciado": "Em até duas frases: por que esse alvo, e não o campo de cancelamento que a Marina mencionou?",
-     "maxChars": 400
+     "id": "f1x",
+     "tipo": "escolha",
+     "rotulo": "Desafio do enquadre",
+     "enunciado": "A Marina sugere: \"Usem o campo de cancelamento que já existe, depois a gente ajusta.\" Qual é o principal problema dessa sugestão?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "O campo de cancelamento tem poucos registros para treinar um modelo"
+      },
+      {
+       "id": "b",
+       "texto": "O modelo aprenderia a reconhecer só o terço dos clientes que avisa antes de sair, e a campanha não alcançaria quem some em silêncio"
+      },
+      {
+       "id": "c",
+       "texto": "Cancelamento é uma variável numérica, e o problema é de classificação"
+      },
+      {
+       "id": "d",
+       "texto": "Não há problema: qualquer alvo ligado à perda de clientes serve"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -541,11 +559,29 @@
      "dependeDe": "f3q1"
     },
     {
-     "id": "f3j",
-     "tipo": "texto",
-     "rotulo": "Confiança no resultado",
-     "enunciado": "Em até duas frases: vocês confiam no resultado do treino? Por quê?",
-     "maxChars": 400
+     "id": "f3x",
+     "tipo": "escolha",
+     "rotulo": "Desafio da modelagem",
+     "enunciado": "O treino mostrou acurácia de 98% com divisão aleatória. Um colega quer apresentar o modelo ao Conselho amanhã. Qual é a reação mais adequada?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Aprovar: 98% está acima de qualquer referência de mercado"
+      },
+      {
+       "id": "b",
+       "texto": "Treinar de novo com mais colunas para chegar a 99%"
+      },
+      {
+       "id": "c",
+       "texto": "Desconfiar: com só 4% de fuga, conferir AUC, precisão e recall, e refazer o teste com divisão por tempo"
+      },
+      {
+       "id": "d",
+       "texto": "Trocar o algoritmo por uma rede neural antes de apresentar"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -619,11 +655,29 @@
      "pontosMax": 4
     },
     {
-     "id": "evj",
-     "tipo": "texto",
-     "rotulo": "O que faltou antes",
-     "enunciado": "Em até duas frases: o que a equipe deveria ter feito antes de ir para produção?",
-     "maxChars": 400
+     "id": "evx",
+     "tipo": "escolha",
+     "rotulo": "Desafio da produção",
+     "enunciado": "Para não ser pego de surpresa de novo, o que deveria estar no plano desde o início?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Revalidar o modelo uma vez por ano"
+      },
+      {
+       "id": "b",
+       "texto": "Monitorar todo mês o desempenho em produção e o comportamento das colunas, com um gatilho para retreinar"
+      },
+      {
+       "id": "c",
+       "texto": "Treinar com o máximo possível de colunas"
+      },
+      {
+       "id": "d",
+       "texto": "Aumentar o percentual de clientes abordados"
+      }
+     ],
+     "pontosMax": 4
     }
    ],
    "dicas": []

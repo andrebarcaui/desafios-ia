@@ -179,11 +179,29 @@
      "pontosMax": 8
     },
     {
-     "id": "f1j",
-     "tipo": "texto",
-     "rotulo": "Por que não usar o plano",
-     "enunciado": "Em até duas frases: por que não usar o plano (Básico, Plus, Pro) como tipo de assinante?",
-     "maxChars": 400
+     "id": "f1x",
+     "tipo": "escolha",
+     "rotulo": "Desafio do enquadre",
+     "enunciado": "A Bianca quer usar os grupos para decidir quem recebe desconto para não cancelar. Qual é a melhor resposta?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Sim, os grupos já dizem quem vai cancelar"
+      },
+      {
+       "id": "b",
+       "texto": "Os grupos ajudam a desenhar comunicações; para decidir quem vai cancelar, o adequado é um modelo supervisionado com o cancelamento como alvo"
+      },
+      {
+       "id": "c",
+       "texto": "Não, porque desconto não é decisão de produto"
+      },
+      {
+       "id": "d",
+       "texto": "Sim, desde que se use o grupo com a maior silhueta"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -512,11 +530,29 @@
      "pontosMax": 10
     },
     {
-     "id": "f3j",
-     "tipo": "texto",
-     "rotulo": "Confiança nos grupos",
-     "enunciado": "Em até duas frases: os tipos encontrados ajudam a Bianca a melhorar a comunicação? Por quê?",
-     "maxChars": 400
+     "id": "f3x",
+     "tipo": "escolha",
+     "rotulo": "Desafio da modelagem",
+     "enunciado": "O grupo \"Adormecidos\" é grande e quase não abre e-mails. O que esse achado sugere?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Que o agrupamento falhou"
+      },
+      {
+       "id": "b",
+       "texto": "Que esses assinantes devem ser excluídos da base"
+      },
+      {
+       "id": "c",
+       "texto": "Que o número de grupos deveria ser maior"
+      },
+      {
+       "id": "d",
+       "texto": "Que esse grupo pede uma abordagem diferente (outro canal, um convite de retorno), e não mais da mesma newsletter"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -590,11 +626,29 @@
      "pontosMax": 4
     },
     {
-     "id": "evj",
-     "tipo": "texto",
-     "rotulo": "O que faltou antes",
-     "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de levar os tipos ao conselho?",
-     "maxChars": 400
+     "id": "evx",
+     "tipo": "escolha",
+     "rotulo": "Desafio da produção",
+     "enunciado": "Como saber se os tipos de assinante continuam valendo?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Recalcular os grupos depois de cada mudança relevante no produto e acompanhar quantos assinantes trocam de tipo"
+      },
+      {
+       "id": "b",
+       "texto": "Manter os tipos fixos"
+      },
+      {
+       "id": "c",
+       "texto": "Esperar o cancelamento aumentar"
+      },
+      {
+       "id": "d",
+       "texto": "Perguntar aos assinantes em qual tipo se encaixam"
+      }
+     ],
+     "pontosMax": 4
     }
    ],
    "dicas": []

@@ -208,11 +208,29 @@
      "pontosMax": 8
     },
     {
-     "id": "f1j",
-     "tipo": "texto",
-     "rotulo": "Por que esse alvo",
-     "enunciado": "Em até duas frases: por que não basta usar os sinistros que a equipe já marcou como suspeitos?",
-     "maxChars": 400
+     "id": "f1x",
+     "tipo": "escolha",
+     "rotulo": "Desafio do enquadre",
+     "enunciado": "O comitê de risco propõe recusar automaticamente, sem análise humana, todo sinistro que o modelo apontar. Por que isso é arriscado?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Porque o modelo seria lento demais para decidir na hora"
+      },
+      {
+       "id": "b",
+       "texto": "Não é arriscado se a AUC for maior que 0,80"
+      },
+      {
+       "id": "c",
+       "texto": "Porque a lei proíbe qualquer uso de IA em seguros"
+      },
+      {
+       "id": "d",
+       "texto": "Cada falso positivo vira um cliente honesto sem indenização; o modelo deve priorizar a investigação, não decidir"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -541,11 +559,29 @@
      "pontosMax": 10
     },
     {
-     "id": "f3j",
-     "tipo": "texto",
-     "rotulo": "Confiança no resultado",
-     "enunciado": "Em até duas frases: vocês confiam no resultado do treino? Por quê?",
-     "maxChars": 400
+     "id": "f3x",
+     "tipo": "escolha",
+     "rotulo": "Desafio da modelagem",
+     "enunciado": "A AUC no teste ficou em 0,99. O que isso mais provavelmente indica num problema de fraude?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Que alguma coluna carrega informação do resultado, e o dataset precisa ser revisado antes de comemorar"
+      },
+      {
+       "id": "b",
+       "texto": "Que o modelo é excelente e pode ir para produção"
+      },
+      {
+       "id": "c",
+       "texto": "Que faltam dados e é preciso comprar mais fontes"
+      },
+      {
+       "id": "d",
+       "texto": "Que a divisão por tempo foi feita corretamente"
+      }
+     ],
+     "pontosMax": 5
     }
    ],
    "dicas": [
@@ -619,11 +655,29 @@
      "pontosMax": 4
     },
     {
-     "id": "evj",
-     "tipo": "texto",
-     "rotulo": "O que faltou antes",
-     "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de ir para produção?",
-     "maxChars": 400
+     "id": "evx",
+     "tipo": "escolha",
+     "rotulo": "Desafio da produção",
+     "enunciado": "Como saber, em produção, quantas fraudes o modelo está deixando passar?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Contar quantos sinistros apontados viraram fraude confirmada"
+      },
+      {
+       "id": "b",
+       "texto": "Perguntar à equipe antifraude se o modelo parece bom"
+      },
+      {
+       "id": "c",
+       "texto": "Investigar todo mês uma pequena amostra aleatória dos sinistros não apontados e medir quantas fraudes aparecem ali"
+      },
+      {
+       "id": "d",
+       "texto": "Não há como saber"
+      }
+     ],
+     "pontosMax": 4
     }
    ],
    "dicas": []

@@ -207,11 +207,35 @@
           "_explicacao": "As trilhas vão ser aplicadas a projetos novos, no início. Então os grupos precisam ser formados com informações que existem no início e com o portfólio inteiro. Só os atrasados (a) dá uma visão parcial; só os ativos (d) usa dados de desempenho que um projeto novo ainda não tem."
         },
         {
-          "id": "f1j",
-          "tipo": "texto",
-          "rotulo": "Por que não usar P, M e G",
-          "enunciado": "Em até duas frases: por que não usar a classificação P, M e G como resposta certa?",
-          "maxChars": 400
+          "id": "f1x",
+          "tipo": "escolha",
+          "rotulo": "Desafio do enquadre",
+          "enunciado": "O Paulo insiste: \"Vamos treinar um classificador com P, M e G, é mais rápido.\" Qual é o melhor argumento contra?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Classificadores não funcionam com dados de projetos"
+            },
+            {
+              "id": "b",
+              "texto": "O classificador aprenderia a reproduzir P, M e G, justamente o critério que a auditoria mostrou que falha; o objetivo é descobrir grupos novos"
+            },
+            {
+              "id": "c",
+              "texto": "Agrupamento é sempre mais preciso que classificação"
+            },
+            {
+              "id": "d",
+              "texto": "P, M e G têm só três categorias, e classificadores precisam de pelo menos cinco"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 5,
+            "c": 1,
+            "d": 0
+          },
+          "pontosMax": 5
         }
       ],
       "dicas": [
@@ -619,11 +643,35 @@
           "_explicacao": "Com as variáveis padronizadas, 4 grupos têm a melhor silhueta, perfis claros e cabem no que o comitê consegue operar. Com 2 ou 3, grupos com riscos diferentes ficam misturados; com 6, surgem grupos quase iguais."
         },
         {
-          "id": "f3j",
-          "tipo": "texto",
-          "rotulo": "Confiança nos grupos",
-          "enunciado": "Em até duas frases: os grupos encontrados fazem sentido para o PMO? Por quê?",
-          "maxChars": 400
+          "id": "f3x",
+          "tipo": "escolha",
+          "rotulo": "Desafio da modelagem",
+          "enunciado": "Suponha que, em outro portfólio, dividir em 2 grupos desse a maior silhueta. Por que, mesmo assim, 2 grupos poderiam ser uma má escolha?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Porque a silhueta só vale para 4 grupos ou mais"
+            },
+            {
+              "id": "b",
+              "texto": "Porque o k-means não aceita 2 grupos"
+            },
+            {
+              "id": "c",
+              "texto": "Não seria má escolha: a maior silhueta é sempre a melhor resposta"
+            },
+            {
+              "id": "d",
+              "texto": "Porque projetos com riscos muito diferentes ficariam juntos na mesma trilha, e a governança voltaria a ser quase tamanho único"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 0,
+            "c": 1,
+            "d": 5
+          },
+          "pontosMax": 5
         }
       ],
       "dicas": [
@@ -699,11 +747,35 @@
           "pontosMax": 4
         },
         {
-          "id": "evj",
-          "tipo": "texto",
-          "rotulo": "O que faltou antes",
-          "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de levar os grupos para a diretoria?",
-          "maxChars": 400
+          "id": "evx",
+          "tipo": "escolha",
+          "rotulo": "Desafio da produção",
+          "enunciado": "Como saber se as trilhas continuam fazendo sentido ao longo do tempo?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Recalcular os grupos periodicamente e acompanhar quantos projetos novos ficam mal encaixados"
+            },
+            {
+              "id": "b",
+              "texto": "Manter os grupos fixos para não confundir o comitê"
+            },
+            {
+              "id": "c",
+              "texto": "Esperar a auditoria anual apontar problemas"
+            },
+            {
+              "id": "d",
+              "texto": "Aumentar o número de grupos a cada trimestre"
+            }
+          ],
+          "_gabarito": {
+            "a": 4,
+            "b": 0,
+            "c": 1,
+            "d": 0
+          },
+          "pontosMax": 4
         }
       ],
       "dicas": []
