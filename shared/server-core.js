@@ -5,17 +5,32 @@
  */
 var ServerCore = (function () {
   var FASES = ['lobby', 'f1', 'f2', 'f3', 'evento', 'pitch', 'revelacao'];
-  var TITULOS_FASE = ['Sala de espera', 'Enquadre o problema', 'Monte o dataset', 'Treine e avalie', 'Seis meses em produção', 'Pitch ao comitê', 'Revelação'];
+  var TITULOS_FASE = ['Sala de espera', 'Enquadre o problema', 'Monte o dataset', 'Modele e avalie', 'Seis meses depois', 'Pitch ao comitê', 'Revelação'];
   var JOGAVEIS = { f1: 1, f2: 2, f3: 3, evento: 4 };
   var DURACOES = { f1: 6, f2: 12, f3: 8, evento: 6 };
 
   function fmtAuc(x) { return (Math.round(x * 100) / 100).toFixed(2).replace('.', ','); }
+  function fmt1(x) { return (Math.round(x * 10) / 10).toString().replace('.', ','); }
   function fmtPct(x) { return (Math.round(x * 1000) / 10).toFixed(1).replace('.', ',') + '%'; }
   function fmtReais(x) { var s = Math.round(Math.abs(x)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return (x < 0 ? '-R$ ' : 'R$ ') + s; }
   function fmtInt(x) { return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
   function limpar(s, max) { return String(s == null ? '' : s).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max || 200); }
   function achar(lista, id) { for (var i = 0; i < (lista || []).length; i++) if (lista[i].id === id) return lista[i]; return null; }
-  function bonusDesempenho(auc) { return Math.max(0, Math.min(15, Math.round((auc - 0.5) * 30))); }
+  function lim15(x) { return Math.max(0, Math.min(15, Math.round(x))); }
+  /* Bônus de desempenho: AUC (supervisionado) ou silhueta e nota do comitê (agrupamento). */
+  function bonusDesempenho(m, fase) {
+    if (!m) return 0;
+    if (m.tipo === 'agrupamento') {
+      if (fase === 'producao') return m.valorProducao == null ? 0 : lim15(m.valorProducao * 15);
+      return m.valorTreino == null ? 0 : lim15(m.valorTreino * 25);
+    }
+    return lim15(((fase === 'producao' ? m.aucProducao : m.aucValidacao) - 0.5) * 30);
+  }
+  function fmtMilhoes(v) {
+    if (v < 1) return 'R$ ' + Math.round(v * 1000) + ' mil';
+    if (v < 1000) { var r = Math.round(v); return 'R$ ' + r + (r === 1 ? ' milhão' : ' milhões'); }
+    return 'R$ ' + (Math.round(v / 100) / 10).toString().replace('.', ',') + ' bilhões';
+  }
 
   function create(opts) {
     var store = opts.store, casos = opts.casos, cfg = opts.config;
@@ -76,6 +91,9 @@ var ServerCore = (function () {
 
     /* ---------- Modelo simulado ---------- */
     function calcularModelo(caso, g) {
+      return caso._modelo.tipo === 'agrupamento' ? calcularAgrupamento(caso, g) : calcularSupervisionado(caso, g);
+    }
+    function calcularSupervisionado(caso, g) {
       var m = caso._modelo, cartas = itemPorTipo(caso, 'cartas'), merc = itemPorTipo(caso, 'mercado');
       var resp = (respostasDe(g, cartas.fase.id)[cartas.item.id]) || {};
       var honesto = m.aucBase, rv = 0, rp = 0, vaz = [], sens = [], ruido = [], usadas = [];
@@ -98,11 +116,74 @@ var ServerCore = (function () {
       var val = vaz.length ? m.vazamento.aucValidacao : lim(honesto + infl + rv);
       var prod = vaz.length ? lim(honesto - m.vazamento.quedaProducao + rp) : lim(honesto - m.drift + rp);
       return {
-        aucValidacao: val, aucProducao: prod, divisao: div || null,
+        tipo: 'supervisionado', metrica: 'AUC', base: div || null,
+        aucValidacao: val, aucProducao: prod, divisao: div || null, valorTreino: val, valorProducao: prod,
         acuracia: Stats.acuraciaPadrao(val, caso.simulador), acuraciaIngenua: 1 - caso.simulador.prevalencia,
         cenario: vaz.length ? 'vazamento' : 'drift', nFeatures: usadas.length,
-        flags: { vazamento: vaz, sensivel: sens, ruido: ruido, redes: redes }
+        flags: { vazamento: vaz, sensivel: sens, ruido: ruido, redes: redes, circular: [] }
       };
+    }
+
+    function calcularAgrupamento(caso, g) {
+      var m = caso._modelo, cartas = itemPorTipo(caso, 'cartas'), merc = itemPorTipo(caso, 'mercado'), lab = itemPorTipo(caso, 'agrupamento');
+      var resp = (respostasDe(g, cartas.fase.id)[cartas.item.id]) || {};
+      var ajuste = 0, circ = [], sens = [], ruido = [], usadas = [], redes = false;
+      cartas.item.cartas.forEach(function (c) {
+        var ag = resp[c.id] === 'agrupar';
+        if (ag) usadas.push(c.nome);
+        if (c._gabarito === 'agrupar' && !ag) ajuste -= (m.pesoCarta[c.id] != null ? m.pesoCarta[c.id] : m.pesoCarta.padrao);
+        if (ag && c._gabarito === 'descrever') circ.push(c.nome);
+        if (ag && c._gabarito === 'sensivel') sens.push(c.nome);
+        if (ag && c._gabarito === 'descartar') { ajuste += m.ruido; ruido.push(c.nome); }
+      });
+      if (merc) g.compras.forEach(function (id) {
+        var f = achar(merc.item.fontes, id);
+        if (f) { ajuste += f._gabarito.auc || 0; if (f._gabarito.flag === 'redes') redes = true; }
+      });
+      var base = respostasDe(g, lab.fase.id)[m.padroniza.item] || null;
+      var padronizado = m.padroniza.respostas.indexOf(base) >= 0;
+      var cenario = !padronizado ? 'escala' : (circ.length ? 'circular' : 'drift');
+      var fator = cenario === 'escala' ? 0.25 : 1, sil = {};
+      for (var k in m.silhueta[cenario]) sil[k] = Math.round(Math.min(0.95, Math.max(0.05, m.silhueta[cenario][k] + ajuste * fator)) * 100) / 100;
+      var k0 = (respostasDe(g, lab.fase.id)[lab.item.id] || {}).k;
+      var mod = {
+        tipo: 'agrupamento', metrica: 'Silhueta', base: base, cenario: cenario, silhuetas: sil, perfis: perfisAgrupamento(caso, cenario),
+        nFeatures: usadas.length, k: null, valorTreino: null, valorProducao: null,
+        flags: { vazamento: [], circular: circ, sensivel: sens, ruido: ruido, redes: redes }
+      };
+      if (k0) definirK(caso, mod, k0);
+      return mod;
+    }
+    function definirK(caso, mod, k) {
+      k = String(k);
+      if (!mod.silhuetas[k]) return;
+      mod.k = Number(k); mod.valorTreino = mod.silhuetas[k];
+      mod.valorProducao = caso._modelo.producao[mod.cenario];
+    }
+    function perfisAgrupamento(caso, cenario) {
+      var m = caso._modelo, ag = caso.agrupamento, out = {};
+      for (var k = ag.kMin; k <= ag.kMax; k++) {
+        if (cenario === 'escala') {
+          var o = m.orcamento, pesos = [], soma = 0, lista = [];
+          for (var i = 0; i < k; i++) { pesos.push(Math.pow(0.5, i)); soma += pesos[i]; }
+          var resto = ag.total;
+          for (i = 0; i < k; i++) {
+            var de = o.min * Math.pow(o.max / o.min, i / k), ate = o.min * Math.pow(o.max / o.min, (i + 1) / k);
+            var n = i === k - 1 ? resto : Math.round(ag.total * pesos[i] / soma); resto -= n;
+            lista.push({ nome: 'Faixa ' + (i + 1) + ' de orçamento', n: n,
+              tracos: ['Orçamento de ' + fmtMilhoes(de) + ' a ' + fmtMilhoes(ate), 'Partes interessadas, exposição regulatória e novidade quase não mudam de um grupo para outro'],
+              desvio: '+' + (17 + (i % 3)) + '%' });
+          }
+          out[k] = lista;
+        } else {
+          out[k] = (m.perfis[k] || []).map(function (p, i) {
+            var c = JSON.parse(JSON.stringify(p));
+            if (cenario === 'circular') c.tracos.unshift('Composição: ' + (84 + (i * 3) % 10) + '% dos projetos com porte ' + ['P', 'M', 'G'][i % 3]);
+            return c;
+          });
+        }
+      }
+      return out;
     }
 
     /* ---------- Pontuação ---------- */
@@ -122,6 +203,8 @@ var ServerCore = (function () {
           it.cartas.forEach(function (c) { if (r && r[c.id] === c._gabarito) pts += it.pontosPorCarta; });
         } else if (it.tipo === 'mercado') {
           g.compras.forEach(function (id) { var f = achar(it.fontes, id); if (f) pts += f._gabarito.pontos; });
+        } else if (it.tipo === 'agrupamento') {
+          if (g.modelo && r && r.k) pts = it._gabarito[String(r.k)] || 0;
         } else if (it.tipo === 'simulador') {
           if (g.modelo && r && r.pct) {
             var v = Stats.simular(g.modelo.aucValidacao, caso.simulador, Number(r.pct)).valor;
@@ -146,8 +229,10 @@ var ServerCore = (function () {
       if (rapido) g.pontos.velocidade += 2;
       var tituloFase = faseCaso(caso, faseId).titulo;
       if (faseId === 'f3' && g.modelo) {
-        g.pontos.desempenho = bonusDesempenho(g.modelo.aucValidacao);
-        if (g.modelo.aucValidacao >= 0.95) feed(glob, g.nome + ' treinou um modelo com AUC de ' + fmtAuc(g.modelo.aucValidacao) + '. Impressionante.', 'alta');
+        g.pontos.desempenho = bonusDesempenho(g.modelo, 'treino');
+        var vt = g.modelo.valorTreino;
+        if (g.modelo.tipo === 'agrupamento' && vt >= 0.7) feed(glob, g.nome + ' encontrou grupos com silhueta de ' + fmtAuc(vt) + '. Impressionante.', 'alta');
+        if (g.modelo.tipo !== 'agrupamento' && vt >= 0.95) feed(glob, g.nome + ' treinou um modelo com AUC de ' + fmtAuc(vt) + '. Impressionante.', 'alta');
       }
       feed(glob, automatico ? g.nome + ': ' + tituloFase + ' encerrada pelo tempo' : g.nome + ' enviou ' + tituloFase + (rapido ? ', com folga no relógio' : ''), automatico ? 'tempo' : 'envio');
       registrar({ tipo: 'envio', grupo: g.nome, codigo: g.codigo, caso: g.caso, fase: faseId, pontos: sc.total, respostas: resp, automatico: !!automatico });
@@ -161,6 +246,7 @@ var ServerCore = (function () {
 
     /* Em produção, os pontos da campanha passam a valer pelo resultado real (AUC de produção). */
     function campanha(caso, g) {
+      if (caso._modelo.tipo === 'agrupamento') return null;
       var sim = itemPorTipo(caso, 'simulador'), env = g.enviadas[sim ? sim.fase.id : ''];
       if (!sim || !env || !g.modelo) return null;
       var r = env.respostas[sim.item.id];
@@ -169,7 +255,15 @@ var ServerCore = (function () {
       return { item: sim.item, env: env, pct: pct, prometido: Stats.simular(g.modelo.aucValidacao, p, pct).valor, real: Stats.simular(g.modelo.aucProducao, p, pct).valor, otimoReal: Stats.otimo(g.modelo.aucProducao, p).valor };
     }
     function sim_fase(caso) { return itemPorTipo(caso, 'simulador').fase.id; }
+    /* Em produção, os pontos do agrupamento passam a valer pelo uso real das trilhas. */
+    function reavaliarAgrupamento(caso, g) {
+      var lab = itemPorTipo(caso, 'agrupamento'), env = g.enviadas[lab.fase.id];
+      if (!env || env.reavaliado || !g.modelo) return;
+      var fator = caso._modelo.fatorProducao[g.modelo.cenario], antes = env.det[lab.item.id] || 0, novo = Math.round(antes * fator);
+      env.det[lab.item.id] = novo; env.pontos += novo - antes; g.pontos[lab.fase.id] += novo - antes; env.reavaliado = true;
+    }
     function reavaliarCampanha(caso, g) {
+      if (caso._modelo.tipo === 'agrupamento') { reavaliarAgrupamento(caso, g); return null; }
       var c = campanha(caso, g);
       if (!c || c.env.reavaliado) return c;
       var novo = c.otimoReal > 0 ? Math.max(0, Math.round(c.item.pontosMax * c.real / c.otimoReal)) : 0;
@@ -218,9 +312,15 @@ var ServerCore = (function () {
                 linhas.push({ rotulo: 'Valor esperado por mês', valor: fmtReais(s.valor) });
               }
             } else linhas.push({ rotulo: 'Modelo', valor: 'Não treinado' });
+          } else if (it.tipo === 'agrupamento') {
+            var m = g.modelo;
+            if (m && m.k) {
+              linhas.push({ rotulo: 'Número de grupos', valor: m.k + ' grupos, silhueta de ' + fmtAuc(m.valorTreino) });
+              (m.perfis[m.k] || []).forEach(function (p) { linhas.push({ rotulo: p.nome + ' (' + fmtInt(p.n) + ')', valor: p.tracos.join('; ') + '. Desvio médio de prazo: ' + p.desvio }); });
+            } else linhas.push({ rotulo: 'Agrupamento', valor: 'Não executado' });
           }
         });
-        if (f.id === 'evento' && g.modelo) linhas.unshift({ rotulo: 'AUC em produção', valor: fmtAuc(g.modelo.aucProducao) });
+        if (f.id === 'evento' && g.modelo) { var rm = resumoModelo(g.modelo, true); linhas.unshift({ rotulo: rm.rotuloProducao, valor: rm.producao }); }
         secoes.push({ titulo: f.titulo, linhas: linhas });
       });
       return { grupo: g.nome, caso: caso.titulo, empresa: caso.empresa, secoes: secoes };
@@ -229,13 +329,31 @@ var ServerCore = (function () {
     function eventoVisao(caso, g) {
       if (!g.modelo || !caso._evento) return null;
       var ev = caso._evento[g.modelo.cenario];
+      var m = g.modelo, rm = resumoModelo(m, true);
       function sub(s) {
-        return s.replace('{aucValidacao}', fmtAuc(g.modelo.aucValidacao)).replace('{aucProducao}', fmtAuc(g.modelo.aucProducao))
-          .replace('{colunasVazamento}', g.modelo.flags.vazamento.join(', '));
+        return s.replace('{aucValidacao}', fmtAuc(m.aucValidacao || 0)).replace('{aucProducao}', fmtAuc(m.aucProducao || 0))
+          .replace('{valorTreino}', fmtAuc(m.valorTreino || 0)).replace('{valorProducao}', fmtAuc(m.valorProducao || 0))
+          .replace('{notaComite}', fmt1((m.valorProducao || 0) * 10))
+          .replace('{colunasVazamento}', m.flags.vazamento.join(', ')).replace('{colunasCirculares}', m.flags.circular.join(', '));
       }
       var c = campanha(caso, g);
-      return { titulo: ev.titulo, mensagem: sub(ev.mensagem), evidencias: ev.evidencias.map(sub), aucValidacao: g.modelo.aucValidacao, aucProducao: g.modelo.aucProducao,
+      return { titulo: ev.titulo, mensagem: sub(ev.mensagem), evidencias: ev.evidencias.map(sub),
+        antes: { rotulo: rm.rotuloTreino, valor: rm.treino }, depois: { rotulo: rm.rotuloProducao, valor: rm.producao },
         campanha: c ? { pct: c.pct, prometido: c.prometido, real: c.real } : null };
+    }
+
+    /* Textos curtos da métrica, iguais em todas as telas. */
+    function resumoModelo(m, comProducao) {
+      if (!m) return null;
+      if (m.tipo === 'agrupamento') return {
+        rotuloTreino: 'Silhueta dos grupos', treino: m.valorTreino == null ? 'sem agrupamento' : fmtAuc(m.valorTreino),
+        rotuloProducao: 'Nota do comitê para as trilhas', producao: comProducao && m.valorProducao != null ? fmt1(m.valorProducao * 10) + ' de 10' : null,
+        curtoTreino: m.valorTreino == null ? null : 'silhueta ' + fmtAuc(m.valorTreino), curtoProducao: comProducao && m.valorProducao != null ? 'comitê ' + fmt1(m.valorProducao * 10) + '/10' : null
+      };
+      return {
+        rotuloTreino: 'AUC no teste', treino: fmtAuc(m.aucValidacao), rotuloProducao: 'AUC em produção', producao: comProducao ? fmtAuc(m.aucProducao) : null,
+        curtoTreino: 'AUC ' + fmtAuc(m.aucValidacao), curtoProducao: comProducao ? 'AUC ' + fmtAuc(m.aucProducao) : null
+      };
     }
 
     function revelacaoGrupo(caso, g) {
@@ -262,6 +380,10 @@ var ServerCore = (function () {
               x.correta = String(o.pct).replace('.', ',') + '% (valor esperado de ' + fmtReais(o.valor) + ' por mês)';
               x.explicacao = 'Abordar mais clientes só compensa enquanto a precisão da lista paga o custo de cada abordagem.';
             }
+          } else if (it.tipo === 'agrupamento') {
+            x.sua = r && r.k ? r.k + ' grupos' + (g.modelo && g.modelo.cenario === 'escala' ? ', com as variáveis sem padronizar' : '') : 'Sem resposta';
+            x.correta = melhorOpcao(it._gabarito) + ' grupos, com as variáveis padronizadas';
+            x.explicacao = it._explicacao;
           } else if (it.tipo === 'texto') x.sua = limpar(r, 500);
           itens.push(x);
         });
@@ -276,6 +398,18 @@ var ServerCore = (function () {
       return gs;
     }
 
+    function visaoModelo(m, comProducao) {
+      if (!m) return null;
+      if (m.tipo === 'agrupamento') {
+        var v = { tipo: m.tipo, base: m.base, silhuetas: m.silhuetas, perfis: m.perfis, nFeatures: m.nFeatures, k: m.k, valorTreino: m.valorTreino };
+        if (comProducao) v.valorProducao = m.valorProducao;
+        return v;
+      }
+      var s = { tipo: 'supervisionado', base: m.base, aucValidacao: m.aucValidacao, acuracia: m.acuracia, acuraciaIngenua: m.acuraciaIngenua, divisao: m.divisao, nFeatures: m.nFeatures };
+      if (comProducao) s.aucProducao = m.aucProducao;
+      return s;
+    }
+
     function visaoGrupo(g, glob) {
       var caso = casos[g.caso], fid = FASES[glob.fase], gs = ranking(), pos = 0;
       for (var i = 0; i < gs.length; i++) if (gs[i].codigo === g.codigo) pos = i + 1;
@@ -283,11 +417,7 @@ var ServerCore = (function () {
       caso.fases.forEach(function (f) { (f.dicas || []).forEach(function (d) { if (g.dicas.indexOf(d.id) >= 0) dicas.push({ id: d.id, fase: f.id, titulo: d.titulo, texto: d._texto }); }); });
       var enviadas = {};
       for (var k in g.enviadas) enviadas[k] = { respostas: g.enviadas[k].respostas, pontos: g.enviadas[k].pontos, ts: g.enviadas[k].ts, automatico: g.enviadas[k].automatico, rapido: g.enviadas[k].rapido };
-      var modelo = null;
-      if (g.modelo) {
-        modelo = { aucValidacao: g.modelo.aucValidacao, acuracia: g.modelo.acuracia, acuraciaIngenua: g.modelo.acuraciaIngenua, divisao: g.modelo.divisao, nFeatures: g.modelo.nFeatures };
-        if (glob.fase >= 4) modelo.aucProducao = g.modelo.aucProducao;
-      }
+      var modelo = visaoModelo(g.modelo, glob.fase >= 4);
       return {
         agora: agora(), fase: glob.fase, faseId: fid, faseTitulo: TITULOS_FASE[glob.fase], prazo: glob.prazo,
         sorteio: glob.sorteio && glob.sorteio.codigo === g.codigo ? { membro: glob.sorteio.membro, ts: glob.sorteio.ts } : null,
@@ -312,7 +442,7 @@ var ServerCore = (function () {
           posicao: i + 1, nome: g.nome, caso: caso.titulo, setor: caso.setor, membros: g.membros.length, status: status,
           total: total(g), pontos: g.pontos, bonusCreditos: Math.floor(Math.max(0, g.creditos) / 10),
           online: online(g.codigo),
-          auc: g.modelo ? (glob.fase >= 4 ? { treino: g.modelo.aucValidacao, producao: g.modelo.aucProducao } : (g.enviadas.f3 ? { treino: g.modelo.aucValidacao } : null)) : null
+          metrica: g.modelo && g.enviadas.f3 ? (function () { var rm = resumoModelo(g.modelo, glob.fase >= 4); return { treino: rm.curtoTreino, producao: rm.curtoProducao }; })() : null
         };
       });
       var out = { agora: agora(), fase: glob.fase, faseTitulo: TITULOS_FASE[glob.fase], prazo: glob.prazo, grupos: grupos, feed: glob.feed.slice(-12) };
@@ -335,7 +465,7 @@ var ServerCore = (function () {
         return {
           codigo: g.codigo, nome: g.nome, caso: g.caso, casoTitulo: casos[g.caso].titulo, membros: g.membros, creditos: g.creditos,
           compras: g.compras, dicas: g.dicas, pontos: g.pontos, total: total(g), bonusCreditos: Math.floor(Math.max(0, g.creditos) / 10),
-          enviadas: g.enviadas, rascunhos: g.rascunhos, modelo: g.modelo, telemetria: g.telemetria,
+          enviadas: g.enviadas, rascunhos: g.rascunhos, modelo: g.modelo, resumo: resumoModelo(g.modelo, glob.fase >= 4), telemetria: g.telemetria,
           online: online(g.codigo), visto: store.get('v:' + g.codigo)
         };
       });
@@ -344,19 +474,25 @@ var ServerCore = (function () {
     }
 
     function exportar() {
-      var linhas = [], cols = ['Grupo', 'Código', 'Caso', 'Membros', 'Total', 'F1', 'F2', 'F3', 'Evento', 'Desempenho', 'Velocidade', 'Bônus créditos', 'Créditos restantes', 'AUC treino', 'AUC produção', 'Vazamento usado', 'Sensível usado', 'Comprou redes sociais', 'Saídas da aba', 'Tempo fora (min)', 'Colagens', 'Caracteres colados', 'Inserções grandes'];
-      var itensCols = [];
+      var linhas = [], cols = ['Grupo', 'Código', 'Caso', 'Membros', 'Total', 'F1', 'F2', 'F3', 'Evento', 'Desempenho', 'Velocidade', 'Bônus créditos', 'Créditos restantes', 'Métrica no treino', 'Métrica em produção', 'Vazamento usado', 'Agrupamento circular', 'Sensível usado', 'Comprou redes sociais', 'Saídas da aba', 'Tempo fora (min)', 'Colagens', 'Caracteres colados', 'Inserções grandes'];
       var primeiro = casos[cfg.grupos[0].caso];
-      primeiro.fases.forEach(function (f) { f.itens.forEach(function (it) { if (it.tipo === 'escolha' || it.tipo === 'texto' || it.tipo === 'simulador') { itensCols.push(it.id); cols.push(f.id + ' / ' + it.rotulo); } }); });
+      // Colunas por posição do item na fase, para casos diferentes caberem na mesma planilha
+      var posicoes = [];
+      primeiro.fases.forEach(function (f) { f.itens.forEach(function (it, i) { if (it.tipo !== 'cartas' && it.tipo !== 'mercado') { posicoes.push([f.id, i]); cols.push(f.id + ' / item ' + (i + 1)); } }); });
       ranking().forEach(function (g) {
         var caso = casos[g.caso], m = g.modelo, t = g.telemetria;
         var l = [g.nome, g.codigo, caso.titulo, g.membros.join('; '), total(g), g.pontos.f1, g.pontos.f2, g.pontos.f3, g.pontos.evento, g.pontos.desempenho, g.pontos.velocidade, Math.floor(Math.max(0, g.creditos) / 10), g.creditos,
-          m ? fmtAuc(m.aucValidacao) : '', m ? fmtAuc(m.aucProducao) : '', m ? m.flags.vazamento.join(', ') : '', m ? m.flags.sensivel.join(', ') : '', m && m.flags.redes ? 'sim' : 'não',
+          m ? resumoModelo(m, true).curtoTreino || '' : '', m ? resumoModelo(m, true).curtoProducao || '' : '', m ? m.flags.vazamento.join(', ') : '', m ? m.flags.circular.join(', ') : '', m ? m.flags.sensivel.join(', ') : '', m && m.flags.redes ? 'sim' : 'não',
           t.saidas, Math.round(t.tempoForaMs / 6000) / 10, t.colagens, t.charsColados, t.insercoesGrandes];
-        itensCols.forEach(function (id) {
-          var v = '';
-          caso.fases.forEach(function (f) { var it = achar(f.itens, id); if (!it) return; var r = respostasDe(g, f.id)[id];
-            if (it.tipo === 'escolha') v = textoOpcao(it, r) || ''; else if (it.tipo === 'texto') v = limpar(r, 500); else if (it.tipo === 'simulador') v = r && r.pct ? r.pct + '%' : ''; });
+        posicoes.forEach(function (pos) {
+          var f = faseCaso(caso, pos[0]), it = f && f.itens[pos[1]], v = '';
+          if (it) {
+            var r = respostasDe(g, f.id)[it.id];
+            if (it.tipo === 'escolha') v = it.rotulo + ': ' + (textoOpcao(it, r) || '');
+            else if (it.tipo === 'texto') v = limpar(r, 500);
+            else if (it.tipo === 'simulador') v = r && r.pct ? 'Abordar ' + r.pct + '%' : '';
+            else if (it.tipo === 'agrupamento') v = r && r.k ? r.k + ' grupos' : '';
+          }
           l.push(v);
         });
         linhas.push(l);
@@ -445,13 +581,19 @@ var ServerCore = (function () {
         if (req.respostas && typeof req.respostas === 'object') g.rascunhos.f3 = req.respostas;
         g.modelo = calcularModelo(caso, g);
         salvarGrupo(g);
-        var m = g.modelo;
-        return { ok: true, modelo: { aucValidacao: m.aucValidacao, acuracia: m.acuracia, acuraciaIngenua: m.acuraciaIngenua, divisao: m.divisao, nFeatures: m.nFeatures } };
+        return { ok: true, modelo: visaoModelo(g.modelo, false) };
       },
-      placar: function () { return visaoPlacar(lerGlobal()); },
 
       /* Professor */
       prof_estado: function () { return visaoProfessor(lerGlobal()); },
+      prof_placar: function () { return visaoPlacar(lerGlobal()); },
+      prof_grupo: function (req) {
+        var g = lerGrupo(req.codigo);
+        if (!g) throw new Error('Este grupo ainda não entrou no jogo.');
+        var v = visaoGrupo(g, lerGlobal());
+        v.espiando = true;
+        return v;
+      },
       prof_fase: function (req) {
         var glob = lerGlobal(), antiga = glob.fase, nova = Math.max(0, Math.min(6, parseInt(req.fase, 10) || 0));
         if (nova === antiga) return visaoProfessor(glob);
@@ -466,12 +608,21 @@ var ServerCore = (function () {
         if (fNova === 'pitch') { glob.sorteio = null; glob.projetar = null; }
         feed(glob, 'Fase aberta: ' + TITULOS_FASE[nova], 'fase');
         if (fNova === 'evento') gs.forEach(function (g) {
-          if (!g.modelo) g.modelo = calcularModelo(casos[g.caso], g);
-          g.pontos.desempenho = bonusDesempenho(g.modelo.aucProducao);
-          var camp = reavaliarCampanha(casos[g.caso], g);
-          var txt = g.nome + ': em produção, a AUC ' + (g.modelo.aucValidacao - g.modelo.aucProducao >= 0.15 ? 'despencou' : 'caiu') + ' de ' + fmtAuc(g.modelo.aucValidacao) + ' para ' + fmtAuc(g.modelo.aucProducao);
-          if (camp && camp.real < 0) txt += ' e a campanha passou a dar prejuízo';
-          feed(glob, txt, g.modelo.aucValidacao - g.modelo.aucProducao >= 0.15 ? 'queda' : 'drift');
+          var caso = casos[g.caso];
+          if (!g.modelo) g.modelo = calcularModelo(caso, g);
+          g.pontos.desempenho = bonusDesempenho(g.modelo, 'producao');
+          var camp = reavaliarCampanha(caso, g), m = g.modelo, txt, tipo;
+          if (m.tipo === 'agrupamento') {
+            tipo = m.cenario === 'drift' ? 'drift' : 'queda';
+            txt = m.cenario === 'escala' ? g.nome + ': as trilhas eram só faixas de orçamento. O comitê deu nota ' + fmt1(m.valorProducao * 10) + ' de 10'
+              : m.cenario === 'circular' ? g.nome + ': os grupos repetiram o P, M e G. O comitê deu nota ' + fmt1(m.valorProducao * 10) + ' de 10'
+              : g.nome + ': as trilhas funcionaram, mas projetos novos não cabem em nenhum grupo';
+          } else {
+            tipo = m.aucValidacao - m.aucProducao >= 0.15 ? 'queda' : 'drift';
+            txt = g.nome + ': em produção, a AUC ' + (tipo === 'queda' ? 'despencou' : 'caiu') + ' de ' + fmtAuc(m.aucValidacao) + ' para ' + fmtAuc(m.aucProducao);
+            if (camp && camp.real < 0) txt += ' e a campanha passou a dar prejuízo';
+          }
+          feed(glob, txt, tipo);
           salvarGrupo(g);
         });
         salvarGlobal(glob);
@@ -518,7 +669,7 @@ var ServerCore = (function () {
         var a = acoes[req.acao];
         if (!a) throw new Error('Ação desconhecida.');
         if (req.acao.indexOf('prof_') === 0 && !senhaConfere(req.chave, cfg.chaveProfessor)) throw new Error('Senha do professor incorreta.');
-        var leitura = req.acao === 'placar' || req.acao === 'estado' || req.acao === 'prof_estado' || req.acao === 'prof_exportar';
+        var leitura = { estado: 1, prof_estado: 1, prof_placar: 1, prof_grupo: 1, prof_exportar: 1 }[req.acao];
         return leitura ? a(req) : comTrava(function () { return a(req); });
       } catch (e) {
         return { erro: e && e.message ? e.message : String(e) };

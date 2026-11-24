@@ -1,7 +1,9 @@
 /* Tela do grupo */
 (function () {
   var C = Comum, el = C.el;
-  var CHAVE = 'desafios.sessao';
+  /* Na visão do professor (professor/grupo.html), a mesma tela abre em modo só leitura. */
+  var ESPIAR = !!window.DESAFIOS_ESPIAR, chaveProf = null;
+  var CHAVE = 'desafios.sessao' + (window.name && window.name.indexOf('espiar') !== 0 ? '.' + window.name : '');
   var sessao = null, caso = null, est = null, chaveTela = '', locais = {}, raiz = null;
   var nos = {}, salvarTimer = null, pollTimer = null, selecionada = null;
   var tel = { saidas: 0, tempoForaMs: 0, colagens: 0, charsColados: 0, insercoesGrandes: 0 }, foraDesde = null;
@@ -30,7 +32,7 @@
       }
     },
       el('h1', { texto: 'Desafios de IA' }),
-      el('p.sub', { texto: 'Machine learning supervisionado. Cada grupo recebe um caso diferente.' }),
+      el('p.sub', { texto: 'Machine learning na prática. Cada grupo recebe um caso diferente.' }),
       msg,
       el('label.campo', null, el('span', { texto: 'Código do grupo' }), codigo),
       el('fieldset.campo.membros-lista', { style: 'border:0;padding:0;margin:0 0 1rem' }, el('legend', { style: 'font-weight:700;margin-bottom:.3rem', texto: 'Integrantes do grupo (até 10)' }), el('div.membros-grade', null, campos)),
@@ -47,13 +49,13 @@
     return C.carregarCaso(sessao.caso).then(function (c) {
       caso = c;
       montarEsqueleto();
-      instalarProtecao();
+      if (!ESPIAR) instalarProtecao();
       return atualizar();
     }).then(function () {
       clearInterval(pollTimer);
       pollTimer = setInterval(atualizar, 5000);
       setInterval(tique, 1000);
-      setInterval(function () { if (temTelemetria()) salvarAgora(); }, 20000);
+      if (!ESPIAR) setInterval(function () { if (temTelemetria()) salvarAgora(); }, 20000);
     });
   }
 
@@ -63,7 +65,7 @@
     nos.creditos = el('b'); nos.pontos = el('b'); nos.posicao = el('small');
     nos.trilha = el('ol.trilha', null, caso.fases.map(function (f, i) { return el('li', { dados: { fase: f.id } }, el('b', { texto: i + 1 }), f.curto || f.titulo); }));
     var topo = el('header.topo', null,
-      el('div.topo-caso', null, el('strong', { texto: caso.titulo }), el('small', { texto: sessao.nome + ', ' + caso.empresa })),
+      el('div.topo-caso', null, el('strong', { texto: caso.titulo }), el('small', { texto: (ESPIAR ? 'Visão do professor: ' : '') + sessao.nome + ', ' + caso.empresa })),
       nos.trilha,
       el('div.topo-status', null,
         el('div.medidor', null, nos.creditos, el('small', { texto: 'créditos' })),
@@ -75,7 +77,7 @@
     nos.missao = el('main.missao', { id: 'missao' });
     nos.palco = el('div.palco', null, dossie, nos.missao);
     nos.rodape = el('div.rodape-envio.oculto');
-    var textoMarca = sessao.nome + '   ' + sessao.codigo, marcas = [];
+    var textoMarca = ESPIAR ? 'Visão do professor' : sessao.nome + '   ' + sessao.codigo, marcas = [];
     for (var i = 0; i < 90; i++) marcas.push(el('span', { texto: textoMarca }));
     raiz.appendChild(el('div.protegido', null, topo, nos.palco, nos.rodape));
     raiz.appendChild(el('div.marca-dagua', { 'aria-hidden': 'true' }, el('div', null, marcas)));
@@ -88,7 +90,9 @@
 
   function renderBriefing() {
     var b = caso.briefing;
+    var img = C.urlImagem(caso);
     return el('div', null,
+      img ? el('img.dossie-img', { src: img, alt: '' }) : null,
       el('h2', { texto: 'Dossiê' }),
       el('article.email', null,
         el('div.email-cab', null, el('div', null, 'De: ', el('b', { texto: b.remetente }), ', ' + b.cargo), el('div', null, 'Assunto: ', el('b', { texto: b.assunto }))),
@@ -97,15 +101,18 @@
   }
 
   function atualizar() {
-    return C.chamar('estado', { codigo: sessao.codigo }).then(function (r) {
+    var pedido = ESPIAR ? C.chamar('prof_grupo', { chave: chaveProf, codigo: sessao.codigo }) : C.chamar('estado', { codigo: sessao.codigo });
+    return pedido.then(function (r) {
       est = r; C.sincronizar(r.agora);
       pintarTopo(); pintarDicas();
       var fid = r.faseId, env = r.grupo.enviadas[fid];
-      if (!locais[fid] && r.grupo.rascunhos[fid]) locais[fid] = JSON.parse(JSON.stringify(r.grupo.rascunhos[fid]));
+      if (!ESPIAR && !locais[fid] && r.grupo.rascunhos[fid]) locais[fid] = JSON.parse(JSON.stringify(r.grupo.rascunhos[fid]));
       var chave = [r.fase, env ? 'e' : 'a', r.sorteio ? r.sorteio.ts : '', r.ficha ? 'f' : '', r.revelacao ? 'r' : ''].join('|');
+      if (ESPIAR) chave += JSON.stringify([r.grupo.rascunhos[fid], r.grupo.compras, r.grupo.modelo]);
       if (chave !== chaveTela) { chaveTela = chave; renderTela(); }
     }).catch(function (e) {
-      if (/Entre no jogo|não encontrado/.test(e.message)) { C.guardar(CHAVE, null); clearInterval(pollTimer); telaEntrada(e.message); }
+      if (ESPIAR) C.toast(e.message, true);
+      else if (/Entre no jogo|não encontrado/.test(e.message)) { C.guardar(CHAVE, null); clearInterval(pollTimer); telaEntrada(e.message); }
       else C.toast('Sem conexão com o servidor. Tentando de novo...', true);
     });
   }
@@ -149,6 +156,8 @@
   }
 
   function renderEspera(m) {
+    var img = C.urlImagem(caso);
+    if (img) m.appendChild(el('img.capa-caso', { src: img, alt: 'Ilustração do caso ' + caso.titulo }));
     m.appendChild(el('div.missao-cab', null,
       el('h1', { texto: 'Bem-vindos, ' + sessao.nome }),
       el('p.missao-texto', { texto: 'O professor ainda não abriu a primeira fase. Aproveitem para ler o dossiê ao lado: os detalhes fazem diferença.' })));
@@ -162,19 +171,23 @@
 
   function respostasDaFase(fid) {
     if (est.grupo.enviadas[fid]) return est.grupo.enviadas[fid].respostas || {};
+    if (ESPIAR) return JSON.parse(JSON.stringify(est.grupo.rascunhos[fid] || {}));
     if (!locais[fid]) locais[fid] = {};
     return locais[fid];
   }
 
   function renderFase(m, fase) {
-    var env = est.grupo.enviadas[fase.id], R = respostasDaFase(fase.id), travado = !!env;
+    var env = est.grupo.enviadas[fase.id], R = respostasDaFase(fase.id), travado = ESPIAR || !!env;
     var cab = el('div.missao-cab', null, el('h1', { texto: fase.titulo }), el('p.missao-texto', { texto: fase.missao }));
     m.appendChild(cab);
     if (env) m.appendChild(el('div.selado', { role: 'status' },
       el('b', { texto: env.automatico ? 'Fase encerrada pelo tempo: ' + env.pontos + ' pontos.' : 'Fase enviada: ' + env.pontos + ' pontos' + (env.rapido ? ', mais 2 pela folga no relógio.' : '.') }),
       el('div', { texto: 'Aguardem o professor abrir a próxima fase.' })));
+    if (ESPIAR && !env) m.appendChild(el('div.selado', { style: 'border-left-color:var(--marca)' }, el('b', { texto: 'Visão do professor' }), el('div', { texto: 'Rascunho atual do grupo, atualizado a cada 5 segundos. Nada aqui pode ser alterado.' })));
     if (fase.id === 'evento' && est.evento) m.appendChild(renderAlertaProducao(est.evento));
     if (!travado && fase.dicas && fase.dicas.length) cab.appendChild(renderDicasFase(fase));
+    if (fase.explicacao) m.appendChild(el('section.passos', null, el('h2', { texto: fase.explicacao.titulo }),
+      el('ol', null, fase.explicacao.passos.map(function (p) { return el('li', null, el('b', { texto: p.titulo }), el('span', { texto: p.texto })); }))));
     var corpo = el('div' + (travado ? '.travado' : ''));
     fase.itens.forEach(function (it) { corpo.appendChild(renderItem(it, R, travado, fase)); });
     m.appendChild(corpo);
@@ -216,11 +229,13 @@
   function renderItem(it, R, travado, fase) {
     var bloco = el('section.item', { dados: { item: it.id } });
     bloco.appendChild(el('div.item-enunciado', { texto: it.enunciado }));
+    if (it.entenda) bloco.appendChild(el('details.entenda', { open: !travado }, el('summary', { texto: 'Entenda antes de responder' }), el('p', { texto: it.entenda })));
     if (it.tipo === 'escolha') bloco.appendChild(renderEscolha(it, R, travado));
     else if (it.tipo === 'texto') bloco.appendChild(renderTexto(it, R, travado));
     else if (it.tipo === 'cartas') { nos.mesa = el('div.mesa'); bloco.appendChild(nos.mesa); pintarMesa(it, R, travado); }
     else if (it.tipo === 'mercado') { nos.mercado = el('div'); bloco.appendChild(nos.mercado); pintarMercado(it, travado); }
     else if (it.tipo === 'simulador') { nos.lab = el('div.lab'); bloco.appendChild(nos.lab); nos.labFn = function () { pintarLab(it, R, travado, fase); }; nos.labFn(); }
+    else if (it.tipo === 'agrupamento') { nos.lab = el('div.lab'); bloco.appendChild(nos.lab); nos.labFn = function () { pintarAgrupamento(it, R, travado, fase); }; nos.labFn(); }
     return bloco;
   }
 
@@ -384,71 +399,155 @@
     })));
   }
 
-  /* Laboratório de treino */
-  function pintarLab(it, R, travado, fase) {
-    var lab = C.limpar(nos.lab), m = est.grupo.modelo, sim = caso.simulador;
-    var div = itemDivisao(fase);
-    var desatualizado = m && div && R[div.id] && m.divisao !== R[div.id];
-    var treinar = el('button.btn.btn-forte', { type: 'button', texto: m ? 'Treinar de novo' : 'Treinar modelo', disabled: travado });
-    treinar.addEventListener('click', function () {
-      if (div && !R[div.id]) { C.toast('Escolham primeiro como separar os dados.', true); return; }
-      treinar.disabled = true; treinar.textContent = 'Treinando...';
+  /* ---------- Laboratórios ---------- */
+  function itemBase(fase) {
+    var lab = fase.itens.filter(function (i) { return i.tipo === 'simulador' || i.tipo === 'agrupamento'; })[0];
+    if (!lab || !lab.dependeDe) return null;
+    return fase.itens.filter(function (i) { return i.id === lab.dependeDe; })[0] || null;
+  }
+  function botaoRodar(R, travado, texto, textoRodando, base, msgFalta) {
+    var b = el('button.btn.btn-forte', { type: 'button', texto: texto, disabled: travado });
+    b.addEventListener('click', function () {
+      if (base && !R[base.id]) { C.toast(msgFalta, true); return; }
+      b.disabled = true; b.textContent = textoRodando;
       C.chamar('treinar', { codigo: sessao.codigo, respostas: R }).then(function (r) {
-        est.grupo.modelo = r.modelo; pintarLab(it, R, travado, fase); atualizarRodape();
-      }).catch(function (e) { C.toast(e.message, true); treinar.disabled = false; treinar.textContent = 'Treinar modelo'; });
+        est.grupo.modelo = r.modelo; if (nos.labFn) nos.labFn(); atualizarRodape();
+      }).catch(function (e) { C.toast(e.message, true); b.disabled = false; b.textContent = texto; });
     });
+    return b;
+  }
+  function pct(x, casas) { return C.fmtPct(x, casas == null ? 1 : casas); }
+  function cabLab(titulo, botao) {
+    return el('div.lab-cab', null, el('h3', { texto: titulo }), botao);
+  }
+  /* Régua com faixas de leitura (ex.: fraco, bom, muito bom) e um marcador no valor */
+  function escala(valor, min, max, faixas) {
+    function x(v) { return Math.max(0, Math.min(100, (v - min) / (max - min) * 100)); }
+    var trilho = el('div.escala-trilho', null, faixas.map(function (f, i) {
+      var fim = i + 1 < faixas.length ? faixas[i + 1][0] : max;
+      return el('div.escala-faixa', { style: 'left:' + x(f[0]) + '%;width:' + (x(fim) - x(f[0])) + '%' }, el('span', { texto: f[1] }));
+    }), el('div.escala-marca', { style: 'left:' + x(valor) + '%' }, el('b', { texto: C.fmtAuc(valor) })));
+    return el('div.escala', { 'aria-hidden': 'true' }, trilho,
+      el('div.escala-pontas', null, el('span', { texto: C.fmtAuc(min) }), el('span', { texto: C.fmtAuc(max) })));
+  }
+
+  /* Supervisionado: treino, leitura da AUC e decisão da campanha */
+  function pintarLab(it, R, travado, fase) {
+    var lab = C.limpar(nos.lab), m = est.grupo.modelo, sim = caso.simulador, t = sim.termos;
+    var base = itemBase(fase), desatualizado = m && base && R[base.id] && m.base !== R[base.id];
+    var treinar = botaoRodar(R, travado, m ? 'Treinar de novo' : 'Treinar o modelo', 'Treinando...', base, 'Escolham primeiro como separar os dados.');
     if (!m) {
-      lab.appendChild(el('p', { texto: 'O modelo é treinado com as colunas que vocês classificaram como feature, os dados externos comprados e a divisão escolhida acima.' }));
+      lab.appendChild(el('p', { texto: 'O modelo vai aprender com as colunas que vocês colocaram em "Usar como feature" e com os dados externos comprados, separando treino e teste do jeito escolhido acima. O resultado aparece aqui, com a explicação de cada número.' }));
       if (!travado) lab.appendChild(treinar);
       return;
     }
-    var bonus = Math.max(0, Math.min(15, Math.round((m.aucValidacao - 0.5) * 30)));
-    lab.appendChild(el('div', { style: 'display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap' },
-      el('h3', { style: 'margin:0', texto: 'Resultado do treino (' + m.nFeatures + ' features)' }), travado ? null : treinar));
+    lab.appendChild(cabLab('Resultado do treino, com ' + m.nFeatures + ' features', travado ? null : treinar));
     if (desatualizado) lab.appendChild(el('div.aviso', { texto: 'Vocês mudaram a divisão dos dados depois do treino. Treinem de novo antes de enviar.' }));
-    lab.appendChild(el('div.lab-placar', null,
-      el('div.lab-num', null, el('b', { texto: C.fmtAuc(m.aucValidacao) }), el('small', { texto: 'AUC no conjunto de teste' })),
-      el('div.lab-num', null, el('b', { texto: C.fmtPct(m.acuracia) }), el('small', { texto: 'acurácia do modelo' })),
-      el('div.lab-num', null, el('b', { texto: C.fmtPct(m.acuraciaIngenua) }), el('small', { texto: 'acurácia de quem responde "ninguém sai", sem modelo nenhum' }))));
-    lab.appendChild(el('p', { style: 'font-size:.9rem;color:var(--grafite)', texto: 'Este resultado vale um bônus provisório de ' + bonus + ' pontos no placar (máximo de 15).' }));
+    var auc = m.aucValidacao, p100 = Math.round(auc * 100);
+    lab.appendChild(el('div.lab-bloco', null,
+      el('div.lab-num', null, el('b', { texto: C.fmtAuc(auc) }), el('small', { texto: 'AUC no conjunto de teste' })),
+      el('div', null,
+        escala(auc, 0.5, 1, [[0.5, 'fraco'], [0.6, 'razoável'], [0.7, 'bom'], [0.85, 'muito bom'], [0.92, 'excepcional']]),
+        el('p', { texto: 'Como ler: sorteando um cliente que ' + t.passado + ' e um que ' + t.passadoNeg + ', em ' + p100 + ' de cada 100 sorteios o modelo dá nota de risco maior a quem ' + t.passado + '. AUC 0,5 é o mesmo que tirar cara ou coroa; 1,0 é acertar sempre.' }))));
+    lab.appendChild(el('div.lab-bloco', null,
+      el('div.lab-num', null, el('b', { texto: pct(m.acuracia) }), el('small', { texto: 'acurácia do modelo' })),
+      el('p', { texto: 'O modelo acerta ' + pct(m.acuracia) + ' dos ' + t.unidade + '. Parece ótimo, mas compare: quem simplesmente dissesse que ninguém ' + t.verbo + ' acertaria ' + pct(m.acuraciaIngenua) + ', sem modelo nenhum, porque só ' + pct(sim.prevalencia, 0) + ' ' + t.verboPlural + '. Quando um dos lados é raro, a acurácia engana.' })));
+    var bonus = Math.max(0, Math.min(15, Math.round((auc - 0.5) * 30)));
+    lab.appendChild(el('p.lab-nota', { texto: 'Este resultado vale um bônus provisório de ' + bonus + ' pontos no placar (máximo de 15).' }));
+
+    lab.appendChild(el('h3', { style: 'margin-top:1.5rem', texto: 'Quantos ' + t.unidade + ' a campanha vai alcançar por mês' }));
+    lab.appendChild(el('p', { texto: 'O modelo coloca os ' + C.fmtInt(sim.baseClientes) + ' ' + t.unidade + ' numa fila, do maior para o menor risco. A régua decide até onde da fila a campanha vai. Quanto mais à direita, mais ' + t.unidade + ' que ' + t.positivos + ' a campanha encontra, e mais dinheiro gasta com quem ' + t.negativos + '.' }));
     var val = R[it.id] && R[it.id].pct ? Number(R[it.id].pct) : null;
     var leitura = el('b'), detalhe = el('div');
-    var regua = el('input', { type: 'range', min: sim.minPct, max: sim.maxPct, step: 0.5, value: val || sim.minPct, disabled: travado, 'aria-label': 'Percentual de clientes a ' + sim.rotuloAcao });
+    var regua = el('input', { type: 'range', min: sim.minPct, max: sim.maxPct, step: 0.5, value: val || sim.minPct, disabled: travado, 'aria-label': 'Percentual da fila que a campanha alcança' });
     function pintar() {
-      var pct = Number(regua.value), s = Stats.simular(m.aucValidacao, sim, pct);
-      leitura.textContent = String(pct).replace('.', ',') + '%';
+      var p = Number(regua.value), s = Stats.simular(auc, sim, p), alcancados = s.vp + s.fp;
+      leitura.textContent = String(p).replace('.', ',') + '% da fila';
       C.limpar(detalhe).appendChild(el('div', null,
+        el('p.narrativa', null, 'Indo até ' + String(p).replace('.', ',') + '% da fila, a campanha alcança ', el('b', { texto: C.fmtInt(alcancados) + ' ' + t.unidade }), ' por mês. Destes, ',
+          el('b', { texto: C.fmtInt(s.vp) }), ' ' + t.positivos + ' e ', el('b', { texto: C.fmtInt(s.fp) }), ' ' + t.negativos + '. Outros ', el('b', { texto: C.fmtInt(s.fn) }), ' que ' + t.positivos + ' ficaram fora da campanha.'),
         el('div.matriz', null,
-          el('div.mh'), el('div.mh', { texto: 'Fugiu de verdade' }), el('div.mh', { texto: 'Não fugiu' }),
-          el('div.mh', { texto: 'Abordado' }), el('div.acerto', null, el('b', { texto: C.fmtInt(s.vp) }), 'verdadeiros positivos'), el('div.erro', null, el('b', { texto: C.fmtInt(s.fp) }), 'falsos positivos'),
-          el('div.mh', { texto: 'Não abordado' }), el('div.erro', null, el('b', { texto: C.fmtInt(s.fn) }), 'falsos negativos'), el('div.acerto', null, el('b', { texto: C.fmtInt(s.vn) }), 'verdadeiros negativos')),
+          el('div.mh'), el('div.mh', { texto: 'Na realidade, ' + t.positivos }), el('div.mh', { texto: 'Na realidade, ' + t.negativos }),
+          el('div.mh', { texto: 'Alcançados' }),
+          el('div.acerto', null, el('b', { texto: C.fmtInt(s.vp) }), t.vp, el('small', { texto: 'verdadeiro positivo' })),
+          el('div.erro', null, el('b', { texto: C.fmtInt(s.fp) }), t.fp, el('small', { texto: 'falso positivo' })),
+          el('div.mh', { texto: 'Fora da campanha' }),
+          el('div.erro', null, el('b', { texto: C.fmtInt(s.fn) }), t.fn, el('small', { texto: 'falso negativo' })),
+          el('div.acerto', null, el('b', { texto: C.fmtInt(s.vn) }), t.vn, el('small', { texto: 'verdadeiro negativo' }))),
         el('div.contas', null,
-          el('div', null, el('b', { texto: C.fmtPct(s.precisao) }), el('small', { texto: 'precisão: dos abordados, quantos iam fugir' })),
-          el('div', null, el('b', { texto: C.fmtPct(s.recall) }), el('small', { texto: 'recall: dos que iam fugir, quantos foram abordados' })),
-          el('div', null, el('b', { texto: C.fmtReais(s.custo) }), el('small', { texto: 'custo da campanha por mês' })),
-          el('div', null, el('b', { texto: C.fmtReais(s.receitaSalva) }), el('small', { texto: 'margem anual dos clientes salvos' })),
-          el('div.destaque', null, el('b', { texto: C.fmtReais(s.valor) }), el('small', { texto: 'valor esperado por mês' })))));
+          el('div', null, el('b', { texto: pct(s.precisao, 0) }), el('span', { texto: 'Precisão' }), el('small', { texto: 'De cada 100 alcançados, ' + Math.round(s.precisao * 100) + ' ' + t.positivos + '.' })),
+          el('div', null, el('b', { texto: pct(s.recall, 0) }), el('span', { texto: 'Recall' }), el('small', { texto: 'De cada 100 que ' + t.positivos + ', a campanha alcança ' + Math.round(s.recall * 100) + '.' })),
+          el('div', null, el('b', { texto: C.fmtReais(s.custo) }), el('span', { texto: 'Custo por mês' }), el('small', { texto: C.fmtInt(alcancados) + ' alcançados × ' + C.fmtReais(sim.custoAcao) + ', acertando ou não.' })),
+          el('div', null, el('b', { texto: C.fmtReais(s.receitaSalva) }), el('span', { texto: 'Margem salva' }), el('small', { texto: Math.round(sim.taxaSalvamento * 100) + '% dos ' + C.fmtInt(s.vp) + ' acertos aceitam a oferta: ' + C.fmtInt(s.salvos) + ' ' + t.unidade + ' × ' + C.fmtReais(sim.valorCliente) + '.' })),
+          el('div.destaque', null, el('b', { texto: C.fmtReais(s.valor) }), el('span', { texto: 'Valor esperado por mês' }), el('small', { texto: 'Margem salva menos o custo da campanha.' })))));
     }
     regua.addEventListener('input', function () { R[it.id] = { pct: Number(regua.value) }; pintar(); mudou(); });
-    lab.appendChild(el('div.regua', null,
-      el('div.regua-leitura', null, el('span', { texto: 'Clientes a ' + sim.rotuloAcao + ', por mês, do maior para o menor risco' }), leitura), regua));
-    var dicaRegua = !val && !travado ? el('div.contador', { style: 'text-align:left', texto: 'Movam a régua para escolher o percentual.' }) : null;
+    lab.appendChild(el('div.regua', null, el('div.regua-leitura', null, el('span', { texto: 'Até onde da fila a campanha vai' }), leitura), regua,
+      el('div.regua-pontas', null, el('span', { texto: 'Só os de maior risco' }), el('span', { texto: 'Muita gente' }))));
+    var dicaRegua = !val && !travado ? el('div.contador', { style: 'text-align:left', texto: 'Movam a régua para escolher.' }) : null;
     if (dicaRegua) { lab.appendChild(dicaRegua); regua.addEventListener('input', function () { dicaRegua.remove(); }, { once: true }); }
     lab.appendChild(detalhe);
     pintar();
   }
-  function itemDivisao(fase) {
-    var sim = fase.itens.filter(function (i) { return i.tipo === 'simulador'; })[0];
-    if (!sim || !sim.divisaoItem) return null;
-    return fase.itens.filter(function (i) { return i.id === sim.divisaoItem; })[0] || null;
+
+  /* Agrupamento: silhueta por número de grupos e perfil de cada grupo */
+  function pintarAgrupamento(it, R, travado, fase) {
+    var lab = C.limpar(nos.lab), m = est.grupo.modelo, ag = caso.agrupamento;
+    var base = itemBase(fase), desatualizado = m && base && R[base.id] && m.base !== R[base.id];
+    var rodar = botaoRodar(R, travado, m ? 'Rodar de novo' : 'Rodar o agrupamento', 'Agrupando...', base, 'Escolham primeiro como preparar as variáveis.');
+    if (!m) {
+      lab.appendChild(el('p', { texto: 'O algoritmo vai usar as colunas que vocês colocaram em "Usar para agrupar" e os dados externos comprados, preparados do jeito escolhido acima. Ele vai dividir os ' + C.fmtInt(ag.total) + ' ' + ag.itens + ' em ' + ag.kMin + ', ' + (ag.kMin + 1) + ', até ' + ag.kMax + ' grupos, e mostrar cada resultado.' }));
+      if (!travado) lab.appendChild(rodar);
+      return;
+    }
+    lab.appendChild(cabLab('Resultado do agrupamento, com ' + m.nFeatures + ' variáveis', travado ? null : rodar));
+    if (desatualizado) lab.appendChild(el('div.aviso', { texto: 'Vocês mudaram a preparação das variáveis depois de rodar. Rodem de novo antes de enviar.' }));
+    var atual = R[it.id] && R[it.id].k ? Number(R[it.id].k) : null;
+    var barras = el('div.barras-k'), perfis = el('div'), leitura = el('b'), nota = el('p.lab-nota');
+    var regua = el('input', { type: 'range', min: ag.kMin, max: ag.kMax, step: 1, value: atual || ag.kMin, disabled: travado, 'aria-label': 'Número de grupos' });
+    function pintar() {
+      var k = Number(regua.value), sil = m.silhuetas[k];
+      leitura.textContent = k + ' grupos';
+      C.limpar(barras);
+      for (var i = ag.kMin; i <= ag.kMax; i++) {
+        var v = m.silhuetas[i];
+        barras.appendChild(el('div.barra-k' + (i === k ? '.atual' : ''), null, el('span', { texto: i + ' grupos' }),
+          el('div.barra-k-trilho', null, el('i', { style: 'width:' + Math.max(2, v * 100) + '%' })), el('b', { texto: C.fmtAuc(v) })));
+      }
+      C.limpar(perfis).appendChild(el('div.perfis', null, (m.perfis[k] || []).map(function (p) {
+        return el('article.perfil', null, el('b', { texto: p.nome }),
+          el('div.perfil-n', null, el('i', { style: 'width:' + (p.n / ag.total * 100) + '%' }), el('span', { texto: C.fmtInt(p.n) + ' ' + ag.itens + ' (' + Math.round(p.n / ag.total * 100) + '%)' })),
+          el('ul', null, p.tracos.map(function (x) { return el('li', { texto: x }); })),
+          el('div.perfil-comp', null, ag.rotuloComparacao + ': ', el('b', { texto: p.desvio })));
+      })));
+      nota.textContent = 'Com ' + k + ' grupos, a silhueta é ' + C.fmtAuc(sil) + '. Este resultado vale um bônus provisório de ' + Math.min(15, Math.round(sil * 25)) + ' pontos no placar (máximo de 15).';
+    }
+    lab.appendChild(el('div.lab-bloco.lab-bloco-largo', null,
+      el('div', null, el('h4', { texto: 'Silhueta para cada número de grupos' }), barras),
+      el('div', null,
+        escala(m.silhuetas[atual || ag.kMin], 0, 1, [[0, 'fraca'], [0.25, 'razoável'], [0.5, 'boa'], [0.7, 'muito forte']]),
+        el('p', { texto: 'Como ler: a silhueta vai de -1 a 1. Perto de 1, cada ' + ag.item + ' está muito mais perto dos ' + ag.itens + ' do próprio grupo do que dos outros grupos. Perto de 0, os grupos se misturam. A silhueta mede separação, não utilidade: quem diz se um grupo serve é o negócio.' }))));
+    lab.appendChild(el('h3', { style: 'margin-top:1.5rem', texto: 'Em quantos grupos dividir' }));
+    lab.appendChild(el('div.regua', null, el('div.regua-leitura', null, el('span', { texto: 'Número de grupos (k)' }), leitura), regua));
+    lab.appendChild(nota);
+    lab.appendChild(el('p', { style: 'font-size:.9rem;color:var(--grafite)', texto: 'Os nomes dos grupos foram sugeridos pelo analista a partir das características mais marcantes de cada um. A última linha de cada cartão serve para comparar os grupos.' }));
+    lab.appendChild(perfis);
+    regua.addEventListener('input', function () {
+      R[it.id] = { k: Number(regua.value) }; pintar(); mudou();
+      var e = lab.querySelector('.escala'); if (e) e.replaceWith(escala(m.silhuetas[Number(regua.value)], 0, 1, [[0, 'fraca'], [0.25, 'razoável'], [0.5, 'boa'], [0.7, 'muito forte']]));
+    });
+    if (!atual && !travado) lab.appendChild(el('div.contador', { style: 'text-align:left', texto: 'Movam a régua para escolher o número de grupos.' }));
+    pintar();
   }
 
   function renderAlertaProducao(ev) {
     return el('section.alerta-producao', { role: 'alert' },
       el('h2', { texto: ev.titulo }),
-      el('div.queda', null, el('span.de', { texto: 'AUC ' + C.fmtAuc(ev.aucValidacao) }), el('span.para', { texto: C.fmtAuc(ev.aucProducao) })),
+      el('div.queda', null,
+        el('div.de', null, el('small', { texto: ev.antes.rotulo }), el('span', { texto: ev.antes.valor })),
+        el('div.para', null, el('small', { texto: ev.depois.rotulo }), el('span', { texto: ev.depois.valor }))),
       el('p', { texto: ev.mensagem }),
-      ev.campanha ? el('p', null, 'A campanha abordando ' + String(ev.campanha.pct).replace('.', ',') + '% dos clientes prometia ', el('b', { texto: C.fmtReais(ev.campanha.prometido) }), ' por mês. Em produção, entregou ', el('b', { texto: C.fmtReais(ev.campanha.real) }), '. Os pontos da campanha no placar agora valem pelo resultado real.') : null,
+      ev.campanha ? el('p', null, 'A campanha prometia ', el('b', { texto: C.fmtReais(ev.campanha.prometido) }), ' por mês. Em produção, entregou ', el('b', { texto: C.fmtReais(ev.campanha.real) }), '. Os pontos da campanha no placar agora valem pelo resultado real.') : null,
       el('h3', { texto: 'O que o monitoramento mostra' }),
       el('ul.evidencias', null, ev.evidencias.map(function (e) { return el('li', { texto: e }); })));
   }
@@ -461,6 +560,7 @@
       if (it.tipo === 'texto' && !(R[it.id] || '').trim()) n++;
       if (it.tipo === 'cartas') { var mp = R[it.id] || {}; n += it.cartas.filter(function (c) { return !mp[c.id]; }).length ? 1 : 0; }
       if (it.tipo === 'simulador' && !(est.grupo.modelo && R[it.id] && R[it.id].pct)) n++;
+      if (it.tipo === 'agrupamento' && !(est.grupo.modelo && R[it.id] && R[it.id].k)) n++;
     });
     return n;
   }
@@ -470,9 +570,9 @@
     var info = el('span.pendencias'), botao = el('button.btn.btn-marca', { type: 'button', texto: 'Enviar fase' });
     rod.appendChild(info); rod.appendChild(botao);
     nos.rodapeFn = function () {
-      var p = pendencias(fase, R), m = est.grupo.modelo, div = itemDivisao(fase);
-      var bloqueio = fase.itens.some(function (it) { return it.tipo === 'simulador'; }) && m && div && R[div.id] && m.divisao !== R[div.id];
-      info.textContent = bloqueio ? 'Treinem o modelo de novo com a divisão escolhida.' : p ? p + ' item(ns) sem resposta' : 'Tudo respondido';
+      var p = pendencias(fase, R), m = est.grupo.modelo, base = itemBase(fase);
+      var bloqueio = base && m && R[base.id] && m.base !== R[base.id];
+      info.textContent = bloqueio ? (m.tipo === 'agrupamento' ? 'Rodem o agrupamento de novo com a preparação escolhida.' : 'Treinem o modelo de novo com a divisão escolhida.') : p ? p + ' item(ns) sem resposta' : 'Tudo respondido';
       botao.disabled = !!bloqueio;
     };
     nos.rodapeFn();
@@ -505,7 +605,7 @@
         var box = el('div.revela-item');
         if (it.max) box.appendChild(el('span.pts', { texto: it.pontos + ' / ' + it.max }));
         box.appendChild(el('b', { texto: it.enunciado }));
-        if (it.tipo === 'escolha' || it.tipo === 'simulador') {
+        if (it.tipo === 'escolha' || it.tipo === 'simulador' || it.tipo === 'agrupamento') {
           box.appendChild(el('div.sua', { texto: 'Vocês: ' + (it.sua || 'Sem resposta') }));
           if (it.correta) box.appendChild(el('div.certa', { texto: 'Melhor resposta: ' + it.correta }));
           if (it.explicacao) box.appendChild(el('p', { style: 'margin:.4rem 0 0', texto: it.explicacao }));
@@ -523,7 +623,7 @@
   }
 
   /* ---------- Salvamento e telemetria ---------- */
-  function mudou() { atualizarRodape(); clearTimeout(salvarTimer); salvarTimer = setTimeout(salvarAgora, 1500); }
+  function mudou() { if (ESPIAR) return; atualizarRodape(); clearTimeout(salvarTimer); salvarTimer = setTimeout(salvarAgora, 1500); }
   function salvarAgora() {
     if (!est) return;
     var fid = est.faseId, R = (fid && !est.grupo.enviadas[fid]) ? locais[fid] : null;
@@ -550,6 +650,20 @@
   }
 
   /* ---------- Início ---------- */
+  if (ESPIAR) {
+    var codigoEspiado = decodeURIComponent(location.hash.slice(1)) || (window.name.indexOf('espiar:') === 0 ? window.name.slice(7) : '');
+    C.areaProfessor('Tela do grupo', function (s) {
+      chaveProf = s;
+      C.chamar('prof_grupo', { chave: s, codigo: codigoEspiado }).then(function (r) {
+        sessao = { codigo: r.grupo.codigo, nome: r.grupo.nome, caso: r.grupo.caso };
+        document.title = r.grupo.nome + ': tela do grupo';
+        return iniciar();
+      }).catch(function (e) {
+        C.limpar(document.getElementById('app')).appendChild(el('main.entrada', null, el('div.entrada-caixa', null, el('h1', { texto: 'Tela do grupo' }), el('div.aviso.aviso-erro', { texto: e.message }))));
+      });
+    });
+    return;
+  }
   sessao = C.ler(CHAVE);
   if (sessao && sessao.codigo) iniciar().catch(function (e) { C.guardar(CHAVE, null); telaEntrada(e.message); });
   else telaEntrada();

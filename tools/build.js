@@ -20,11 +20,12 @@ function semPrivados(x) {
   return x;
 }
 
-// 1. Casos
+// 1. Casos e imagens
 const casos = {};
+fs.rmSync(path.join(raiz, 'site/casos'), { recursive: true, force: true });
 for (const ex of fs.readdirSync(path.join(raiz, 'casos-fonte'))) {
   const dir = path.join('casos-fonte', ex);
-  if (!fs.statSync(path.join(raiz, dir)).isDirectory()) continue;
+  if (ex === 'img' || !fs.statSync(path.join(raiz, dir)).isDirectory()) continue;
   for (const arq of fs.readdirSync(path.join(raiz, dir)).filter(a => a.endsWith('.json'))) {
     const c = JSON.parse(ler(path.join(dir, arq)));
     if (casos[c.id]) throw new Error('Caso repetido: ' + c.id);
@@ -36,6 +37,13 @@ for (const ex of fs.readdirSync(path.join(raiz, 'casos-fonte'))) {
   }
 }
 console.log('Casos:', Object.keys(casos).join(', '));
+for (const id in casos) {
+  const img = casos[id].imagem;
+  if (!img) continue;
+  const origem = path.join('casos-fonte', img);
+  if (!fs.existsSync(path.join(raiz, origem))) throw new Error('Imagem não encontrada: ' + origem);
+  gravar('site/casos/' + img, ler(origem));
+}
 
 // 2. Stats para o navegador
 gravar('site/assets/stats.js', ler('shared/stats.js'));
@@ -48,14 +56,18 @@ console.log('backend/Codigo.gs:', Math.round(gs.length / 1024), 'KB');
 
 // 4. Demo
 const css = ler('site/assets/estilo.css');
-function pagina(js) {
+function pagina(js, extra) {
   const scripts = ['site/assets/comum.js', 'site/assets/' + js + '.js'].map(p => '<script>' + ler(p) + '<\/script>').join('\n');
   return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
     '<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">' +
-    '<style>' + css + '</style></head><body><div id="app"></div><script>window.DESAFIOS_CONFIG={apiUrl:""};<\/script><script>' + ler('shared/stats.js') + '<\/script>' + scripts + '</body></html>';
+    '<style>' + css + '</style></head><body><div id="app"></div><script>window.DESAFIOS_CONFIG={apiUrl:""};' + (extra || '') + '<\/script><script>' + ler('shared/stats.js') + '<\/script>' + scripts + '</body></html>';
 }
-const paginas = { aluno: pagina('aluno'), professor: pagina('professor'), telao: pagina('telao') };
-const publicos = {}; for (const id in casos) publicos[id] = semPrivados(casos[id]);
+const paginas = { aluno: pagina('aluno'), professor: pagina('professor'), telao: pagina('telao'), espiar: pagina('aluno', 'window.DESAFIOS_ESPIAR=true;') };
+const publicos = {};
+for (const id in casos) {
+  publicos[id] = semPrivados(casos[id]);
+  if (casos[id].imagem) publicos[id].imagemDados = 'data:image/svg+xml;base64,' + Buffer.from(ler(path.join('casos-fonte', casos[id].imagem))).toString('base64');
+}
 const seguro = s => JSON.stringify(s).replace(/<\//g, '<\\/').replace(/<!--/g, '<\\!--');
 const demo = ler('tools/demo-shell.html')
   .replace('/*__STATS__*/', ler('shared/stats.js'))

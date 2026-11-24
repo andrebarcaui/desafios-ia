@@ -81,8 +81,14 @@ function configurar() {
   function aba(nome) { return ss.getSheetByName(nome) || ss.insertSheet(nome); }
   var g = aba('Grupos');
   if (g.getLastRow() < 2) {
-    var casoPadrao = Object.keys(CASOS)[0], linhas = [['Código', 'Nome do grupo', 'Caso']];
-    for (var i = 1; i <= 6; i++) linhas.push([codigoAleatorio_(), 'Grupo ' + i, casoPadrao]);
+    // Alterna os casos disponíveis entre os grupos (ex.: supervisionado, clustering, supervisionado...)
+    var ids = Object.keys(CASOS).sort(function (a, b) { return (CASOS[a]._modelo.tipo === 'agrupamento') - (CASOS[b]._modelo.tipo === 'agrupamento'); });
+    var porTipo = [ids.filter(function (id) { return CASOS[id]._modelo.tipo !== 'agrupamento'; }), ids.filter(function (id) { return CASOS[id]._modelo.tipo === 'agrupamento'; })];
+    var linhas = [['Código', 'Nome do grupo', 'Caso']];
+    for (var i = 0; i < 6; i++) {
+      var lista = porTipo[i % 2].length ? porTipo[i % 2] : ids;
+      linhas.push([codigoAleatorio_(), 'Grupo ' + (i + 1), lista[Math.floor(i / 2) % lista.length]]);
+    }
     g.getRange(1, 1, linhas.length, 3).setValues(linhas);
     g.setFrozenRows(1);
     g.getRange('A1:C1').setFontWeight('bold');

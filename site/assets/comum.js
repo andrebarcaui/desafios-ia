@@ -1,6 +1,7 @@
 /* Funções comuns às três telas */
 var Comum = (function () {
   var cfg = window.DESAFIOS_CONFIG || {};
+  var base = window.DESAFIOS_BASE || '';
   var pai = null;
   try { if (window.parent !== window && window.parent.DEMO_SERVIDOR) pai = window.parent; } catch (e) { pai = null; }
   var demo = !!pai;
@@ -29,11 +30,45 @@ var Comum = (function () {
   function carregarCaso(id) {
     if (casosCache[id]) return Promise.resolve(casosCache[id]);
     if (demo) return Promise.resolve(casosCache[id] = pai.DEMO_CASOS_PUBLICOS[id]);
-    return fetch('casos/' + encodeURIComponent(id) + '.json', { cache: 'no-cache' }).then(function (r) {
+    return fetch(base + 'casos/' + encodeURIComponent(id) + '.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('Não foi possível carregar o caso.');
       return r.json();
     }).then(function (c) { casosCache[id] = c; return c; });
   }
+
+  function urlImagem(caso) {
+    if (!caso || !caso.imagem) return null;
+    if (caso.imagemDados) return caso.imagemDados;
+    return base + 'casos/' + caso.imagem;
+  }
+
+  /* Senha do professor: uma só para painel, telão e visão dos grupos */
+  var CHAVE_PROF = 'desafios.professor';
+  function senhaProfessor() { return ler(CHAVE_PROF); }
+  function pedirSenha(titulo, aoEntrar, erro) {
+    var app = limpar(document.getElementById('app'));
+    var inp = el('input', { type: 'password', autocomplete: 'current-password', required: true, inputmode: 'numeric', 'aria-label': 'Senha do professor' });
+    var msg = el('div.aviso.aviso-erro' + (erro ? '' : '.oculto'), { role: 'alert', texto: erro || '' });
+    var botao = el('button.btn.btn-forte', { type: 'submit', texto: 'Entrar' });
+    app.appendChild(el('main.entrada', null, el('form.entrada-caixa', {
+      onsubmit: function (e) {
+        e.preventDefault(); botao.disabled = true;
+        chamar('prof_estado', { chave: inp.value.trim() }).then(function () {
+          guardar(CHAVE_PROF, inp.value.trim()); aoEntrar(inp.value.trim());
+        }).catch(function (x) { botao.disabled = false; msg.textContent = x.message; msg.classList.remove('oculto'); });
+      }
+    }, el('h1', { texto: titulo }), el('p.sub', { texto: 'Área do professor. Acesso com senha.' }), msg,
+      el('label.campo', null, el('span', { texto: 'Senha' }), inp), botao)));
+    inp.focus();
+  }
+  /* Abre a área do professor: usa a senha guardada ou pede de novo */
+  function areaProfessor(titulo, aoEntrar) {
+    var s = senhaProfessor();
+    if (!s) return pedirSenha(titulo, aoEntrar);
+    chamar('prof_estado', { chave: s }).then(function () { aoEntrar(s); })
+      .catch(function (e) { guardar(CHAVE_PROF, null); pedirSenha(titulo, aoEntrar, /Senha/.test(e.message) ? e.message : null); });
+  }
+  function sairProfessor() { guardar(CHAVE_PROF, null); location.reload(); }
 
   /* Montagem de elementos: el('div.classe', {atributos}, filhos...) */
   function el(spec, attrs) {
@@ -102,7 +137,7 @@ var Comum = (function () {
   }
 
   return {
-    demo: demo, chamar: chamar, carregarCaso: carregarCaso, el: el, limpar: limpar, toast: toast,
+    demo: demo, pai: pai, urlImagem: urlImagem, areaProfessor: areaProfessor, senhaProfessor: senhaProfessor, sairProfessor: sairProfessor, chamar: chamar, carregarCaso: carregarCaso, el: el, limpar: limpar, toast: toast,
     guardar: guardar, ler: ler, sincronizar: sincronizar, restante: restante, fmtRelogio: fmtRelogio, pintarRelogio: pintarRelogio,
     fmtAuc: fmtAuc, fmtPct: fmtPct, fmtInt: fmtInt, fmtReais: fmtReais, renderFicha: renderFicha
   };

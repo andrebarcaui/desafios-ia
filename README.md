@@ -2,17 +2,23 @@
 
 Jogo de casos para aulas de IA aplicada (FGV, prof. André Barcaui). Cada grupo recebe um caso diferente, com estrutura e dificuldade equivalentes, e resolve em fases cronometradas enquanto um placar ao vivo roda no telão.
 
-Exercício atual: **machine learning supervisionado**. Caso pronto: *A Fuga Silenciosa* (Banco Arandu, previsão de abandono de cartão).
+Exercício atual: **machine learning**, misturando na mesma aula casos de aprendizado supervisionado e de agrupamento (clustering). Casos prontos:
+
+| Caso | Tipo | Empresa (fictícia) | Armadilha principal |
+|---|---|---|---|
+| A Fuga Silenciosa | Supervisionado (classificação) | Banco Arandu | Vazamento de dados |
+| Tamanho Único | Não supervisionado (clustering) | Corrente Viva Energia (PMO) | Escala que engana |
 
 ## Como funciona
 
 | Parte | Onde roda | O que faz |
 |---|---|---|
-| `site/` | Netlify (site público) | Três telas: `index.html` (grupos), `professor.html` (painel) e `telao.html` (placar no projetor) |
+| `site/index.html` | Netlify (link dos alunos) | Tela do grupo. Cada grupo entra com o próprio código e só vê o próprio caso |
+| `site/professor/` | Netlify, com senha | `index.html` (painel), `telao.html` (placar no projetor) e `grupo.html` (tela de qualquer grupo, só leitura) |
 | `backend/Codigo.gs` | Google Apps Script, dentro de uma planilha sua | Guarda o estado do jogo, calcula pontos com o gabarito e registra as respostas na planilha |
 | `casos-fonte/` | Só no repositório | Os casos completos, com gabarito. Nunca vão para o site |
 
-O gabarito fica apenas no Apps Script. O site recebe uma versão do caso sem nenhum campo de resposta.
+O gabarito fica apenas no Apps Script. O site recebe uma versão do caso sem nenhum campo de resposta. Placar, respostas, telemetria e a tela de cada grupo só saem do servidor com a senha do professor.
 
 ## Instalação (uma vez)
 
@@ -39,23 +45,26 @@ A partir daí, todo envio ao GitHub republica o site sozinho.
 ## Em aula
 
 1. Antes da aula, confira a aba **Grupos**: um código por grupo e o caso de cada um. Se mudar algo, espere 1 minuto para o servidor ler de novo.
-2. Projete `telao.html`. Abra `professor.html` no seu computador e entre com a senha (a da aba **Config**).
+2. Abra `professor/` no seu computador e entre com a senha (a da aba **Config**). Do painel, abra o telão (`professor/telao.html`) e projete. A senha fica guardada no navegador, então o telão abre direto.
 3. Entregue a cada grupo o seu código. Eles entram em `index.html` com o código e os nomes dos integrantes (até 10 por grupo).
 4. No painel, abra uma fase de cada vez. Quando você abre a fase seguinte, o que estiver marcado na anterior é enviado automaticamente.
-5. No pitch, use **Projetar ficha** e **Sortear quem responde** em cada grupo.
-6. Ao final, **Baixar respostas (CSV)** traz respostas, justificativas, pontos e sinais de comportamento de cada grupo. A aba **Respostas** da planilha guarda cada fase enviada.
+5. A qualquer momento, **Ver tela do grupo** mostra exatamente o que aquele grupo está vendo, com o rascunho atualizado a cada 5 segundos.
+6. No pitch, use **Projetar ficha** e **Sortear quem responde** em cada grupo.
+7. Ao final, **Baixar respostas (CSV)** traz respostas, justificativas, pontos e sinais de comportamento de cada grupo. A aba **Respostas** da planilha guarda cada fase enviada.
 
 Para jogar de novo com outra turma: menu **Desafios de IA > Reiniciar jogo** na planilha (ou o botão no painel).
 
-Roteiro de 60 minutos: abertura 3 min, Enquadre 6, Dataset 12, Treino 8, Produção 6, pitches 15 (6 × 2 min + pergunta), revelação 7.
+Roteiro de 60 minutos: abertura 3 min, Enquadre 6, Dataset 12, Modelagem 8, Produção 6, pitches 15 (6 × 2 min + pergunta), revelação 7.
+
+Por padrão, `configurar()` alterna os casos entre os grupos (supervisionado, clustering, supervisionado...). Para mudar, edite a coluna Caso da aba Grupos com o id do caso (`fuga-silenciosa`, `tamanho-unico`).
 
 ## Alterar ou criar casos
 
-1. Edite ou crie um JSON em `casos-fonte/<exercicio>/`. Campos que começam com `_` são privados (gabarito, explicações, modelo, evento, revelação).
+1. Edite ou crie um JSON em `casos-fonte/<exercicio>/`. Campos que começam com `_` são privados (gabarito, explicações, modelo, evento, revelação). A ilustração do caso fica em `casos-fonte/img/` (SVG).
 2. Rode `node tools/build.js`. Ele gera `site/casos/`, `backend/Codigo.gs` e `demo/demo.html`.
 3. Rode `node tools/teste-core.js` para uma partida simulada completa.
 4. Envie ao GitHub (o site se atualiza) e cole o novo `backend/Codigo.gs` no Apps Script. Depois: **Implantar > Gerenciar implantações > Editar > Versão: nova versão > Implantar**. Sem esse passo, o servidor continua com a versão antiga.
 
 ## Demonstração local
 
-`demo/demo.html` roda o jogo inteiro no navegador, sem servidor, com cinco grupos simulados. Ela contém o gabarito: use só para testar e não distribua.
+`demo/demo.html` roda o jogo inteiro no navegador, sem servidor: você joga como Grupo 1 (supervisionado) e Grupo 2 (clustering), e os grupos 3 a 6 são simulados. Ela contém o gabarito: use só para testar e não distribua.

@@ -1,23 +1,23 @@
 /* Telão: placar ao vivo */
 (function () {
   var C = Comum, el = C.el;
-  var est = null, nos = {}, raias = {}, ultimoFeed = 0, modo = '', ultimoSorteio = 0, primeira = true;
+  var chave = null, est = null, nos = {}, raias = {}, ultimoFeed = 0, modo = '', ultimoSorteio = 0, primeira = true;
 
   function montar() {
     var app = C.limpar(document.getElementById('app'));
-    nos.titulo = el('h1'); nos.sub = el('small', { texto: 'Desafios de IA: machine learning supervisionado' });
+    nos.titulo = el('h1'); nos.sub = el('small', { texto: 'Desafios de IA: machine learning na prática' });
     nos.relogio = el('div.telao-relogio');
     nos.corpo = el('div');
     app.appendChild(el('div.telao', null, el('header.telao-cab', null, el('div', null, nos.sub, nos.titulo), nos.relogio), nos.corpo));
   }
 
   function atualizar() {
-    return C.chamar('placar').then(function (r) { est = r; C.sincronizar(r.agora); pintar(); })
+    return C.chamar('prof_placar', { chave: chave }).then(function (r) { est = r; C.sincronizar(r.agora); pintar(); })
       .catch(function () { nos.sub.textContent = 'Sem conexão com o servidor. Tentando de novo...'; });
   }
 
   function pintar() {
-    nos.sub.textContent = 'Desafios de IA: machine learning supervisionado';
+    nos.sub.textContent = 'Desafios de IA: machine learning na prática';
     nos.titulo.textContent = est.faseTitulo;
     C.pintarRelogio(nos.relogio, est.prazo);
     var novoModo = est.fase === 6 ? 'revelacao' : (est.fase === 5 && est.ficha ? 'ficha' : 'placar');
@@ -55,7 +55,7 @@
       r.total.textContent = g.total;
       C.limpar(r.meta);
       ['f1', 'f2', 'f3', 'evento'].forEach(function (f) { r.meta.appendChild(el('span.passo' + (g.status[f] ? '.' + g.status[f] : ''), { title: f })); });
-      if (g.auc) r.meta.appendChild(el('span.auc', { texto: 'AUC ' + C.fmtAuc(g.auc.treino) + (g.auc.producao != null ? ' no treino, ' + C.fmtAuc(g.auc.producao) + ' em produção' : '') }));
+      if (g.metrica && g.metrica.treino) r.meta.appendChild(el('span.auc', { texto: g.metrica.treino + (g.metrica.producao ? ' no treino, ' + g.metrica.producao + ' em produção' : '') }));
       nos.raias.appendChild(r.no);
     });
     // FLIP: anima a troca de posições
@@ -107,8 +107,11 @@
       el('ol', { style: 'font-size:1.3rem;columns:2' }, est.grupos.map(function (g) { return el('li', { texto: g.nome + ': ' + g.total + ' pontos' }); }))));
   }
 
-  montar();
-  atualizar();
-  setInterval(atualizar, 3000);
-  setInterval(function () { if (est) C.pintarRelogio(nos.relogio, est.prazo); }, 1000);
+  C.areaProfessor('Telão', function (s) {
+    chave = s;
+    montar();
+    atualizar();
+    setInterval(atualizar, 3000);
+    setInterval(function () { if (est) C.pintarRelogio(nos.relogio, est.prazo); }, 1000);
+  });
 })();

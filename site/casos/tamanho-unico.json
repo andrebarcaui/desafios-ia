@@ -1,0 +1,603 @@
+{
+ "id": "tamanho-unico",
+ "exercicio": "ml-nao-supervisionado",
+ "titulo": "Tamanho Único",
+ "subtitulo": "Governança sob medida para um portfólio que não cabe numa regra só",
+ "setor": "Energia, PMO corporativo",
+ "empresa": "Corrente Viva Energia",
+ "imagem": "img/tamanho-unico.svg",
+ "creditosIniciais": 100,
+ "briefing": {
+  "remetente": "Paulo Siqueira",
+  "cargo": "Diretor do PMO Corporativo, Corrente Viva Energia",
+  "assunto": "Chega de governança tamanho único",
+  "mensagem": [
+   "Pessoal, preciso de uma mão.",
+   "Hoje todo projeto da Corrente Viva passa pelo mesmo ritual: comitê mensal, 14 documentos obrigatórios e 5 gates de aprovação. Os projetos pequenos reclamam de burocracia, e os grandes estouram prazo mesmo assim.",
+   "Quero usar IA para separar os projetos em trilhas de governança diferentes. Já temos a classificação de porte que o PMO faz há anos (P, M e G). A IA não pode simplesmente aprender com ela e classificar os projetos novos?",
+   "O time de dados tem o histórico completo. Preciso de uma proposta para levar à diretoria no mês que vem."
+  ],
+  "contexto": [
+   {
+    "titulo": "A empresa",
+    "texto": "A Corrente Viva Energia atua em transmissão e distribuição de energia, com obras urbanas, rurais e em áreas de preservação. Os projetos vão de reformas de subestação a linhas de transmissão de centenas de quilômetros."
+   },
+   {
+    "titulo": "O portfólio",
+    "texto": "São 340 projetos em andamento e 1.200 concluídos nos últimos 5 anos: 1.540 no total. O orçamento vai de R$ 80 mil a R$ 2,1 bilhões."
+   },
+   {
+    "titulo": "Classificação atual",
+    "texto": "O PMO classifica cada projeto como P, M ou G de acordo com o orçamento previsto. Projetos P ficam com 42% do portfólio, M com 37% e G com 21%."
+   },
+   {
+    "titulo": "Relatório da auditoria interna",
+    "texto": "No último ano, 62% dos projetos que estouraram o prazo em mais de 30% estavam classificados como P ou M."
+   },
+   {
+    "titulo": "O comitê de governança",
+    "texto": "São 9 analistas no PMO. O comitê aceita desenhar trilhas diferentes, mas avisa que não consegue operar muitas ao mesmo tempo."
+   }
+  ]
+ },
+ "caixas": [
+  {
+   "id": "agrupar",
+   "nome": "Usar para agrupar",
+   "ajuda": "Característica do projeto conhecida no início"
+  },
+  {
+   "id": "descrever",
+   "nome": "Só para descrever depois",
+   "ajuda": "Resultado ou rótulo: serve para comparar os grupos, não para formá-los"
+  },
+  {
+   "id": "sensivel",
+   "nome": "Sensível ou proxy",
+   "ajuda": "Dado protegido ou substituto de um dado protegido"
+  },
+  {
+   "id": "descartar",
+   "nome": "Descartar",
+   "ajuda": "Não carrega padrão útil"
+  }
+ ],
+ "agrupamento": {
+  "itens": "projetos",
+  "item": "projeto",
+  "total": 1540,
+  "kMin": 2,
+  "kMax": 6,
+  "rotuloComparacao": "Desvio médio de prazo dos concluídos"
+ },
+ "fases": [
+  {
+   "id": "f1",
+   "titulo": "Enquadre o problema",
+   "curto": "Enquadre",
+   "duracaoMin": 6,
+   "missao": "Transformem o pedido do Paulo num problema de machine learning bem formulado. Antes de pensar em dados, decidam que decisão a IA vai apoiar e se existe uma resposta certa para aprender.",
+   "itens": [
+    {
+     "id": "f1q1",
+     "tipo": "escolha",
+     "rotulo": "Decisão apoiada",
+     "enunciado": "Qual decisão de negócio a IA vai apoiar?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Desenhar trilhas de governança diferentes para grupos de projetos parecidos entre si"
+      },
+      {
+       "id": "b",
+       "texto": "Prever quais projetos em andamento vão atrasar"
+      },
+      {
+       "id": "c",
+       "texto": "Eliminar o comitê de governança e deixar a IA aprovar os gates"
+      },
+      {
+       "id": "d",
+       "texto": "Avaliar o desempenho de cada gerente de projeto"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q2",
+     "tipo": "escolha",
+     "rotulo": "Existe rótulo?",
+     "enunciado": "Existe uma resposta certa e confiável para cada projeto, que a IA possa usar como exemplo?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Sim: a classificação P, M e G que o PMO já faz"
+      },
+      {
+       "id": "b",
+       "texto": "Não: queremos descobrir grupos de projetos que ainda não conhecemos"
+      },
+      {
+       "id": "c",
+       "texto": "Sim: a nota de risco que cada gerente dá ao próprio projeto"
+      },
+      {
+       "id": "d",
+       "texto": "Sim: se o projeto atrasou ou não"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q3",
+     "tipo": "escolha",
+     "rotulo": "Tipo de problema",
+     "enunciado": "Que tipo de problema é esse?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Classificação: ensinar a IA a colocar cada projeto em P, M ou G"
+      },
+      {
+       "id": "b",
+       "texto": "Regressão: prever um valor numérico, como o desvio de prazo"
+      },
+      {
+       "id": "c",
+       "texto": "Agrupamento (clustering): encontrar grupos de projetos parecidos, sem rótulos"
+      },
+      {
+       "id": "d",
+       "texto": "Aprendizado por reforço: a IA testa trilhas e aprende com recompensas"
+      }
+     ],
+     "pontosMax": 5
+    },
+    {
+     "id": "f1q4",
+     "tipo": "escolha",
+     "rotulo": "O que agrupar",
+     "enunciado": "Quais projetos entram na análise, e descritos por quais informações?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Só os projetos que atrasaram, para entender o problema"
+      },
+      {
+       "id": "b",
+       "texto": "Todos os 1.540 projetos dos últimos 5 anos, descritos pelas características que se conhece no início de cada um"
+      },
+      {
+       "id": "c",
+       "texto": "Os gerentes de projeto, descritos pelo histórico de cada um"
+      },
+      {
+       "id": "d",
+       "texto": "Só os 340 projetos em andamento, descritos pelo desempenho atual"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f1j",
+     "tipo": "texto",
+     "rotulo": "Por que não usar P, M e G",
+     "enunciado": "Em até duas frases: por que não usar a classificação P, M e G como resposta certa?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f1d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f1d2",
+     "titulo": "Conversar com a auditoria interna",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f2",
+   "titulo": "Monte o dataset",
+   "curto": "Dataset",
+   "duracaoMin": 12,
+   "missao": "O time de dados separou 16 colunas sobre os projetos. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. As colunas que forem para \"Usar para agrupar\" são as que a IA vai usar para medir o quanto dois projetos se parecem.",
+   "itens": [
+    {
+     "id": "f2cartas",
+     "tipo": "cartas",
+     "rotulo": "Colunas",
+     "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
+     "pontosPorCarta": 2,
+     "pontosMax": 32,
+     "cartas": [
+      {
+       "id": "c01",
+       "nome": "orcamento_previsto",
+       "descricao": "Orçamento aprovado no início do projeto, em reais.",
+       "exemplos": [
+        "R$ 180.000",
+        "R$ 42.000.000",
+        "R$ 1.900.000.000"
+       ]
+      },
+      {
+       "id": "c02",
+       "nome": "duracao_prevista_meses",
+       "descricao": "Duração planejada no termo de abertura.",
+       "exemplos": [
+        "4",
+        "18",
+        "60"
+       ]
+      },
+      {
+       "id": "c03",
+       "nome": "n_stakeholders_chave",
+       "descricao": "Número de partes interessadas-chave mapeadas na abertura (prefeituras, comunidades, órgãos, clientes).",
+       "exemplos": [
+        "3",
+        "27",
+        "11"
+       ]
+      },
+      {
+       "id": "c04",
+       "nome": "n_fornecedores",
+       "descricao": "Número de fornecedores contratados previstos.",
+       "exemplos": [
+        "1",
+        "9",
+        "4"
+       ]
+      },
+      {
+       "id": "c05",
+       "nome": "exposicao_regulatoria",
+       "descricao": "0 = nenhuma, 1 = exigências da ANEEL, 2 = licenciamento ambiental, 3 = ambos.",
+       "exemplos": [
+        "0",
+        "3",
+        "2"
+       ]
+      },
+      {
+       "id": "c06",
+       "nome": "grau_novidade_tecnologica",
+       "descricao": "De 1 (tecnologia de uso corrente) a 5 (primeira vez na empresa).",
+       "exemplos": [
+        "1",
+        "5",
+        "2"
+       ]
+      },
+      {
+       "id": "c07",
+       "nome": "n_areas_envolvidas",
+       "descricao": "Quantas áreas internas participam do projeto.",
+       "exemplos": [
+        "1",
+        "6",
+        "3"
+       ]
+      },
+      {
+       "id": "c08",
+       "nome": "dependencias_externas",
+       "descricao": "Quantos outros projetos ou obras de terceiros precisam terminar antes de etapas deste.",
+       "exemplos": [
+        "0",
+        "4",
+        "1"
+       ]
+      },
+      {
+       "id": "c09",
+       "nome": "tipo_local",
+       "descricao": "Onde a obra acontece: urbano, rural ou área de preservação.",
+       "exemplos": [
+        "urbano",
+        "área de preservação",
+        "rural"
+       ]
+      },
+      {
+       "id": "c10",
+       "nome": "desvio_prazo_final",
+       "descricao": "Diferença entre o prazo real e o planejado, apurada no encerramento.",
+       "exemplos": [
+        "+4%",
+        "+52%",
+        "-2%"
+       ]
+      },
+      {
+       "id": "c11",
+       "nome": "classificacao_porte_pmo",
+       "descricao": "Classificação P, M ou G feita pelo PMO com base no orçamento.",
+       "exemplos": [
+        "P",
+        "G",
+        "M"
+       ]
+      },
+      {
+       "id": "c12",
+       "nome": "satisfacao_patrocinador",
+       "descricao": "Nota de 0 a 10 dada pelo patrocinador no encerramento.",
+       "exemplos": [
+        "9",
+        "4",
+        "7"
+       ]
+      },
+      {
+       "id": "c13",
+       "nome": "idade_gerente",
+       "descricao": "Idade do gerente responsável pelo projeto.",
+       "exemplos": [
+        "34",
+        "51",
+        "42"
+       ]
+      },
+      {
+       "id": "c14",
+       "nome": "genero_gerente",
+       "descricao": "Gênero do gerente responsável, conforme cadastro de RH.",
+       "exemplos": [
+        "feminino",
+        "masculino",
+        "feminino"
+       ]
+      },
+      {
+       "id": "c15",
+       "nome": "codigo_projeto",
+       "descricao": "Código do projeto no sistema de gestão de portfólio.",
+       "exemplos": [
+        "TR-2021-0448",
+        "DS-2024-1102",
+        "SE-2022-0090"
+       ]
+      },
+      {
+       "id": "c16",
+       "nome": "moeda_contrato",
+       "descricao": "Moeda dos contratos do projeto. Desde 2020 a Corrente Viva só contrata em reais.",
+       "exemplos": [
+        "BRL",
+        "BRL",
+        "BRL"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "f2mercado",
+     "tipo": "mercado",
+     "rotulo": "Dados externos comprados",
+     "enunciado": "Mercado de dados: fontes externas que podem ser compradas com créditos. A compra é imediata e não tem devolução.",
+     "pontosMax": 8,
+     "fontes": [
+      {
+       "id": "m1",
+       "nome": "Prazos de licenciamento ambiental",
+       "descricao": "Prazo médio de emissão de licenças pelo órgão estadual, por região e tipo de obra.",
+       "custo": 30
+      },
+      {
+       "id": "m2",
+       "nome": "Histórico de fiscalização da ANEEL",
+       "descricao": "Autuações e exigências da ANEEL por tipo de obra nos últimos 10 anos.",
+       "custo": 20
+      },
+      {
+       "id": "m3",
+       "nome": "Cotação diária do dólar",
+       "descricao": "Série histórica do câmbio real e dólar.",
+       "custo": 15
+      },
+      {
+       "id": "m4",
+       "nome": "Perfis profissionais dos gerentes",
+       "descricao": "Histórico de carreira dos gerentes de projeto, coletado de redes profissionais por uma empresa de dados.",
+       "custo": 25
+      }
+     ]
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f2d1",
+     "titulo": "Perguntar ao analista do PMO",
+     "custo": 10
+    },
+    {
+     "id": "f2d2",
+     "titulo": "Consultar o Jurídico",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f3",
+   "titulo": "Agrupe e avalie",
+   "curto": "Agrupamento",
+   "duracaoMin": 8,
+   "missao": "Hora de agrupar. Decidam como preparar as variáveis, como avaliar os grupos e em quantos grupos dividir o portfólio.",
+   "explicacao": {
+    "titulo": "Como o agrupamento funciona",
+    "passos": [
+     {
+      "titulo": "Preparar as variáveis",
+      "texto": "O algoritmo usa as colunas que vocês colocaram em \"Usar para agrupar\". Antes de rodar, é preciso decidir se elas entram como estão ou se passam por algum ajuste."
+     },
+     {
+      "titulo": "Medir semelhança",
+      "texto": "Para o algoritmo, dois projetos são parecidos quando estão perto um do outro. A distância é calculada somando as diferenças entre os dois projetos em cada variável."
+     },
+     {
+      "titulo": "Escolher quantos grupos",
+      "texto": "O k-means, o algoritmo mais usado, precisa que alguém diga quantos grupos (k) procurar. Ele não sabe sozinho qual é o número certo."
+     },
+     {
+      "titulo": "Avaliar e dar nome",
+      "texto": "Não existe gabarito para conferir. Os grupos são avaliados pela separação entre eles e, principalmente, pelo sentido que fazem para quem vai usá-los."
+     }
+    ]
+   },
+   "itens": [
+    {
+     "id": "f3q1",
+     "tipo": "escolha",
+     "rotulo": "Preparação das variáveis",
+     "enunciado": "O orçamento vai de R$ 80 mil a R$ 2,1 bilhões. O número de partes interessadas vai de 2 a 60, e a exposição regulatória vai de 0 a 3. O que fazer antes de agrupar?",
+     "entenda": "Pensem em como a distância entre dois projetos é calculada. Comparem: dois projetos que diferem em R$ 10 milhões de orçamento e em 25 partes interessadas. Qual das duas diferenças vai pesar mais numa soma simples?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Nada: o algoritmo se ajusta sozinho às unidades de cada coluna"
+      },
+      {
+       "id": "b",
+       "texto": "Colocar todas as variáveis numéricas na mesma escala (padronizar) antes de agrupar"
+      },
+      {
+       "id": "c",
+       "texto": "Excluir o orçamento, que é a variável com os números maiores"
+      },
+      {
+       "id": "d",
+       "texto": "Converter o orçamento de reais para milhões de reais"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f3q2",
+     "tipo": "escolha",
+     "rotulo": "Como avaliar",
+     "enunciado": "Como saber se os grupos encontrados são bons?",
+     "entenda": "No agrupamento não há resposta certa para conferir, então não existe acurácia. A silhueta, de -1 a 1, mede o quanto cada projeto está mais perto do próprio grupo do que dos outros: perto de 1, grupos bem separados; perto de 0, grupos misturados.",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Pela acurácia: o percentual de projetos colocados no grupo certo"
+      },
+      {
+       "id": "b",
+       "texto": "Pela separação entre os grupos (silhueta) e, principalmente, se cada grupo tem um perfil claro e pede uma governança diferente"
+      },
+      {
+       "id": "c",
+       "texto": "Quanto mais grupos, mais detalhada e melhor a análise"
+      },
+      {
+       "id": "d",
+       "texto": "Pela maior silhueta possível, sem olhar o que há dentro dos grupos"
+      }
+     ],
+     "pontosMax": 7
+    },
+    {
+     "id": "f3grupos",
+     "tipo": "agrupamento",
+     "rotulo": "Agrupamento",
+     "dependeDe": "f3q1",
+     "enunciado": "Rodem o agrupamento e escolham em quantos grupos dividir o portfólio. Para cada número de grupos, vejam a silhueta e o perfil de cada grupo.",
+     "pontosMax": 10
+    },
+    {
+     "id": "f3j",
+     "tipo": "texto",
+     "rotulo": "Confiança nos grupos",
+     "enunciado": "Em até duas frases: os grupos encontrados fazem sentido para o PMO? Por quê?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f3d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f3d2",
+     "titulo": "Falar com o comitê de governança",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "evento",
+   "titulo": "Seis meses depois",
+   "curto": "Produção",
+   "duracaoMin": 6,
+   "missao": "As trilhas de governança baseadas nos grupos de vocês estão em uso há seis meses. O Paulo chama a equipe para uma conversa difícil.",
+   "itens": [
+    {
+     "id": "evq1",
+     "tipo": "escolha",
+     "rotulo": "Diagnóstico",
+     "enunciado": "Qual é o diagnóstico mais provável?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Uma variável dominou o cálculo de distância por causa da escala"
+      },
+      {
+       "id": "b",
+       "texto": "O agrupamento usou como entrada a classificação ou os resultados que deveria explicar"
+      },
+      {
+       "id": "c",
+       "texto": "O portfólio mudou: chegaram projetos de um tipo que não existia nos dados"
+      },
+      {
+       "id": "d",
+       "texto": "O número de grupos foi pequeno demais"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "evq2",
+     "tipo": "escolha",
+     "rotulo": "Ação",
+     "enunciado": "O que fazer agora?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Padronizar as variáveis e rodar o agrupamento de novo"
+      },
+      {
+       "id": "b",
+       "texto": "Tirar a classificação e os resultados das variáveis de agrupamento e usá-los só para comparar os grupos depois"
+      },
+      {
+       "id": "c",
+       "texto": "Refazer o agrupamento periodicamente e criar uma trilha provisória para projetos fora do padrão"
+      },
+      {
+       "id": "d",
+       "texto": "Voltar para a governança única, que pelo menos era simples"
+      }
+     ],
+     "pontosMax": 4
+    },
+    {
+     "id": "evj",
+     "tipo": "texto",
+     "rotulo": "O que faltou antes",
+     "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de levar os grupos para a diretoria?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": []
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" role="img" aria-label="Ilustração: um banco, um celular com o cartão e um cartão de crédito se afastando">
+  <rect width="640" height="280" fill="#DCE6E0"/>
+  <circle cx="548" cy="64" r="44" fill="#F4C430"/>
+  <circle cx="96" cy="58" r="22" fill="#EEF1EC"/><circle cx="122" cy="52" r="28" fill="#EEF1EC"/><circle cx="150" cy="60" r="20" fill="#EEF1EC"/>
+  <rect y="246" width="640" height="34" fill="#C9D3CC"/>
+  <g>
+    <polygon points="44,104 160,46 276,104" fill="#1E7F6E"/>
+    <circle cx="160" cy="84" r="12" fill="#F4C430" stroke="#172033" stroke-width="3"/>
+    <rect x="52" y="104" width="216" height="18" fill="#172033"/>
+    <g fill="#EEF1EC" stroke="#172033" stroke-width="3">
+      <rect x="66" y="122" width="20" height="98"/><rect x="106" y="122" width="20" height="98"/><rect x="150" y="122" width="20" height="98"/>
+      <rect x="194" y="122" width="20" height="98"/><rect x="234" y="122" width="20" height="98"/>
+    </g>
+    <rect x="58" y="220" width="204" height="12" fill="#172033"/>
+    <rect x="46" y="232" width="228" height="14" fill="#172033"/>
+  </g>
+  <g>
+    <rect x="300" y="70" width="96" height="176" rx="16" fill="#172033"/>
+    <rect x="308" y="86" width="80" height="142" rx="6" fill="#EEF1EC"/>
+    <rect x="316" y="98" width="40" height="6" rx="3" fill="#9AA5A0"/>
+    <rect x="316" y="114" width="64" height="40" rx="5" fill="#C9D3CC" stroke="#172033" stroke-width="2" stroke-dasharray="5 4"/>
+    <rect x="316" y="166" width="64" height="7" rx="3" fill="#C9D3CC"/><rect x="316" y="180" width="48" height="7" rx="3" fill="#C9D3CC"/><rect x="316" y="194" width="56" height="7" rx="3" fill="#C9D3CC"/>
+    <rect x="336" y="234" width="24" height="4" rx="2" fill="#EEF1EC"/>
+  </g>
+  <path d="M384 132 C 420 118, 450 120, 478 130" fill="none" stroke="#172033" stroke-width="3" stroke-dasharray="6 7" stroke-linecap="round"/>
+  <g transform="translate(410 118) rotate(-10)" opacity=".18"><rect width="112" height="70" rx="9" fill="#1E7F6E"/></g>
+  <g transform="translate(446 124) rotate(-13)" opacity=".38"><rect width="112" height="70" rx="9" fill="#1E7F6E"/></g>
+  <g transform="translate(486 128) rotate(-16)">
+    <rect width="112" height="70" rx="9" fill="#1E7F6E" stroke="#172033" stroke-width="3"/>
+    <rect x="14" y="20" width="22" height="16" rx="3" fill="#F4C430" stroke="#172033" stroke-width="2"/>
+    <rect x="14" y="48" width="60" height="6" rx="3" fill="#EEF1EC"/>
+    <circle cx="88" cy="52" r="7" fill="#EEF1EC" opacity=".7"/><circle cx="96" cy="52" r="7" fill="#EEF1EC" opacity=".45"/>
+  </g>
+  <g fill="#F4C430" stroke="#172033" stroke-width="2.5">
+    <circle cx="452" cy="226" r="12"/><circle cx="480" cy="236" r="10"/><circle cx="506" cy="222" r="8"/>
+  </g>
+</svg>

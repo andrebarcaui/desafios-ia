@@ -5,6 +5,7 @@
  "subtitulo": "Prever quem vai deixar o cartão antes que seja tarde",
  "setor": "Banco digital, cartão de crédito",
  "empresa": "Banco Arandu",
+ "imagem": "img/fuga-silenciosa.svg",
  "creditosIniciais": 100,
  "briefing": {
   "remetente": "Marina Couto",
@@ -69,8 +70,19 @@
   "taxaSalvamento": 0.3,
   "minPct": 1,
   "maxPct": 40,
-  "rotuloAcao": "abordar com a oferta de retenção",
-  "rotuloPositivo": "clientes que iam fugir"
+  "termos": {
+   "unidade": "clientes",
+   "positivos": "iam fugir",
+   "negativos": "iam ficar",
+   "passado": "fugiu",
+   "passadoNeg": "ficou",
+   "verbo": "vai fugir",
+   "verboPlural": "fogem",
+   "vp": "Acerto: a oferta chegou a quem ia fugir",
+   "fp": "Desperdício: oferta para quem ia ficar",
+   "fn": "Perda: foram embora sem receber oferta",
+   "vn": "Acerto: ninguém incomodou quem ia ficar"
+  }
  },
  "fases": [
   {
@@ -431,12 +443,34 @@
    "curto": "Treino",
    "duracaoMin": 8,
    "missao": "Hora de treinar. Decidam como separar os dados, como medir o modelo e quantos clientes a campanha deve abordar por mês.",
+   "explicacao": {
+    "titulo": "Como o treino funciona",
+    "passos": [
+     {
+      "titulo": "Separar os dados",
+      "texto": "O modelo aprende com uma parte dos dados (treino) e é testado numa parte que nunca viu (teste). É como estudar por provas antigas e ser avaliado numa prova nova: se a prova nova repetir as questões que caíram no estudo, a nota engana."
+     },
+     {
+      "titulo": "Escolher como medir",
+      "texto": "Antes de olhar o resultado, decidam o que significa um modelo bom para este negócio. A medida errada pode aprovar um modelo inútil."
+     },
+     {
+      "titulo": "Treinar e ler o resultado",
+      "texto": "O modelo dá a cada cliente uma nota de risco. O teste mostra o quanto essas notas separam quem fugiu de quem ficou."
+     },
+     {
+      "titulo": "Decidir quem abordar",
+      "texto": "Com os clientes ordenados do maior para o menor risco, vocês decidem até onde a campanha vai. Cada abordagem custa dinheiro, acerte ou erre."
+     }
+    ]
+   },
    "itens": [
     {
      "id": "f3q1",
      "tipo": "escolha",
      "rotulo": "Divisão dos dados",
      "enunciado": "A base tem uma linha por cliente por mês, durante 18 meses. Como separar treino, validação e teste?",
+     "entenda": "O teste precisa imitar a situação real em que o modelo vai ser usado. Pensem: quando o banco rodar o modelo, que dados ele terá em mãos, e que período ele estará tentando prever? Lembrem também que o mesmo cliente aparece uma vez por mês na base.",
      "opcoes": [
       {
        "id": "a",
@@ -462,6 +496,7 @@
      "tipo": "escolha",
      "rotulo": "Como avaliar",
      "enunciado": "Só 4% dos clientes fogem. Como avaliar se o modelo é bom?",
+     "entenda": "Acurácia é o percentual de acertos no total. Precisão responde: dos clientes que o modelo apontou como fujões, quantos fugiram mesmo? Recall responde: dos clientes que fugiram, quantos o modelo apontou? A AUC resume o quanto o modelo ordena bem os clientes por risco.",
      "opcoes": [
       {
        "id": "a",
@@ -488,7 +523,7 @@
      "rotulo": "Campanha",
      "enunciado": "Treinem o modelo e decidam qual percentual dos clientes, do maior para o menor risco, a campanha vai abordar por mês.",
      "pontosMax": 10,
-     "divisaoItem": "f3q1"
+     "dependeDe": "f3q1"
     },
     {
      "id": "f3j",
