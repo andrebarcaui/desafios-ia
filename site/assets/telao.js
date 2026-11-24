@@ -1,25 +1,26 @@
-/* Telão: placar ao vivo */
-(function () {
+/* Telão: placar ao vivo para projetar. Abre dentro do painel do professor. */
+var Telao = (function () {
   var C = Comum, el = C.el;
-  var chave = null, est = null, nos = {}, raias = {}, ultimoFeed = 0, modo = '', ultimoSorteio = 0, primeira = true;
+  var chave = null, est = null, nos = {}, raias = {}, ultimoFeed = 0, modo = '', ultimoSorteio = 0, primeira = true, timer = null;
 
-  function montar() {
-    var app = C.limpar(document.getElementById('app'));
+  function abrir(container, senha) {
+    chave = senha; est = null; nos = {}; raias = {}; modo = ''; primeira = true;
     nos.titulo = el('h1'); nos.sub = el('small', { texto: 'Desafios de IA: machine learning na prática' });
-    nos.relogio = el('div.telao-relogio');
     nos.corpo = el('div');
-    app.appendChild(el('div.telao', null, el('header.telao-cab', null, el('div', null, nos.sub, nos.titulo), nos.relogio), nos.corpo));
+    C.limpar(container).appendChild(el('div.telao', null, el('header.telao-cab', null, el('div', null, nos.sub, nos.titulo)), nos.corpo));
+    atualizar();
+    clearInterval(timer); timer = setInterval(atualizar, 3000);
   }
+  function fechar() { clearInterval(timer); timer = null; }
 
   function atualizar() {
-    return C.chamar('prof_placar', { chave: chave }).then(function (r) { est = r; C.sincronizar(r.agora); pintar(); })
+    return C.chamar('prof_placar', { chave: chave }).then(function (r) { if (!timer) return; est = r; pintar(); })
       .catch(function () { nos.sub.textContent = 'Sem conexão com o servidor. Tentando de novo...'; });
   }
 
   function pintar() {
     nos.sub.textContent = 'Desafios de IA: machine learning na prática';
     nos.titulo.textContent = est.faseTitulo;
-    C.pintarRelogio(nos.relogio, est.prazo);
     var novoModo = est.fase === 6 ? 'revelacao' : (est.fase === 5 && est.ficha ? 'ficha' : 'placar');
     if (novoModo !== modo) { modo = novoModo; C.limpar(nos.corpo); raias = {}; nos.raias = null; nos.ficha = null; }
     if (modo === 'placar') pintarPlacar();
@@ -28,6 +29,7 @@
   }
 
   function pintarPlacar() {
+    var inicial = primeira;
     if (!nos.raias) {
       nos.raias = el('div.raias');
       nos.mural = el('ol');
@@ -69,7 +71,7 @@
     // Mural
     C.limpar(nos.mural);
     est.feed.slice().reverse().forEach(function (f) { nos.mural.appendChild(el('li.m-' + f.tipo, { texto: f.texto })); });
-    est.feed.forEach(function (f) {
+    if (!inicial) est.feed.forEach(function (f) {
       if (f.id > ultimoFeed && f.tipo === 'queda') est.grupos.forEach(function (g) {
         if (f.texto.indexOf(g.nome + ':') === 0 && raias[g.id]) { var n = raias[g.id].no; n.classList.remove('caiu'); n.offsetHeight; n.classList.add('caiu'); }
       });
@@ -107,11 +109,5 @@
       el('ol', { style: 'font-size:1.3rem;columns:2' }, est.grupos.map(function (g) { return el('li', { texto: g.nome + ': ' + g.total + ' pontos' }); }))));
   }
 
-  C.areaProfessor('Telão', function (s) {
-    chave = s;
-    montar();
-    atualizar();
-    setInterval(atualizar, 3000);
-    setInterval(function () { if (est) C.pintarRelogio(nos.relogio, est.prazo); }, 1000);
-  });
+  return { abrir: abrir, fechar: fechar };
 })();

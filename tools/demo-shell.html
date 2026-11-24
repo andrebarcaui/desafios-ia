@@ -27,9 +27,8 @@
     <button role="tab" aria-selected="true" data-aba="aluno1">Grupo 1</button>
     <button role="tab" aria-selected="false" data-aba="aluno2">Grupo 2</button>
     <button role="tab" aria-selected="false" data-aba="professor">Professor</button>
-    <button role="tab" aria-selected="false" data-aba="telao">Telão</button>
   </div>
-  <span class="info">Você joga como Grupo 1 (<code>DEMO-1</code>, supervisionado) e Grupo 2 (<code>DEMO-2</code>, clustering). Senha do professor: <code>020271</code>. Grupos 3 a 6 simulados.</span>
+  <span class="info">Você joga como Grupo 1 (<code>DEMO-1</code>, supervisionado) e Grupo 2 (<code>DEMO-2</code>, clustering). Senha do professor: <code>020271</code> (o telão fica dentro da aba Professor). Grupos 3 a 6 simulados.</span>
   <button class="reiniciar" type="button" id="reiniciar">Reiniciar demonstração</button>
 </div>
 <div class="quadros" id="quadros"></div>
@@ -132,7 +131,7 @@
     abas.querySelectorAll('[data-aba]').forEach(function (x) { x.setAttribute('aria-selected', x.dataset.aba === nome ? 'true' : 'false'); });
     for (var k in ifr) ifr[k].hidden = k !== nome;
   }
-  criar('aluno1', 'aluno'); criar('aluno2', 'aluno'); criar('professor', 'professor'); criar('telao', 'telao');
+  criar('aluno1', 'aluno'); criar('aluno2', 'aluno'); criar('professor', 'professor');
   abas.addEventListener('click', function (e) { var b = e.target.closest('[data-aba]'); if (b) mostrar(b.dataset.aba); });
   window.DEMO_ESPIAR = function (codigo, nome) {
     var id = 'espiar-' + codigo;

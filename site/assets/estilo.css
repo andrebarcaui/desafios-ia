@@ -382,3 +382,10 @@ a.btn { text-decoration: none; display: inline-block; color: var(--tinta); }
 .perfil-n span { position: relative; font-size: .78rem; padding-left: .4rem; line-height: 1.3rem; }
 .perfil-comp { border-top: 1px solid var(--linha); padding-top: .4rem; font-size: .82rem; }
 @media (max-width: 820px) { .lab-bloco { grid-template-columns: 1fr; } }
+
+/* Telão dentro do painel do professor */
+.prof-vistas { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.prof-vistas b { font-stretch: 125%; font-size: 1.2rem; }
+.telao-controles { position: fixed; top: .75rem; right: .75rem; z-index: 100; display: flex; gap: .4rem; opacity: .3; transition: opacity .2s; }
+.telao-controles:hover, .telao-controles:focus-within { opacity: 1; }
+.telao-controles .btn { background: var(--papel); }

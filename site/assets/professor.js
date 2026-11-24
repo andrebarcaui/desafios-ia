@@ -5,6 +5,22 @@
 
   function chamar(acao, dados) { return C.chamar(acao, Object.assign({ chave: chave }, dados || {})); }
 
+  /* Duas vistas na mesma aba: o painel (só para o professor) e o telão (para projetar) */
+  function verTelao() {
+    clearInterval(timer); timer = null;
+    nos.painel.classList.add('oculto'); nos.telao.classList.remove('oculto');
+    Telao.abrir(nos.telaoConteudo, chave);
+  }
+  function verPainel() {
+    Telao.fechar();
+    try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+    nos.telao.classList.add('oculto'); nos.painel.classList.remove('oculto');
+    atualizar(); clearInterval(timer); timer = setInterval(atualizar, 4000);
+  }
+  function telaCheia() {
+    try { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(function () {}); } catch (e) {}
+  }
+
   function iniciar(r) {
     raiz = C.limpar(document.getElementById('app'));
     nos.fase = el('div.fase-nome'); nos.relogio = el('div.relogio');
@@ -12,7 +28,17 @@
     nos.barra = el('div.prof-barra', null, el('div', null, el('small', { texto: 'Fase atual' }), nos.fase), nos.relogio, nos.acoes);
     nos.tabela = el('div');
     nos.extra = el('div');
-    raiz.appendChild(el('main.prof', null, nos.barra, nos.tabela, nos.extra));
+    nos.painel = el('main.prof', null,
+      el('div.prof-vistas', null, el('b', { texto: 'Painel do professor' }),
+        el('button.btn.btn-forte', { type: 'button', texto: 'Mostrar o telão para a turma', onclick: verTelao })),
+      nos.barra, nos.tabela, nos.extra);
+    nos.telaoConteudo = el('div');
+    nos.telao = el('div.oculto', null, nos.telaoConteudo,
+      el('div.telao-controles', null,
+        el('button.btn.btn-pequeno', { type: 'button', texto: 'Tela cheia', onclick: telaCheia }),
+        el('button.btn.btn-pequeno', { type: 'button', texto: 'Voltar ao painel', onclick: verPainel })));
+    raiz.appendChild(nos.painel); raiz.appendChild(nos.telao);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !nos.telao.classList.contains('oculto') && !document.fullscreenElement) verPainel(); });
     receber(r);
     clearInterval(timer); timer = setInterval(atualizar, 4000);
     setInterval(function () { if (est) C.pintarRelogio(nos.relogio, est.global.prazo); }, 1000);
@@ -83,7 +109,7 @@
       if (m && m.flags.circular && m.flags.circular.length) bandeiras.push(el('span.bandeira', { texto: 'Agrupou com resultado ou rótulo: ' + m.flags.circular.join(', ') }));
       if (m && m.tipo === 'agrupamento' && m.cenario === 'escala') bandeiras.push(el('span.bandeira', { texto: 'Agrupou sem padronizar as variáveis' }));
       if (m && m.flags.redes) bandeiras.push(el('span.bandeira.violeta', { texto: 'Comprou dados de redes sociais' }));
-      if (m && m.flags.ruido.length) bandeiras.push(el('span.bandeira.violeta', { texto: 'Ruído como feature: ' + m.flags.ruido.join(', ') }));
+      if (m && m.flags.ruido.length) bandeiras.push(el('span.bandeira.violeta', { texto: 'Usou coluna sem informação: ' + m.flags.ruido.join(', ') }));
       var suspeito = t.colagens > 0 || t.insercoesGrandes > 0 || t.tempoForaMs > 120000 || t.saidas > 6;
       return el('tr', null,
         el('td', null, el('span.ponto-on' + (g.online ? '.on' : ''), { title: g.online ? 'Conectado' : 'Sem sinal há mais de 25 s' }), el('b', { texto: g.nome }), ' ', el('span.mono', { style: 'font-size:.78rem', texto: g.codigo }),
@@ -116,7 +142,6 @@
     if (est.semEntrar.length) x.appendChild(el('section.secao-prof', null, el('h3', { texto: 'Grupos que ainda não entraram' }),
       el('div.codigos', null, est.semEntrar.map(function (g) { return el('span', null, el('b', { texto: g.nome + ': ' }), el('span.mono', { texto: g.codigo })); }))));
     x.appendChild(el('section.secao-prof', null, el('h3', { texto: 'Ferramentas' }), el('div', { style: 'display:flex;gap:.5rem;flex-wrap:wrap' },
-      C.demo ? null : el('a.btn', { href: 'telao.html', target: '_blank', texto: 'Abrir o telão' }),
       el('button.btn', { type: 'button', texto: 'Baixar respostas (CSV)', onclick: exportar }),
       (function () { var b = el('button.btn.btn-perigo', { type: 'button', texto: 'Reiniciar o jogo' }); armar(b, 'Apaga tudo. Confirmar?', function () { return acao('prof_reiniciar', {}, 'Jogo reiniciado.'); }); return b; })(),
       el('button.btn', { type: 'button', texto: 'Sair', onclick: function () { clearInterval(timer); C.sairProfessor(); } }))));

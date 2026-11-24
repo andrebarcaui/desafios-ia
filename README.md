@@ -20,7 +20,7 @@ Todos os casos têm a mesma estrutura e a mesma pontuação máxima, então o pl
 | Parte | Onde roda | O que faz |
 |---|---|---|
 | `site/index.html` | Netlify (link dos alunos) | Tela do grupo. Cada grupo entra com o próprio código e só vê o próprio caso |
-| `site/professor/` | Netlify, com senha | `index.html` (painel), `telao.html` (placar no projetor) e `grupo.html` (tela de qualquer grupo, só leitura) |
+| `site/professor/` | Netlify, com senha | `index.html` (painel, com o telão para projetar na mesma aba) e `grupo.html` (tela de qualquer grupo, só leitura) |
 | `backend/Codigo.gs` | Google Apps Script, dentro de uma planilha sua | Guarda o estado do jogo, calcula pontos com o gabarito e registra as respostas na planilha |
 | `casos-fonte/` | Só no repositório | Os casos completos, com gabarito. Nunca vão para o site |
 
@@ -51,7 +51,7 @@ A partir daí, todo envio ao GitHub republica o site sozinho.
 ## Em aula
 
 1. Antes da aula, confira a aba **Grupos**: um código por grupo e o caso de cada um. Se mudar algo, espere 1 minuto para o servidor ler de novo.
-2. Abra `professor/` no seu computador e entre com a senha (a da aba **Config**). Do painel, abra o telão (`professor/telao.html`) e projete. A senha fica guardada no navegador, então o telão abre direto.
+2. Abra `professor/` no seu computador e entre com a senha (a da aba **Config**). O botão **Mostrar o telão para a turma** troca o painel pelo placar, para projetar; **Voltar ao painel** (ou Esc) traz o painel de volta. O telão não mostra relógio: o tempo de cada fase fica só no painel e na tela dos grupos.
 3. Entregue a cada grupo o seu código. Eles entram em `index.html` com o código e os nomes dos integrantes (até 10 por grupo).
 4. No painel, abra uma fase de cada vez. Quando você abre a fase seguinte, o que estiver marcado na anterior é enviado automaticamente.
 5. A qualquer momento, **Ver tela do grupo** mostra exatamente o que aquele grupo está vendo, com o rascunho atualizado a cada 5 segundos.

@@ -57,12 +57,12 @@ console.log('backend/Codigo.gs:', Math.round(gs.length / 1024), 'KB');
 // 4. Demo
 const css = ler('site/assets/estilo.css');
 function pagina(js, extra) {
-  const scripts = ['site/assets/comum.js', 'site/assets/' + js + '.js'].map(p => '<script>' + ler(p) + '<\/script>').join('\n');
+  const scripts = ['site/assets/comum.js'].concat((Array.isArray(js) ? js : [js]).map(j => 'site/assets/' + j + '.js')).map(p => '<script>' + ler(p) + '<\/script>').join('\n');
   return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
     '<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">' +
     '<style>' + css + '</style></head><body><div id="app"></div><script>window.DESAFIOS_CONFIG={apiUrl:""};' + (extra || '') + '<\/script><script>' + ler('shared/stats.js') + '<\/script>' + scripts + '</body></html>';
 }
-const paginas = { aluno: pagina('aluno'), professor: pagina('professor'), telao: pagina('telao'), espiar: pagina('aluno', 'window.DESAFIOS_ESPIAR=true;') };
+const paginas = { aluno: pagina('aluno'), professor: pagina(['telao', 'professor']), espiar: pagina('aluno', 'window.DESAFIOS_ESPIAR=true;') };
 const publicos = {};
 for (const id in casos) {
   publicos[id] = semPrivados(casos[id]);

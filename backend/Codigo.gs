@@ -1,7 +1,7 @@
 /*
  * Desafios de IA: servidor do jogo (Google Apps Script).
  * ARQUIVO GERADO por tools/build.js. Não edite aqui: edite shared/, backend/adaptador.gs.js e casos-fonte/.
- * Gerado em 2026-11-24T17:06:17.615Z
+ * Gerado em 2026-11-24T18:08:27.200Z
  */
 
 /* Estatística do simulador. Usado no navegador e no Apps Script. */
