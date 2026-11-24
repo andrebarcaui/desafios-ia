@@ -159,6 +159,26 @@ var ServerCore = (function () {
       return g;
     }
 
+    /* Em produção, os pontos da campanha passam a valer pelo resultado real (AUC de produção). */
+    function campanha(caso, g) {
+      var sim = itemPorTipo(caso, 'simulador'), env = g.enviadas[sim ? sim.fase.id : ''];
+      if (!sim || !env || !g.modelo) return null;
+      var r = env.respostas[sim.item.id];
+      if (!r || !r.pct) return null;
+      var p = caso.simulador, pct = Number(r.pct);
+      return { item: sim.item, env: env, pct: pct, prometido: Stats.simular(g.modelo.aucValidacao, p, pct).valor, real: Stats.simular(g.modelo.aucProducao, p, pct).valor, otimoReal: Stats.otimo(g.modelo.aucProducao, p).valor };
+    }
+    function sim_fase(caso) { return itemPorTipo(caso, 'simulador').fase.id; }
+    function reavaliarCampanha(caso, g) {
+      var c = campanha(caso, g);
+      if (!c || c.env.reavaliado) return c;
+      var novo = c.otimoReal > 0 ? Math.max(0, Math.round(c.item.pontosMax * c.real / c.otimoReal)) : 0;
+      var delta = novo - (c.env.det[c.item.id] || 0);
+      c.env.det[c.item.id] = novo; c.env.pontos += delta; g.pontos[sim_fase(caso)] += delta;
+      c.env.reavaliado = true;
+      return c;
+    }
+
     function aplicarTelemetria(g, t) {
       if (!t || typeof t !== 'object') return;
       ['saidas', 'tempoForaMs', 'colagens', 'charsColados', 'insercoesGrandes'].forEach(function (k) {
@@ -213,7 +233,9 @@ var ServerCore = (function () {
         return s.replace('{aucValidacao}', fmtAuc(g.modelo.aucValidacao)).replace('{aucProducao}', fmtAuc(g.modelo.aucProducao))
           .replace('{colunasVazamento}', g.modelo.flags.vazamento.join(', '));
       }
-      return { titulo: ev.titulo, mensagem: sub(ev.mensagem), evidencias: ev.evidencias.map(sub), aucValidacao: g.modelo.aucValidacao, aucProducao: g.modelo.aucProducao };
+      var c = campanha(caso, g);
+      return { titulo: ev.titulo, mensagem: sub(ev.mensagem), evidencias: ev.evidencias.map(sub), aucValidacao: g.modelo.aucValidacao, aucProducao: g.modelo.aucProducao,
+        campanha: c ? { pct: c.pct, prometido: c.prometido, real: c.real } : null };
     }
 
     function revelacaoGrupo(caso, g) {
@@ -445,10 +467,11 @@ var ServerCore = (function () {
         feed(glob, 'Fase aberta: ' + TITULOS_FASE[nova], 'fase');
         if (fNova === 'evento') gs.forEach(function (g) {
           if (!g.modelo) g.modelo = calcularModelo(casos[g.caso], g);
-          var antes = g.pontos.desempenho;
           g.pontos.desempenho = bonusDesempenho(g.modelo.aucProducao);
-          if (g.modelo.aucValidacao - g.modelo.aucProducao >= 0.15) feed(glob, g.nome + ': em produção, a AUC despencou de ' + fmtAuc(g.modelo.aucValidacao) + ' para ' + fmtAuc(g.modelo.aucProducao), 'queda');
-          else if (antes !== g.pontos.desempenho) feed(glob, g.nome + ': em produção, a AUC caiu de ' + fmtAuc(g.modelo.aucValidacao) + ' para ' + fmtAuc(g.modelo.aucProducao), 'drift');
+          var camp = reavaliarCampanha(casos[g.caso], g);
+          var txt = g.nome + ': em produção, a AUC ' + (g.modelo.aucValidacao - g.modelo.aucProducao >= 0.15 ? 'despencou' : 'caiu') + ' de ' + fmtAuc(g.modelo.aucValidacao) + ' para ' + fmtAuc(g.modelo.aucProducao);
+          if (camp && camp.real < 0) txt += ' e a campanha passou a dar prejuízo';
+          feed(glob, txt, g.modelo.aucValidacao - g.modelo.aucProducao >= 0.15 ? 'queda' : 'drift');
           salvarGrupo(g);
         });
         salvarGlobal(glob);

@@ -76,6 +76,7 @@
     {
       "id": "f1",
       "titulo": "Enquadre o problema",
+      "curto": "Enquadre",
       "duracaoMin": 6,
       "missao": "Transformem o pedido da Marina num problema de machine learning bem formulado. Antes de pensar em dados, decidam o que exatamente o modelo vai prever, quando e para quê.",
       "itens": [
@@ -233,6 +234,7 @@
     {
       "id": "f2",
       "titulo": "Monte o dataset",
+      "curto": "Dataset",
       "duracaoMin": 12,
       "missao": "O time de dados separou 16 colunas candidatas. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. O dataset que vocês montarem é o que o modelo vai usar.",
       "itens": [
@@ -511,6 +513,7 @@
     {
       "id": "f3",
       "titulo": "Treine e avalie",
+      "curto": "Treino",
       "duracaoMin": 8,
       "missao": "Hora de treinar. Decidam como separar os dados, como medir o modelo e quantos clientes a campanha deve abordar por mês.",
       "itens": [
@@ -583,7 +586,8 @@
           "tipo": "simulador",
           "rotulo": "Campanha",
           "enunciado": "Treinem o modelo e decidam qual percentual dos clientes, do maior para o menor risco, a campanha vai abordar por mês.",
-          "pontosMax": 10
+          "pontosMax": 10,
+          "divisaoItem": "f3q1"
         },
         {
           "id": "f3j",
@@ -611,6 +615,7 @@
     {
       "id": "evento",
       "titulo": "Seis meses em produção",
+      "curto": "Produção",
       "duracaoMin": 6,
       "missao": "O modelo de vocês foi para produção. Seis meses depois, a Marina chama a equipe para uma conversa difícil.",
       "itens": [

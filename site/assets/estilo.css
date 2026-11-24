@@ -111,8 +111,11 @@ textarea { resize: vertical; min-height: 5.5em; }
 .contador { font-size: .8rem; color: var(--grafite); text-align: right; }
 
 /* Cartas */
-.mesa { display: grid; gap: 1rem; }
-.monte { display: flex; flex-wrap: wrap; gap: .6rem; min-height: 4rem; padding: .75rem; border: 2px dashed var(--linha); border-radius: var(--raio); }
+.missao.missao-larga { max-width: 92rem; }
+.mesa { display: grid; grid-template-columns: minmax(15rem, 17.5rem) 1fr; gap: 1rem; align-items: start; }
+.mesa-lado { position: sticky; top: 4.6rem; }
+.monte { display: flex; flex-direction: column; gap: .5rem; min-height: 6rem; max-height: calc(100vh - 17rem); overflow-y: auto; padding: .6rem; border: 2px dashed var(--linha); border-radius: var(--raio); }
+.monte .carta { width: 100%; }
 .monte-vazio { color: var(--grafite); font-size: .9rem; align-self: center; }
 .carta { width: 14.5rem; background: var(--cartao); border-radius: 4px; padding: .55rem .7rem .6rem; border-top: 4px solid var(--tinta); box-shadow: 0 1px 0 var(--linha), 0 2px 6px rgba(23,32,51,.08); cursor: grab; position: relative; touch-action: manipulation; }
 .carta:active { cursor: grabbing; }
@@ -122,8 +125,8 @@ textarea { resize: vertical; min-height: 5.5em; }
 .carta-desc { font-size: .8rem; line-height: 1.35; color: var(--grafite); margin-bottom: .4rem; }
 .carta-ex { display: flex; flex-wrap: wrap; gap: .25rem; }
 .carta-ex span { font-family: var(--mono); font-size: .7rem; background: var(--papel); border-radius: 3px; padding: 0 .3rem; }
-.caixas { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
-.caixa { border: 2px solid var(--cor); border-radius: var(--raio); background: color-mix(in srgb, var(--cor) 7%, var(--papel)); min-height: 14rem; display: flex; flex-direction: column; }
+.caixas { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+.caixa { border: 2px solid var(--cor); border-radius: var(--raio); background: color-mix(in srgb, var(--cor) 7%, var(--papel)); min-height: 12rem; display: flex; flex-direction: column; }
 .caixa.alvo { background: color-mix(in srgb, var(--cor) 20%, var(--papel)); }
 .caixa-cab { background: var(--cor); color: #fff; padding: .45rem .7rem; border-radius: 3px 3px 0 0; }
 .caixa-cab b { display: block; font-size: .95rem; }
@@ -276,9 +279,9 @@ textarea { resize: vertical; min-height: 5.5em; }
 .mural h2 { font-size: 1rem; font-stretch: 100%; opacity: .65; }
 .mural ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
 .mural li { padding: .55rem .75rem; border-left: 3px solid rgba(238,241,236,.3); background: rgba(238,241,236,.05); font-size: .95rem; }
-.mural li.alta { border-left-color: var(--marca); }
-.mural li.queda { border-left-color: #ff7864; color: #ffc4ba; }
-.mural li.fase { border-left-color: var(--papel); font-weight: 700; }
+.mural li.m-alta { border-left-color: var(--marca); }
+.mural li.m-queda { border-left-color: #ff7864; color: #ffc4ba; }
+.mural li.m-fase { border-left-color: var(--papel); font-weight: 700; }
 .telao-ficha { display: grid; grid-template-columns: 1fr 22rem; gap: 2rem; color: var(--tinta); }
 .telao-ficha .ficha { font-size: 1.05rem; }
 .telao-ficha .ficha dl { grid-template-columns: 15rem 1fr; }
@@ -294,8 +297,12 @@ textarea { resize: vertical; min-height: 5.5em; }
 .armadilha ul { padding-left: 1.1rem; margin: .5rem 0 0; }
 .vazio-telao { opacity: .6; font-size: 1.2rem; }
 
+a.btn { text-decoration: none; display: inline-block; color: var(--tinta); }
 @media (max-width: 1100px) {
-  .caixas { grid-template-columns: repeat(2, 1fr); }
+  .mesa { grid-template-columns: 1fr; }
+  .mesa-lado { position: static; }
+  .monte { flex-direction: row; flex-wrap: wrap; max-height: none; }
+  .monte .carta { width: 14.5rem; }
   .telao-corpo { grid-template-columns: 1fr; }
 }
 @media (max-width: 820px) {

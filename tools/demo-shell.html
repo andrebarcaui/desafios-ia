@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desafios de IA: demonstração</title>
+<style>
+  html, body { margin: 0; height: 100%; font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; background: #172033; color: #EEF1EC; }
+  .barra { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .55rem 1rem; }
+  .barra b { font-size: 1rem; }
+  .barra .info { font-size: .85rem; opacity: .8; flex: 1; min-width: 16rem; }
+  .barra code { background: #F4C430; color: #172033; padding: 0 .35rem; border-radius: 3px; font-weight: 700; }
+  .abas { display: flex; gap: .3rem; }
+  .abas button, .reiniciar { font: inherit; font-weight: 700; font-size: .9rem; border: 2px solid #EEF1EC; background: transparent; color: #EEF1EC; padding: .35rem .8rem; border-radius: 6px; cursor: pointer; }
+  .abas button[aria-selected=true] { background: #F4C430; border-color: #F4C430; color: #172033; }
+  .reiniciar { border-color: rgba(238,241,236,.4); font-weight: 400; }
+  .quadros { position: absolute; top: 3.2rem; left: 0; right: 0; bottom: 0; }
+  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #EEF1EC; }
+  iframe[hidden] { display: block; visibility: hidden; }
+  @media (max-width: 760px) { .quadros { top: 6rem; } }
+</style>
+</head>
+<body>
+<div class="barra">
+  <b>Demonstração</b>
+  <div class="abas" role="tablist">
+    <button role="tab" aria-selected="true" data-aba="aluno">Grupo 1 (você)</button>
+    <button role="tab" aria-selected="false" data-aba="professor">Professor</button>
+    <button role="tab" aria-selected="false" data-aba="telao">Telão</button>
+  </div>
+  <span class="info">Tudo roda neste navegador. Entre como Grupo 1 com o código <code>DEMO-1</code>. Os grupos 2 a 6 são simulados e respondem sozinhos quando o professor abre cada fase.</span>
+  <button class="reiniciar" type="button" id="reiniciar">Reiniciar demonstração</button>
+</div>
+<div class="quadros" id="quadros"></div>
+<script>/*__STATS__*/</script>
+<script>/*__CORE__*/</script>
+<script>/*__DADOS__*/</script>
+<script>
+(function () {
+  try { localStorage.removeItem('desafios.sessao'); } catch (e) {}
+  var CASO = Object.keys(CASOS_COMPLETOS)[0];
+  var grupos = [1, 2, 3, 4, 5, 6].map(function (i) { return { codigo: 'DEMO-' + i, nome: 'Grupo ' + i, caso: CASO }; });
+  var mem = {};
+  var store = { get: function (k) { return mem[k] ? JSON.parse(mem[k]) : null; }, set: function (k, v) { mem[k] = JSON.stringify(v); }, del: function (k) { delete mem[k]; } };
+  window.DEMO_CASOS_PUBLICOS = DEMO_CASOS_PUBLICOS;
+  var S = ServerCore.create({ store: store, casos: CASOS_COMPLETOS, config: { chaveProfessor: 'DEMO', grupos: grupos } });
+  /* Antes de o professor mudar de fase, os grupos simulados que ainda não jogaram jogam na hora. */
+  window.DEMO_SERVIDOR = { handle: function (req) { if (req && req.acao === 'prof_fase') jogarPendentes(); return S.handle(req); } };
+
+  /* ----- Grupos simulados ----- */
+  var perfis = {
+    'DEMO-2': { p: 0.85, vaza: [], compra: ['m1', 'm2'], membros: ['Larissa', 'Otávio', 'Beatriz'] },
+    'DEMO-3': { p: 0.6, vaza: ['c11', 'c13'], compra: ['m4'], membros: ['Rafael', 'Júlia', 'Henrique', 'Sofia'] },
+    'DEMO-4': { p: 0.7, vaza: [], compra: ['m3'], membros: ['Camila', 'Diego'] },
+    'DEMO-5': { p: 0.5, vaza: ['c12'], compra: [], membros: ['Paula', 'Tiago', 'Renata'] },
+    'DEMO-6': { p: 0.9, vaza: [], compra: ['m1'], membros: ['Igor', 'Mariana', 'Felipe'] }
+  };
+  var caso = CASOS_COMPLETOS[CASO], agenda = {};
+  function sorte(p) { return Math.random() < p; }
+  function escolher(gab, p) {
+    var ids = Object.keys(gab), melhor = ids.reduce(function (a, b) { return gab[b] > gab[a] ? b : a; });
+    if (sorte(p)) return melhor;
+    var outros = ids.filter(function (x) { return x !== melhor; });
+    return outros[Math.floor(Math.random() * outros.length)];
+  }
+  function respostasBot(codigo, faseId) {
+    var pf = perfis[codigo], fase = caso.fases.filter(function (f) { return f.id === faseId; })[0], R = {};
+    var est = S.handle({ acao: 'estado', codigo: codigo });
+    fase.itens.forEach(function (it) {
+      if (it.tipo === 'escolha') {
+        var gab = it._gabarito || (est.evento ? caso._evento[est.evento.titulo === caso._evento.vazamento.titulo ? 'vazamento' : 'drift']._gabarito[it.id] : null);
+        if (gab) R[it.id] = escolher(gab, pf.p);
+      } else if (it.tipo === 'texto') R[it.id] = 'Resposta do grupo simulado.';
+      else if (it.tipo === 'cartas') {
+        var m = {}, caixas = caso.caixas.map(function (c) { return c.id; });
+        it.cartas.forEach(function (c) { m[c.id] = sorte(pf.p) ? c._gabarito : caixas[Math.floor(Math.random() * 4)]; if (c._gabarito === 'vazamento' && m[c.id] === 'feature') m[c.id] = 'descartar'; });
+        pf.vaza.forEach(function (id) { m[id] = 'feature'; });
+        R[it.id] = m;
+      } else if (it.tipo === 'simulador') R[it.id] = { pct: pf.p > 0.65 ? 3 + Math.round(Math.random() * 6) : 12 + Math.round(Math.random() * 12) };
+    });
+    return R;
+  }
+  function jogar(codigo, faseId) {
+    var R = respostasBot(codigo, faseId);
+    if (faseId === 'f2') perfis[codigo].compra.forEach(function (id) { S.handle({ acao: 'comprar', codigo: codigo, fonteId: id }); });
+    if (faseId === 'f3') S.handle({ acao: 'treinar', codigo: codigo, respostas: R });
+    S.handle({ acao: 'enviar', codigo: codigo, faseId: faseId, respostas: R });
+  }
+  function iniciarBots() {
+    Object.keys(perfis).forEach(function (c, i) {
+      setTimeout(function () { S.handle({ acao: 'entrar', codigo: c, membros: perfis[c].membros }); }, 1500 + i * 1700);
+    });
+  }
+  setInterval(function () {
+    var p = S.handle({ acao: 'placar' }), fid = ServerCore.FASES[p.fase];
+    if (['f1', 'f2', 'f3', 'evento'].indexOf(fid) < 0) return;
+    Object.keys(perfis).forEach(function (c) {
+      var k = c + fid;
+      if (agenda[k]) return;
+      agenda[k] = { t: setTimeout(function () { executar(k, c, fid); }, 5000 + Math.random() * 20000), c: c, f: fid };
+    });
+  }, 1500);
+  function executar(k, c, fid) {
+    var a = agenda[k]; if (!a || a.feito) return;
+    a.feito = true; clearTimeout(a.t);
+    try { jogar(c, fid); } catch (e) {}
+  }
+  function jogarPendentes() {
+    var p = S.handle({ acao: 'placar' }), fid = ServerCore.FASES[p.fase];
+    if (['f1', 'f2', 'f3', 'evento'].indexOf(fid) < 0) return;
+    Object.keys(perfis).forEach(function (c) { if (!agenda[c + fid]) agenda[c + fid] = { c: c, f: fid }; executar(c + fid, c, fid); });
+  }
+
+  /* ----- Abas ----- */
+  var quadros = document.getElementById('quadros'), ifr = {};
+  ['aluno', 'professor', 'telao'].forEach(function (nome, i) {
+    var f = document.createElement('iframe');
+    f.title = nome; f.srcdoc = PAGINAS[nome]; f.hidden = i !== 0;
+    quadros.appendChild(f); ifr[nome] = f;
+  });
+  document.querySelectorAll('[data-aba]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('[data-aba]').forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      for (var k in ifr) ifr[k].hidden = k !== b.dataset.aba;
+    });
+  });
+  document.getElementById('reiniciar').addEventListener('click', function () {
+    try { localStorage.removeItem('desafios.sessao'); } catch (e) {}
+    location.reload();
+  });
+  iniciarBots();
+})();
+</script>
+</body>
+</html>

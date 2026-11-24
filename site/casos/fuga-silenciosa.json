@@ -1,0 +1,582 @@
+{
+ "id": "fuga-silenciosa",
+ "exercicio": "ml-supervisionado",
+ "titulo": "A Fuga Silenciosa",
+ "subtitulo": "Prever quem vai deixar o cartão antes que seja tarde",
+ "setor": "Banco digital, cartão de crédito",
+ "empresa": "Banco Arandu",
+ "creditosIniciais": 100,
+ "briefing": {
+  "remetente": "Marina Couto",
+  "cargo": "Diretora de Cartões, Banco Arandu",
+  "assunto": "Preciso de IA para segurar nossos clientes",
+  "mensagem": [
+   "Pessoal, preciso da ajuda de vocês com urgência.",
+   "Perdemos uns 230 mil clientes de cartão nos últimos 12 meses. Cada cliente ativo nos dá, em média, R$ 900 de margem por ano, então façam a conta. O Conselho quer um plano em 30 dias.",
+   "A ideia é simples: quero uma IA que me diga quem vai cancelar o cartão, para eu fazer uma oferta antes. O pessoal de dados diz que tem tudo na base, mais de 200 colunas por cliente. Já temos até o campo de cancelamento lá.",
+   "Vocês me ajudam a desenhar isso? Não preciso de código, preciso saber o que pedir ao time de dados e se dá para confiar no resultado."
+  ],
+  "contexto": [
+   {
+    "titulo": "A empresa",
+    "texto": "O Banco Arandu é um banco 100% digital, com 2,4 milhões de cartões de crédito ativos e sem anuidade. A receita vem de juros e da tarifa que o banco recebe a cada compra."
+   },
+   {
+    "titulo": "Relatório do BI",
+    "texto": "No último ano, o sistema registrou 81 mil cancelamentos formais de cartão, feitos pelo app ou pelo telefone."
+   },
+   {
+    "titulo": "Base de dados",
+    "texto": "O time de dados guarda uma foto mensal de cada cliente (uma linha por cliente por mês) desde janeiro de 2025: 18 meses de histórico."
+   },
+   {
+    "titulo": "Campanha de retenção",
+    "texto": "Um piloto do ano passado testou uma oferta de cashback de 2% por 3 meses. Cada cliente abordado custou, em média, R$ 40. A oferta convenceu a ficar cerca de 30% dos clientes que iam sair."
+   },
+   {
+    "titulo": "Tamanho do problema",
+    "texto": "Em qualquer mês, cerca de 4% dos clientes ativos param de usar o cartão nos 60 dias seguintes."
+   }
+  ]
+ },
+ "caixas": [
+  {
+   "id": "feature",
+   "nome": "Usar como feature",
+   "ajuda": "Informação que existe no momento da previsão e ajuda a prever"
+  },
+  {
+   "id": "vazamento",
+   "nome": "Vazamento",
+   "ajuda": "Só existe depois que o resultado já aconteceu"
+  },
+  {
+   "id": "sensivel",
+   "nome": "Sensível ou proxy",
+   "ajuda": "Dado protegido ou substituto de um dado protegido"
+  },
+  {
+   "id": "descartar",
+   "nome": "Descartar",
+   "ajuda": "Não carrega padrão útil"
+  }
+ ],
+ "simulador": {
+  "baseClientes": 2400000,
+  "prevalencia": 0.04,
+  "custoAcao": 40,
+  "valorCliente": 900,
+  "taxaSalvamento": 0.3,
+  "minPct": 1,
+  "maxPct": 40,
+  "rotuloAcao": "abordar com a oferta de retenção",
+  "rotuloPositivo": "clientes que iam fugir"
+ },
+ "fases": [
+  {
+   "id": "f1",
+   "titulo": "Enquadre o problema",
+   "curto": "Enquadre",
+   "duracaoMin": 6,
+   "missao": "Transformem o pedido da Marina num problema de machine learning bem formulado. Antes de pensar em dados, decidam o que exatamente o modelo vai prever, quando e para quê.",
+   "itens": [
+    {
+     "id": "f1q1",
+     "tipo": "escolha",
+     "rotulo": "Decisão apoiada",
+     "enunciado": "Qual decisão de negócio o modelo vai apoiar?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Escolher, todo mês, quais clientes recebem a oferta de retenção antes de pararem de usar o cartão"
+      },
+      {
+       "id": "b",
+       "texto": "Explicar ao Conselho por que os clientes estão indo embora"
+      },
+      {
+       "id": "c",
+       "texto": "Separar os clientes em perfis de comportamento para campanhas de marketing"
+      },
+      {
+       "id": "d",
+       "texto": "Estimar quanto de receita o banco vai perder no próximo trimestre"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q2",
+     "tipo": "escolha",
+     "rotulo": "Momento da previsão",
+     "enunciado": "Em que momento a previsão precisa ser feita?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Quando o cliente pede o cancelamento"
+      },
+      {
+       "id": "b",
+       "texto": "Uma vez por mês, prevendo quem vai parar de usar o cartão nos 60 dias seguintes"
+      },
+      {
+       "id": "c",
+       "texto": "Uma vez por ano, no aniversário do cartão"
+      },
+      {
+       "id": "d",
+       "texto": "Na abertura da conta"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q3",
+     "tipo": "escolha",
+     "rotulo": "Tipo de problema",
+     "enunciado": "Que tipo de problema é esse?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Classificação: prever uma classe (vai fugir ou não), com uma probabilidade associada"
+      },
+      {
+       "id": "b",
+       "texto": "Regressão: prever um valor numérico, como o gasto do mês seguinte"
+      },
+      {
+       "id": "c",
+       "texto": "Agrupamento: descobrir grupos de clientes parecidos, sem rótulos"
+      },
+      {
+       "id": "d",
+       "texto": "Aprendizado por reforço: o sistema aprende testando ofertas e recebendo recompensa"
+      }
+     ],
+     "pontosMax": 5
+    },
+    {
+     "id": "f1q4",
+     "tipo": "escolha",
+     "rotulo": "Variável-alvo",
+     "enunciado": "Qual deve ser a variável-alvo (o rótulo que o modelo aprende a prever)?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Cancelou formalmente o cartão (sim ou não)"
+      },
+      {
+       "id": "b",
+       "texto": "Ficou sem nenhuma compra nos 60 dias seguintes à data de referência, depois de ter usado o cartão nos 3 meses anteriores (sim ou não)"
+      },
+      {
+       "id": "c",
+       "texto": "Deu nota de satisfação menor que 6 na pesquisa do app"
+      },
+      {
+       "id": "d",
+       "texto": "Valor gasto no cartão no mês seguinte, em reais"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f1j",
+     "tipo": "texto",
+     "rotulo": "Por que esse alvo",
+     "enunciado": "Em até duas frases: por que esse alvo, e não o campo de cancelamento que a Marina mencionou?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f1d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f1d2",
+     "titulo": "Conversar com o time de Retenção",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f2",
+   "titulo": "Monte o dataset",
+   "curto": "Dataset",
+   "duracaoMin": 12,
+   "missao": "O time de dados separou 16 colunas candidatas. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. O dataset que vocês montarem é o que o modelo vai usar.",
+   "itens": [
+    {
+     "id": "f2cartas",
+     "tipo": "cartas",
+     "rotulo": "Colunas",
+     "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
+     "pontosPorCarta": 2,
+     "pontosMax": 32,
+     "cartas": [
+      {
+       "id": "c01",
+       "nome": "id_cliente",
+       "descricao": "Identificador único do cliente na base.",
+       "exemplos": [
+        "88231907",
+        "10455321",
+        "77310022"
+       ]
+      },
+      {
+       "id": "c02",
+       "nome": "meses_relacionamento",
+       "descricao": "Há quantos meses o cliente tem o cartão.",
+       "exemplos": [
+        "4",
+        "37",
+        "112"
+       ]
+      },
+      {
+       "id": "c03",
+       "nome": "limite_credito",
+       "descricao": "Limite total do cartão na data de referência.",
+       "exemplos": [
+        "R$ 1.200",
+        "R$ 8.500",
+        "R$ 22.000"
+       ]
+      },
+      {
+       "id": "c04",
+       "nome": "pct_limite_usado_3m",
+       "descricao": "Média do percentual do limite utilizado nos últimos 3 meses.",
+       "exemplos": [
+        "12%",
+        "64%",
+        "3%"
+       ]
+      },
+      {
+       "id": "c05",
+       "nome": "variacao_gasto_3m_vs_6m",
+       "descricao": "Gasto dos últimos 3 meses comparado ao dos 3 meses anteriores.",
+       "exemplos": [
+        "-72%",
+        "+8%",
+        "-15%"
+       ]
+      },
+      {
+       "id": "c06",
+       "nome": "dias_sem_transacao",
+       "descricao": "Dias desde a última compra no cartão, contados na data de referência.",
+       "exemplos": [
+        "2",
+        "41",
+        "19"
+       ]
+      },
+      {
+       "id": "c07",
+       "nome": "categorias_compra_3m",
+       "descricao": "Quantas categorias diferentes (mercado, transporte, streaming...) tiveram compras nos últimos 3 meses.",
+       "exemplos": [
+        "1",
+        "7",
+        "4"
+       ]
+      },
+      {
+       "id": "c08",
+       "nome": "faturas_atraso_12m",
+       "descricao": "Faturas pagas com atraso nos últimos 12 meses.",
+       "exemplos": [
+        "0",
+        "3",
+        "1"
+       ]
+      },
+      {
+       "id": "c09",
+       "nome": "contatos_sac_90d",
+       "descricao": "Contatos com o atendimento (chat, telefone, app) nos 90 dias anteriores à data de referência.",
+       "exemplos": [
+        "0",
+        "5",
+        "1"
+       ]
+      },
+      {
+       "id": "c10",
+       "nome": "cartao_em_carteira_digital",
+       "descricao": "Se o cartão está cadastrado na carteira digital do celular, para pagar por aproximação.",
+       "exemplos": [
+        "sim",
+        "não",
+        "sim"
+       ]
+      },
+      {
+       "id": "c11",
+       "nome": "protocolo_cancelamento",
+       "descricao": "Se o cliente abriu protocolo de cancelamento. Preenchido pelo atendimento no dia em que o cliente pede para cancelar.",
+       "exemplos": [
+        "não",
+        "sim",
+        "não"
+       ]
+      },
+      {
+       "id": "c12",
+       "nome": "aceitou_oferta_retencao",
+       "descricao": "Se o cliente aceitou a contraproposta da equipe de retenção. A equipe só faz contraproposta a quem pede cancelamento.",
+       "exemplos": [
+        "não",
+        "não",
+        "sim"
+       ]
+      },
+      {
+       "id": "c13",
+       "nome": "gasto_medio_mensal_ano",
+       "descricao": "Gasto médio mensal no ano civil (janeiro a dezembro), calculado pelo BI em janeiro do ano seguinte e gravado em todas as linhas daquele ano.",
+       "exemplos": [
+        "R$ 340",
+        "R$ 2.100",
+        "R$ 0"
+       ]
+      },
+      {
+       "id": "c14",
+       "nome": "cep_residencial",
+       "descricao": "CEP do endereço de cobrança.",
+       "exemplos": [
+        "22071-000",
+        "21650-210",
+        "04538-133"
+       ]
+      },
+      {
+       "id": "c15",
+       "nome": "raca_cor_autodeclarada",
+       "descricao": "Raça ou cor informada voluntariamente na pesquisa interna de diversidade de clientes, em 2024.",
+       "exemplos": [
+        "Parda",
+        "Branca",
+        "Não informado"
+       ]
+      },
+      {
+       "id": "c16",
+       "nome": "codigo_agencia",
+       "descricao": "Código da agência a que o cliente está vinculado. O Arandu é 100% digital: todos os clientes estão na agência 0001.",
+       "exemplos": [
+        "0001",
+        "0001",
+        "0001"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "f2mercado",
+     "tipo": "mercado",
+     "rotulo": "Dados externos comprados",
+     "enunciado": "Mercado de dados: fontes externas que podem ser compradas com créditos. A compra é imediata e não tem devolução.",
+     "pontosMax": 8,
+     "fontes": [
+      {
+       "id": "m1",
+       "nome": "Bureau de crédito",
+       "descricao": "Score atualizado e número de consultas de outros bancos ao CPF do cliente nos últimos 30 dias.",
+       "custo": 30
+      },
+      {
+       "id": "m2",
+       "nome": "Navegação no app",
+       "descricao": "Telas que o cliente visitou no app nos 30 dias anteriores à data de referência.",
+       "custo": 20
+      },
+      {
+       "id": "m3",
+       "nome": "Clima e feriados",
+       "descricao": "Temperatura, chuva e calendário de feriados por cidade, dia a dia.",
+       "custo": 15
+      },
+      {
+       "id": "m4",
+       "nome": "Perfis em redes sociais",
+       "descricao": "Interesses e conexões dos clientes, de uma empresa que coleta dados de redes sociais.",
+       "custo": 25
+      }
+     ]
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f2d1",
+     "titulo": "Perguntar ao engenheiro de dados",
+     "custo": 10
+    },
+    {
+     "id": "f2d2",
+     "titulo": "Consultar o Jurídico",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f3",
+   "titulo": "Treine e avalie",
+   "curto": "Treino",
+   "duracaoMin": 8,
+   "missao": "Hora de treinar. Decidam como separar os dados, como medir o modelo e quantos clientes a campanha deve abordar por mês.",
+   "itens": [
+    {
+     "id": "f3q1",
+     "tipo": "escolha",
+     "rotulo": "Divisão dos dados",
+     "enunciado": "A base tem uma linha por cliente por mês, durante 18 meses. Como separar treino, validação e teste?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Sorteio aleatório das linhas: 70% treino, 15% validação, 15% teste"
+      },
+      {
+       "id": "b",
+       "texto": "Por tempo: treinar com os meses mais antigos e validar e testar com os mais recentes"
+      },
+      {
+       "id": "c",
+       "texto": "Treinar e testar com todos os dados, para aproveitar ao máximo"
+      },
+      {
+       "id": "d",
+       "texto": "Usar só os últimos 3 meses, porque são os mais parecidos com o futuro"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f3q2",
+     "tipo": "escolha",
+     "rotulo": "Como avaliar",
+     "enunciado": "Só 4% dos clientes fogem. Como avaliar se o modelo é bom?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Pela acurácia: o percentual total de acertos"
+      },
+      {
+       "id": "b",
+       "texto": "Pela precisão e pelo recall da classe \"fuga\", olhando a matriz de confusão e a curva ROC (AUC)"
+      },
+      {
+       "id": "c",
+       "texto": "Pelo erro médio, em reais"
+      },
+      {
+       "id": "d",
+       "texto": "Pelo tempo que o modelo leva para rodar"
+      }
+     ],
+     "pontosMax": 7
+    },
+    {
+     "id": "f3sim",
+     "tipo": "simulador",
+     "rotulo": "Campanha",
+     "enunciado": "Treinem o modelo e decidam qual percentual dos clientes, do maior para o menor risco, a campanha vai abordar por mês.",
+     "pontosMax": 10,
+     "divisaoItem": "f3q1"
+    },
+    {
+     "id": "f3j",
+     "tipo": "texto",
+     "rotulo": "Confiança no resultado",
+     "enunciado": "Em até duas frases: vocês confiam no resultado do treino? Por quê?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f3d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f3d2",
+     "titulo": "Falar com o Financeiro",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "evento",
+   "titulo": "Seis meses em produção",
+   "curto": "Produção",
+   "duracaoMin": 6,
+   "missao": "O modelo de vocês foi para produção. Seis meses depois, a Marina chama a equipe para uma conversa difícil.",
+   "itens": [
+    {
+     "id": "evq1",
+     "tipo": "escolha",
+     "rotulo": "Diagnóstico",
+     "enunciado": "Qual é o diagnóstico mais provável?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Vazamento de dados: o treino usou informação que não existe no momento da previsão"
+      },
+      {
+       "id": "b",
+       "texto": "Drift: o comportamento dos clientes mudou depois do treino"
+      },
+      {
+       "id": "c",
+       "texto": "Overfitting: o modelo tem camadas demais e decorou o treino"
+      },
+      {
+       "id": "d",
+       "texto": "Erro de rotulagem: o time de dados marcou os rótulos errados"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "evq2",
+     "tipo": "escolha",
+     "rotulo": "Ação",
+     "enunciado": "O que fazer agora?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Retreinar só com colunas que existem no momento da previsão"
+      },
+      {
+       "id": "b",
+       "texto": "Retreinar com os dados mais recentes e monitorar o desempenho todo mês"
+      },
+      {
+       "id": "c",
+       "texto": "Trocar por um modelo mais complexo, com mais camadas"
+      },
+      {
+       "id": "d",
+       "texto": "Desligar o modelo e voltar a escolher os clientes pela experiência do time"
+      }
+     ],
+     "pontosMax": 4
+    },
+    {
+     "id": "evj",
+     "tipo": "texto",
+     "rotulo": "O que faltou antes",
+     "enunciado": "Em até duas frases: o que a equipe deveria ter feito antes de ir para produção?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": []
+  }
+ ]
+}
