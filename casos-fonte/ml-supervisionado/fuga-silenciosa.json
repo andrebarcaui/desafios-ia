@@ -1,0 +1,769 @@
+{
+  "id": "fuga-silenciosa",
+  "exercicio": "ml-supervisionado",
+  "titulo": "A Fuga Silenciosa",
+  "subtitulo": "Prever quem vai deixar o cartão antes que seja tarde",
+  "setor": "Banco digital, cartão de crédito",
+  "empresa": "Banco Arandu",
+  "creditosIniciais": 100,
+  "briefing": {
+    "remetente": "Marina Couto",
+    "cargo": "Diretora de Cartões, Banco Arandu",
+    "assunto": "Preciso de IA para segurar nossos clientes",
+    "mensagem": [
+      "Pessoal, preciso da ajuda de vocês com urgência.",
+      "Perdemos uns 230 mil clientes de cartão nos últimos 12 meses. Cada cliente ativo nos dá, em média, R$ 900 de margem por ano, então façam a conta. O Conselho quer um plano em 30 dias.",
+      "A ideia é simples: quero uma IA que me diga quem vai cancelar o cartão, para eu fazer uma oferta antes. O pessoal de dados diz que tem tudo na base, mais de 200 colunas por cliente. Já temos até o campo de cancelamento lá.",
+      "Vocês me ajudam a desenhar isso? Não preciso de código, preciso saber o que pedir ao time de dados e se dá para confiar no resultado."
+    ],
+    "contexto": [
+      {
+        "titulo": "A empresa",
+        "texto": "O Banco Arandu é um banco 100% digital, com 2,4 milhões de cartões de crédito ativos e sem anuidade. A receita vem de juros e da tarifa que o banco recebe a cada compra."
+      },
+      {
+        "titulo": "Relatório do BI",
+        "texto": "No último ano, o sistema registrou 81 mil cancelamentos formais de cartão, feitos pelo app ou pelo telefone."
+      },
+      {
+        "titulo": "Base de dados",
+        "texto": "O time de dados guarda uma foto mensal de cada cliente (uma linha por cliente por mês) desde janeiro de 2025: 18 meses de histórico."
+      },
+      {
+        "titulo": "Campanha de retenção",
+        "texto": "Um piloto do ano passado testou uma oferta de cashback de 2% por 3 meses. Cada cliente abordado custou, em média, R$ 40. A oferta convenceu a ficar cerca de 30% dos clientes que iam sair."
+      },
+      {
+        "titulo": "Tamanho do problema",
+        "texto": "Em qualquer mês, cerca de 4% dos clientes ativos param de usar o cartão nos 60 dias seguintes."
+      }
+    ]
+  },
+  "caixas": [
+    {
+      "id": "feature",
+      "nome": "Usar como feature",
+      "ajuda": "Informação que existe no momento da previsão e ajuda a prever"
+    },
+    {
+      "id": "vazamento",
+      "nome": "Vazamento",
+      "ajuda": "Só existe depois que o resultado já aconteceu"
+    },
+    {
+      "id": "sensivel",
+      "nome": "Sensível ou proxy",
+      "ajuda": "Dado protegido ou substituto de um dado protegido"
+    },
+    {
+      "id": "descartar",
+      "nome": "Descartar",
+      "ajuda": "Não carrega padrão útil"
+    }
+  ],
+  "simulador": {
+    "baseClientes": 2400000,
+    "prevalencia": 0.04,
+    "custoAcao": 40,
+    "valorCliente": 900,
+    "taxaSalvamento": 0.3,
+    "minPct": 1,
+    "maxPct": 40,
+    "rotuloAcao": "abordar com a oferta de retenção",
+    "rotuloPositivo": "clientes que iam fugir"
+  },
+  "fases": [
+    {
+      "id": "f1",
+      "titulo": "Enquadre o problema",
+      "duracaoMin": 6,
+      "missao": "Transformem o pedido da Marina num problema de machine learning bem formulado. Antes de pensar em dados, decidam o que exatamente o modelo vai prever, quando e para quê.",
+      "itens": [
+        {
+          "id": "f1q1",
+          "tipo": "escolha",
+          "rotulo": "Decisão apoiada",
+          "enunciado": "Qual decisão de negócio o modelo vai apoiar?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Escolher, todo mês, quais clientes recebem a oferta de retenção antes de pararem de usar o cartão"
+            },
+            {
+              "id": "b",
+              "texto": "Explicar ao Conselho por que os clientes estão indo embora"
+            },
+            {
+              "id": "c",
+              "texto": "Separar os clientes em perfis de comportamento para campanhas de marketing"
+            },
+            {
+              "id": "d",
+              "texto": "Estimar quanto de receita o banco vai perder no próximo trimestre"
+            }
+          ],
+          "_gabarito": {
+            "a": 6,
+            "b": 2,
+            "c": 0,
+            "d": 0
+          },
+          "pontosMax": 6,
+          "_explicacao": "A previsão só vale se mudar uma decisão. Aqui a decisão é a quem oferecer o cashback. Explicar causas (b) é diagnóstico, não previsão. Separar perfis sem rótulo (c) é aprendizado não supervisionado. Estimar receita agregada (d) é outro problema."
+        },
+        {
+          "id": "f1q2",
+          "tipo": "escolha",
+          "rotulo": "Momento da previsão",
+          "enunciado": "Em que momento a previsão precisa ser feita?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Quando o cliente pede o cancelamento"
+            },
+            {
+              "id": "b",
+              "texto": "Uma vez por mês, prevendo quem vai parar de usar o cartão nos 60 dias seguintes"
+            },
+            {
+              "id": "c",
+              "texto": "Uma vez por ano, no aniversário do cartão"
+            },
+            {
+              "id": "d",
+              "texto": "Na abertura da conta"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 6,
+            "c": 2,
+            "d": 0
+          },
+          "pontosMax": 6,
+          "_explicacao": "A oferta precisa chegar antes da decisão do cliente, com tempo para agir. No pedido de cancelamento (a) já é tarde. Uma vez por ano (c) deixa a maioria das fugas passar. Na abertura da conta (d) ainda não existe histórico de uso."
+        },
+        {
+          "id": "f1q3",
+          "tipo": "escolha",
+          "rotulo": "Tipo de problema",
+          "enunciado": "Que tipo de problema é esse?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Classificação: prever uma classe (vai fugir ou não), com uma probabilidade associada"
+            },
+            {
+              "id": "b",
+              "texto": "Regressão: prever um valor numérico, como o gasto do mês seguinte"
+            },
+            {
+              "id": "c",
+              "texto": "Agrupamento: descobrir grupos de clientes parecidos, sem rótulos"
+            },
+            {
+              "id": "d",
+              "texto": "Aprendizado por reforço: o sistema aprende testando ofertas e recebendo recompensa"
+            }
+          ],
+          "_gabarito": {
+            "a": 5,
+            "b": 1,
+            "c": 0,
+            "d": 0
+          },
+          "pontosMax": 5,
+          "_explicacao": "O que se quer saber é se o cliente vai ou não parar de usar o cartão: uma classe binária, com uma probabilidade que permite ordenar os clientes por risco."
+        },
+        {
+          "id": "f1q4",
+          "tipo": "escolha",
+          "rotulo": "Variável-alvo",
+          "enunciado": "Qual deve ser a variável-alvo (o rótulo que o modelo aprende a prever)?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Cancelou formalmente o cartão (sim ou não)"
+            },
+            {
+              "id": "b",
+              "texto": "Ficou sem nenhuma compra nos 60 dias seguintes à data de referência, depois de ter usado o cartão nos 3 meses anteriores (sim ou não)"
+            },
+            {
+              "id": "c",
+              "texto": "Deu nota de satisfação menor que 6 na pesquisa do app"
+            },
+            {
+              "id": "d",
+              "texto": "Valor gasto no cartão no mês seguinte, em reais"
+            }
+          ],
+          "_gabarito": {
+            "a": 3,
+            "b": 8,
+            "c": 0,
+            "d": 2
+          },
+          "pontosMax": 8,
+          "_explicacao": "O BI registrou 81 mil cancelamentos formais, mas a Marina perdeu 230 mil clientes: só um em cada três avisa que está saindo. O resto simplesmente para de usar o cartão. Usar o campo de cancelamento (a) ensinaria o modelo a enxergar só a ponta do problema. A nota de satisfação (c) mede opinião de quem responde pesquisa, não comportamento. O gasto do mês seguinte (d) é outra pergunta."
+        },
+        {
+          "id": "f1j",
+          "tipo": "texto",
+          "rotulo": "Por que esse alvo",
+          "enunciado": "Em até duas frases: por que esse alvo, e não o campo de cancelamento que a Marina mencionou?",
+          "maxChars": 400
+        }
+      ],
+      "dicas": [
+        {
+          "id": "f1d1",
+          "titulo": "Ligar para o cientista de dados",
+          "custo": 10,
+          "_texto": "Antes de falar em algoritmo, respondam duas perguntas. Quando a previsão vai ser usada, e que informação existe naquele momento? E o que a Marina quer evitar: o pedido de cancelamento ou a perda do cliente?"
+        },
+        {
+          "id": "f1d2",
+          "titulo": "Conversar com o time de Retenção",
+          "custo": 10,
+          "_texto": "A maioria dos clientes que perdemos nunca ligou para cancelar. O cartão continua aberto, só que ninguém usa. Para nós, cliente que não compra é cliente perdido."
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "titulo": "Monte o dataset",
+      "duracaoMin": 12,
+      "missao": "O time de dados separou 16 colunas candidatas. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. O dataset que vocês montarem é o que o modelo vai usar.",
+      "itens": [
+        {
+          "id": "f2cartas",
+          "tipo": "cartas",
+          "rotulo": "Colunas",
+          "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
+          "pontosPorCarta": 2,
+          "pontosMax": 32,
+          "cartas": [
+            {
+              "id": "c01",
+              "nome": "id_cliente",
+              "descricao": "Identificador único do cliente na base.",
+              "exemplos": [
+                "88231907",
+                "10455321",
+                "77310022"
+              ],
+              "_gabarito": "descartar",
+              "_explicacao": "Um identificador não carrega padrão de comportamento. Usado como feature, deixa o modelo decorar clientes específicos."
+            },
+            {
+              "id": "c02",
+              "nome": "meses_relacionamento",
+              "descricao": "Há quantos meses o cliente tem o cartão.",
+              "exemplos": [
+                "4",
+                "37",
+                "112"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Existe na data de referência e ajuda a prever: clientes novos fogem mais."
+            },
+            {
+              "id": "c03",
+              "nome": "limite_credito",
+              "descricao": "Limite total do cartão na data de referência.",
+              "exemplos": [
+                "R$ 1.200",
+                "R$ 8.500",
+                "R$ 22.000"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Informação disponível e relevante: limite baixo costuma levar o cliente a usar outro cartão."
+            },
+            {
+              "id": "c04",
+              "nome": "pct_limite_usado_3m",
+              "descricao": "Média do percentual do limite utilizado nos últimos 3 meses.",
+              "exemplos": [
+                "12%",
+                "64%",
+                "3%"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Mede o quanto o cartão é o principal do cliente. Disponível e útil."
+            },
+            {
+              "id": "c05",
+              "nome": "variacao_gasto_3m_vs_6m",
+              "descricao": "Gasto dos últimos 3 meses comparado ao dos 3 meses anteriores.",
+              "exemplos": [
+                "-72%",
+                "+8%",
+                "-15%"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Um dos sinais mais fortes: quem está saindo costuma reduzir o uso aos poucos."
+            },
+            {
+              "id": "c06",
+              "nome": "dias_sem_transacao",
+              "descricao": "Dias desde a última compra no cartão, contados na data de referência.",
+              "exemplos": [
+                "2",
+                "41",
+                "19"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Sinal forte e legítimo, porque é medido até a data de referência, antes do período que se quer prever."
+            },
+            {
+              "id": "c07",
+              "nome": "categorias_compra_3m",
+              "descricao": "Quantas categorias diferentes (mercado, transporte, streaming...) tiveram compras nos últimos 3 meses.",
+              "exemplos": [
+                "1",
+                "7",
+                "4"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Quem usa o cartão para muitas coisas está mais preso a ele."
+            },
+            {
+              "id": "c08",
+              "nome": "faturas_atraso_12m",
+              "descricao": "Faturas pagas com atraso nos últimos 12 meses.",
+              "exemplos": [
+                "0",
+                "3",
+                "1"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Histórico disponível e associado a mudança de comportamento."
+            },
+            {
+              "id": "c09",
+              "nome": "contatos_sac_90d",
+              "descricao": "Contatos com o atendimento (chat, telefone, app) nos 90 dias anteriores à data de referência.",
+              "exemplos": [
+                "0",
+                "5",
+                "1"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Medido antes da data de referência, então é legítimo. Muitos contatos costumam indicar insatisfação."
+            },
+            {
+              "id": "c10",
+              "nome": "cartao_em_carteira_digital",
+              "descricao": "Se o cartão está cadastrado na carteira digital do celular, para pagar por aproximação.",
+              "exemplos": [
+                "sim",
+                "não",
+                "sim"
+              ],
+              "_gabarito": "feature",
+              "_explicacao": "Cartão na carteira digital é cartão do dia a dia. Disponível e útil."
+            },
+            {
+              "id": "c11",
+              "nome": "protocolo_cancelamento",
+              "descricao": "Se o cliente abriu protocolo de cancelamento. Preenchido pelo atendimento no dia em que o cliente pede para cancelar.",
+              "exemplos": [
+                "não",
+                "sim",
+                "não"
+              ],
+              "_gabarito": "vazamento",
+              "_explicacao": "Só é preenchido quando o cliente já decidiu sair. No momento da previsão, essa coluna está vazia para quem ainda não pediu, e é justamente esse cliente que interessa."
+            },
+            {
+              "id": "c12",
+              "nome": "aceitou_oferta_retencao",
+              "descricao": "Se o cliente aceitou a contraproposta da equipe de retenção. A equipe só faz contraproposta a quem pede cancelamento.",
+              "exemplos": [
+                "não",
+                "não",
+                "sim"
+              ],
+              "_gabarito": "vazamento",
+              "_explicacao": "Depende de um pedido de cancelamento que ainda não aconteceu no momento da previsão."
+            },
+            {
+              "id": "c13",
+              "nome": "gasto_medio_mensal_ano",
+              "descricao": "Gasto médio mensal no ano civil (janeiro a dezembro), calculado pelo BI em janeiro do ano seguinte e gravado em todas as linhas daquele ano.",
+              "exemplos": [
+                "R$ 340",
+                "R$ 2.100",
+                "R$ 0"
+              ],
+              "_gabarito": "vazamento",
+              "_explicacao": "O vazamento mais traiçoeiro: a média inclui os meses que vêm depois da data de referência, ou seja, contém o próprio resultado que se quer prever."
+            },
+            {
+              "id": "c14",
+              "nome": "cep_residencial",
+              "descricao": "CEP do endereço de cobrança.",
+              "exemplos": [
+                "22071-000",
+                "21650-210",
+                "04538-133"
+              ],
+              "_gabarito": "sensivel",
+              "_explicacao": "Funciona como substituto de renda e de raça. Ofertas que mudam conforme o bairro podem virar tratamento discriminatório."
+            },
+            {
+              "id": "c15",
+              "nome": "raca_cor_autodeclarada",
+              "descricao": "Raça ou cor informada voluntariamente na pesquisa interna de diversidade de clientes, em 2024.",
+              "exemplos": [
+                "Parda",
+                "Branca",
+                "Não informado"
+              ],
+              "_gabarito": "sensivel",
+              "_explicacao": "Dado sensível pela LGPD, coletado para outra finalidade. Usá-lo para decidir quem recebe oferta é risco jurídico e ético."
+            },
+            {
+              "id": "c16",
+              "nome": "codigo_agencia",
+              "descricao": "Código da agência a que o cliente está vinculado. O Arandu é 100% digital: todos os clientes estão na agência 0001.",
+              "exemplos": [
+                "0001",
+                "0001",
+                "0001"
+              ],
+              "_gabarito": "descartar",
+              "_explicacao": "Tem o mesmo valor para todos os clientes, então não distingue ninguém."
+            }
+          ]
+        },
+        {
+          "id": "f2mercado",
+          "tipo": "mercado",
+          "rotulo": "Dados externos comprados",
+          "enunciado": "Mercado de dados: fontes externas que podem ser compradas com créditos. A compra é imediata e não tem devolução.",
+          "pontosMax": 8,
+          "fontes": [
+            {
+              "id": "m1",
+              "nome": "Bureau de crédito",
+              "descricao": "Score atualizado e número de consultas de outros bancos ao CPF do cliente nos últimos 30 dias.",
+              "custo": 30,
+              "_gabarito": {
+                "pontos": 4,
+                "auc": 0.03
+              },
+              "_explicacao": "Consultas recentes de outros bancos costumam indicar que o cliente está pedindo cartão em outro lugar."
+            },
+            {
+              "id": "m2",
+              "nome": "Navegação no app",
+              "descricao": "Telas que o cliente visitou no app nos 30 dias anteriores à data de referência.",
+              "custo": 20,
+              "_gabarito": {
+                "pontos": 4,
+                "auc": 0.03
+              },
+              "_explicacao": "Visitas à tela de limite, de tarifas ou de cancelamento são sinais precoces, medidos antes da data de referência."
+            },
+            {
+              "id": "m3",
+              "nome": "Clima e feriados",
+              "descricao": "Temperatura, chuva e calendário de feriados por cidade, dia a dia.",
+              "custo": 15,
+              "_gabarito": {
+                "pontos": 0,
+                "auc": 0
+              },
+              "_explicacao": "Útil para prever demanda de loja, irrelevante para a decisão de abandonar um cartão."
+            },
+            {
+              "id": "m4",
+              "nome": "Perfis em redes sociais",
+              "descricao": "Interesses e conexões dos clientes, de uma empresa que coleta dados de redes sociais.",
+              "custo": 25,
+              "_gabarito": {
+                "pontos": -4,
+                "auc": 0.005,
+                "flag": "redes"
+              },
+              "_explicacao": "Origem duvidosa, sem consentimento dos clientes para essa finalidade. O ganho é mínimo e o risco de LGPD é alto."
+            }
+          ]
+        }
+      ],
+      "dicas": [
+        {
+          "id": "f2d1",
+          "titulo": "Perguntar ao engenheiro de dados",
+          "custo": 10,
+          "_texto": "Algumas colunas são preenchidas depois que o cliente já decidiu sair. Para cada coluna, perguntem: no dia em que o modelo rodar, essa informação já existe? Atenção especial a campos calculados pelo BI."
+        },
+        {
+          "id": "f2d2",
+          "titulo": "Consultar o Jurídico",
+          "custo": 10,
+          "_texto": "A LGPD trata origem racial como dado sensível, com regras rígidas de uso. E variáveis aparentemente neutras podem funcionar como substitutas de características protegidas."
+        }
+      ]
+    },
+    {
+      "id": "f3",
+      "titulo": "Treine e avalie",
+      "duracaoMin": 8,
+      "missao": "Hora de treinar. Decidam como separar os dados, como medir o modelo e quantos clientes a campanha deve abordar por mês.",
+      "itens": [
+        {
+          "id": "f3q1",
+          "tipo": "escolha",
+          "rotulo": "Divisão dos dados",
+          "enunciado": "A base tem uma linha por cliente por mês, durante 18 meses. Como separar treino, validação e teste?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Sorteio aleatório das linhas: 70% treino, 15% validação, 15% teste"
+            },
+            {
+              "id": "b",
+              "texto": "Por tempo: treinar com os meses mais antigos e validar e testar com os mais recentes"
+            },
+            {
+              "id": "c",
+              "texto": "Treinar e testar com todos os dados, para aproveitar ao máximo"
+            },
+            {
+              "id": "d",
+              "texto": "Usar só os últimos 3 meses, porque são os mais parecidos com o futuro"
+            }
+          ],
+          "_gabarito": {
+            "a": 3,
+            "b": 8,
+            "c": 0,
+            "d": 2
+          },
+          "pontosMax": 8,
+          "_explicacao": "O modelo vai prever o futuro a partir do passado, e o teste precisa imitar isso. No sorteio aleatório (a), o mesmo cliente aparece no treino e no teste em meses vizinhos, e o resultado fica otimista. Testar com os dados de treino (c) não mede nada. Três meses (d) deixam poucos exemplos de fuga."
+        },
+        {
+          "id": "f3q2",
+          "tipo": "escolha",
+          "rotulo": "Como avaliar",
+          "enunciado": "Só 4% dos clientes fogem. Como avaliar se o modelo é bom?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Pela acurácia: o percentual total de acertos"
+            },
+            {
+              "id": "b",
+              "texto": "Pela precisão e pelo recall da classe \"fuga\", olhando a matriz de confusão e a curva ROC (AUC)"
+            },
+            {
+              "id": "c",
+              "texto": "Pelo erro médio, em reais"
+            },
+            {
+              "id": "d",
+              "texto": "Pelo tempo que o modelo leva para rodar"
+            }
+          ],
+          "_gabarito": {
+            "a": 0,
+            "b": 7,
+            "c": 0,
+            "d": 0
+          },
+          "pontosMax": 7,
+          "_explicacao": "Com 4% de positivos, um modelo que responde \"ninguém vai fugir\" acerta 96% e não serve para nada. O que importa é quantos fujões o modelo encontra (recall) e quantos dos apontados fogem mesmo (precisão)."
+        },
+        {
+          "id": "f3sim",
+          "tipo": "simulador",
+          "rotulo": "Campanha",
+          "enunciado": "Treinem o modelo e decidam qual percentual dos clientes, do maior para o menor risco, a campanha vai abordar por mês.",
+          "pontosMax": 10
+        },
+        {
+          "id": "f3j",
+          "tipo": "texto",
+          "rotulo": "Confiança no resultado",
+          "enunciado": "Em até duas frases: vocês confiam no resultado do treino? Por quê?",
+          "maxChars": 400
+        }
+      ],
+      "dicas": [
+        {
+          "id": "f3d1",
+          "titulo": "Ligar para o cientista de dados",
+          "custo": 10,
+          "_texto": "Cada cliente aparece uma vez por mês na base. Se o mesmo cliente cai no treino e no teste, o modelo cola de si mesmo. E desconfiem de resultado bom demais: em fuga de clientes, AUC acima de 0,90 quase sempre é sintoma de problema nos dados."
+        },
+        {
+          "id": "f3d2",
+          "titulo": "Falar com o Financeiro",
+          "custo": 10,
+          "_texto": "Cada cliente abordado custa R$ 40, fuja ele ou não. Só vale continuar abordando enquanto a chance de acertar um fujão compensar esse custo."
+        }
+      ]
+    },
+    {
+      "id": "evento",
+      "titulo": "Seis meses em produção",
+      "duracaoMin": 6,
+      "missao": "O modelo de vocês foi para produção. Seis meses depois, a Marina chama a equipe para uma conversa difícil.",
+      "itens": [
+        {
+          "id": "evq1",
+          "tipo": "escolha",
+          "rotulo": "Diagnóstico",
+          "enunciado": "Qual é o diagnóstico mais provável?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Vazamento de dados: o treino usou informação que não existe no momento da previsão"
+            },
+            {
+              "id": "b",
+              "texto": "Drift: o comportamento dos clientes mudou depois do treino"
+            },
+            {
+              "id": "c",
+              "texto": "Overfitting: o modelo tem camadas demais e decorou o treino"
+            },
+            {
+              "id": "d",
+              "texto": "Erro de rotulagem: o time de dados marcou os rótulos errados"
+            }
+          ],
+          "pontosMax": 6
+        },
+        {
+          "id": "evq2",
+          "tipo": "escolha",
+          "rotulo": "Ação",
+          "enunciado": "O que fazer agora?",
+          "opcoes": [
+            {
+              "id": "a",
+              "texto": "Retreinar só com colunas que existem no momento da previsão"
+            },
+            {
+              "id": "b",
+              "texto": "Retreinar com os dados mais recentes e monitorar o desempenho todo mês"
+            },
+            {
+              "id": "c",
+              "texto": "Trocar por um modelo mais complexo, com mais camadas"
+            },
+            {
+              "id": "d",
+              "texto": "Desligar o modelo e voltar a escolher os clientes pela experiência do time"
+            }
+          ],
+          "pontosMax": 4
+        },
+        {
+          "id": "evj",
+          "tipo": "texto",
+          "rotulo": "O que faltou antes",
+          "enunciado": "Em até duas frases: o que a equipe deveria ter feito antes de ir para produção?",
+          "maxChars": 400
+        }
+      ],
+      "dicas": []
+    }
+  ],
+  "_modelo": {
+    "aucBase": 0.78,
+    "pesoFeature": {
+      "c05": 0.04,
+      "c06": 0.04,
+      "padrao": 0.01
+    },
+    "ganhoSensivel": 0.005,
+    "ruido": {
+      "validacao": 0.01,
+      "producao": -0.02
+    },
+    "vazamento": {
+      "aucValidacao": 0.985,
+      "quedaProducao": 0.16
+    },
+    "divisao": {
+      "item": "f3q1",
+      "inflacao": {
+        "a": 0.04,
+        "b": 0,
+        "c": 0.09,
+        "d": -0.03
+      }
+    },
+    "drift": 0.05,
+    "aucMin": 0.53,
+    "aucMax": 0.995
+  },
+  "_evento": {
+    "vazamento": {
+      "titulo": "O modelo virou uma moeda",
+      "mensagem": "No treino, o modelo de vocês chegou a AUC de {aucValidacao}. Seis meses depois, em produção, está em {aucProducao}. A campanha abordou milhares de clientes e quase nenhum dos que fugiram estava na lista. O Conselho quer saber o que aconteceu.",
+      "evidencias": [
+        "A taxa de fuga real continua em torno de 4% ao mês, como antes.",
+        "No monitoramento, {colunasVazamento} chega(m) com o mesmo valor para 100% dos clientes avaliados a cada mês.",
+        "No treino, essa(s) mesma(s) coluna(s) apareciam no topo da lista de importância do modelo.",
+        "O perfil dos clientes avaliados em produção é parecido com o do treino."
+      ],
+      "_gabarito": {
+        "evq1": {
+          "a": 6,
+          "b": 1,
+          "c": 0,
+          "d": 0
+        },
+        "evq2": {
+          "a": 4,
+          "b": 1,
+          "c": 0,
+          "d": 0
+        }
+      },
+      "_explicacao": "As colunas de vazamento só são preenchidas depois que o cliente decidiu sair. No treino, o modelo aprendeu a ler a resposta. Em produção, a resposta ainda não existe."
+    },
+    "drift": {
+      "titulo": "O mercado mudou",
+      "mensagem": "No treino, o modelo de vocês chegou a AUC de {aucValidacao}. Seis meses depois, em produção, está em {aucProducao}. Ainda funciona, mas cada vez pior, e a Marina quer entender por quê antes da próxima reunião do Conselho.",
+      "evidencias": [
+        "Em março, um banco concorrente lançou um cartão sem anuidade com 3% de cashback e campanha pesada nas redes.",
+        "Entre os clientes que fugiram em produção, 60% eram de perfil que o modelo considerava de baixo risco: gasto alto e muitas categorias de compra.",
+        "Nenhuma coluna chega vazia ou com valores fora do padrão.",
+        "A taxa de fuga mensal subiu de 4% para 5,5%."
+      ],
+      "_gabarito": {
+        "evq1": {
+          "a": 0,
+          "b": 6,
+          "c": 1,
+          "d": 0
+        },
+        "evq2": {
+          "a": 1,
+          "b": 4,
+          "c": 0,
+          "d": 0
+        }
+      },
+      "_explicacao": "O modelo aprendeu um mundo que mudou: o concorrente passou a atrair justamente os bons clientes. Modelo em produção precisa de monitoramento e retreino periódico."
+    }
+  },
+  "_revelacao": {
+    "armadilha": "Vazamento de dados",
+    "resumo": "Três colunas pareciam ótimas e só existiam depois que o cliente já tinha decidido sair. Quem as usou viu AUC perto de 0,99 no treino e um modelo inútil em produção.",
+    "secundaria": "A definição do alvo: só um em cada três clientes perdidos cancela formalmente. Prever cancelamento formal deixaria de fora dois terços do problema.",
+    "licoes": [
+      "Para cada coluna, pergunte: no dia em que o modelo rodar, essa informação já existe?",
+      "Desconfie de resultado bom demais. AUC perto de 1 costuma ser sintoma, não conquista.",
+      "Com classes raras, acurácia engana. Olhe precisão, recall e o custo de cada tipo de erro."
+    ]
+  }
+}
