@@ -1,0 +1,325 @@
+{
+  "id": "sinistro-perfeito",
+  "exercicio": "ml-supervisionado",
+  "titulo": "O Sinistro Perfeito",
+  "subtitulo": "Achar fraude onde ninguém costuma olhar",
+  "setor": "Seguros, automóvel",
+  "empresa": "Guará Seguros",
+  "imagem": "img/sinistro-perfeito.svg",
+  "creditosIniciais": 100,
+
+  "briefing": {
+    "remetente": "Fernanda Lacerda",
+    "cargo": "Diretora de Sinistros, Guará Seguros",
+    "assunto": "IA contra fraude: precisamos sair do achismo",
+    "mensagem": [
+      "Pessoal, preciso de vocês num tema sensível.",
+      "Pagamos cerca de 380 mil sinistros de automóvel por ano, e sei que uma parte é fraude. Nossa equipe antifraude é ótima, mas investiga pouco e escolhe pelo faro.",
+      "Quero uma IA que aponte os sinistros suspeitos logo que chegam. Temos três anos de histórico, e a equipe já marcou milhares de casos como suspeitos. É só ensinar a máquina com isso, não é?",
+      "Preciso de uma proposta clara para o comitê de risco. Sem código, mas com os pés no chão."
+    ],
+    "contexto": [
+      { "titulo": "A empresa", "texto": "A Guará Seguros tem 1,1 milhão de veículos segurados e recebe cerca de 31,7 mil sinistros por mês." },
+      { "titulo": "A equipe antifraude", "texto": "Investiga cerca de 4% dos sinistros, escolhidos pelos analistas. Dos investigados, 22% acabam confirmados como fraude." },
+      { "titulo": "Estimativa do setor", "texto": "A associação das seguradoras estima que entre 1% e 2% dos sinistros de automóvel tenham algum tipo de fraude." },
+      { "titulo": "Custos", "texto": "Cada investigação custa em média R$ 380. Uma fraude paga custa em média R$ 14 mil. Quando a investigação acontece antes do pagamento, 70% das fraudes são barradas." },
+      { "titulo": "Base de dados", "texto": "Três anos de sinistros, um registro por sinistro, com a data de abertura de cada um." }
+    ]
+  },
+
+  "caixas": [
+    { "id": "feature", "nome": "Usar como feature", "ajuda": "Informação que existe no momento da previsão e ajuda a prever" },
+    { "id": "vazamento", "nome": "Vazamento", "ajuda": "Só existe depois que o resultado já aconteceu" },
+    { "id": "sensivel", "nome": "Sensível ou proxy", "ajuda": "Dado protegido ou substituto de um dado protegido" },
+    { "id": "descartar", "nome": "Descartar", "ajuda": "Não carrega padrão útil" }
+  ],
+
+  "simulador": {
+    "baseClientes": 31700,
+    "prevalencia": 0.015,
+    "custoAcao": 380,
+    "valorCliente": 14000,
+    "taxaSalvamento": 0.7,
+    "minPct": 1,
+    "maxPct": 30,
+    "termos": {
+      "unidade": "sinistros", "um": "sinistro", "positivos": "eram fraude", "negativos": "eram legítimos", "passado": "era fraude", "passadoNeg": "era legítimo",
+      "aoPositivo": "ao que era fraude", "ninguem": "nenhum sinistro é fraude", "verboPlural": "são fraude",
+      "campanha": "investigação", "verboAlcanca": "investiga", "acao": "investigados", "acaoTitulo": "Investigados", "naoAcaoTitulo": "Pagos sem investigação",
+      "tituloDecisao": "Quantos sinistros investigar por mês", "ordem": "do mais para o menos suspeito",
+      "positivosCurto": "fraudes", "negativosCurto": "sinistros legítimos",
+      "efeito": "são barradas antes do pagamento", "ganho": "Fraude evitada", "pontaEsq": "Só os mais suspeitos", "pontaDir": "Muitos sinistros",
+      "vp": "Acerto: a fraude foi investigada", "fp": "Custo extra: investigou um sinistro legítimo",
+      "fn": "Perda: fraude paga sem investigação", "vn": "Acerto: sinistro legítimo pago sem atraso"
+    }
+  },
+
+  "fases": [
+    {
+      "id": "f1", "titulo": "Enquadre o problema", "curto": "Enquadre", "duracaoMin": 6,
+      "missao": "Transformem o pedido da Fernanda num problema de machine learning bem formulado. Antes de pensar em dados, decidam o que o modelo vai prever, quando, para quê e com qual resposta certa ele vai aprender.",
+      "itens": [
+        {
+          "id": "f1q1", "tipo": "escolha", "rotulo": "Decisão apoiada",
+          "enunciado": "Qual decisão de negócio o modelo vai apoiar?",
+          "opcoes": [
+            { "id": "a", "texto": "Escolher, entre os sinistros que chegam, quais encaminhar para investigação antes de pagar" },
+            { "id": "b", "texto": "Recusar automaticamente, sem análise humana, os sinistros que o modelo considerar suspeitos" },
+            { "id": "c", "texto": "Separar os segurados em perfis de risco sem usar nenhum rótulo" },
+            { "id": "d", "texto": "Calcular o preço do seguro de cada cliente na renovação" }
+          ],
+          "_gabarito": { "a": 6, "b": 2, "c": 0, "d": 0 }, "pontosMax": 6,
+          "_explicacao": "O modelo prioriza a investigação; quem decide é a equipe. Recusar automaticamente (b) transforma cada erro do modelo num cliente honesto sem indenização. Perfis sem rótulo (c) é aprendizado não supervisionado, e precificar (d) é outra pergunta."
+        },
+        {
+          "id": "f1q2", "tipo": "escolha", "rotulo": "Momento da previsão",
+          "enunciado": "Em que momento a previsão precisa ser feita?",
+          "opcoes": [
+            { "id": "a", "texto": "Quando o sinistro é aberto, antes da vistoria completa e do pagamento" },
+            { "id": "b", "texto": "Depois do pagamento, para tentar recuperar o dinheiro" },
+            { "id": "c", "texto": "Na renovação anual da apólice" },
+            { "id": "d", "texto": "Na contratação do seguro" }
+          ],
+          "_gabarito": { "a": 6, "b": 2, "c": 1, "d": 0 }, "pontosMax": 6,
+          "_explicacao": "A investigação só barra a fraude se acontecer antes do pagamento. Depois (b), recuperar o dinheiro é caro e raro. Na renovação (c) ou na contratação (d), o sinistro ainda nem existe."
+        },
+        {
+          "id": "f1q3", "tipo": "escolha", "rotulo": "Tipo de problema",
+          "enunciado": "Que tipo de problema é esse?",
+          "opcoes": [
+            { "id": "a", "texto": "Classificação: prever uma classe (fraude ou não), com uma probabilidade associada" },
+            { "id": "b", "texto": "Regressão: prever um valor numérico, como o valor do sinistro" },
+            { "id": "c", "texto": "Agrupamento: descobrir grupos de sinistros parecidos, sem rótulos" },
+            { "id": "d", "texto": "Aprendizado por reforço: o sistema aprende testando decisões e recebendo recompensa" }
+          ],
+          "_gabarito": { "a": 5, "b": 1, "c": 1, "d": 0 }, "pontosMax": 5,
+          "_explicacao": "Fraude ou não é uma classe binária, e a probabilidade permite ordenar os sinistros do mais para o menos suspeito."
+        },
+        {
+          "id": "f1q4", "tipo": "escolha", "rotulo": "Variável-alvo",
+          "enunciado": "Qual deve ser a variável-alvo (o rótulo com que o modelo aprende)?",
+          "opcoes": [
+            { "id": "a", "texto": "Sinistro marcado como suspeito pelos analistas da equipe antifraude" },
+            { "id": "b", "texto": "Fraude confirmada em investigação, com uma amostra aleatória de sinistros também investigada todo mês, para o modelo não aprender só o faro da equipe" },
+            { "id": "c", "texto": "Sinistro negado pela seguradora, por qualquer motivo" },
+            { "id": "d", "texto": "Sinistro com valor acima de R$ 30 mil" }
+          ],
+          "_gabarito": { "a": 2, "b": 8, "c": 2, "d": 0 }, "pontosMax": 8,
+          "_explicacao": "Hoje só 4% dos sinistros são investigados, e quem escolhe é o faro da equipe. Um modelo que aprende só com eles aprende a repetir esse faro e nunca procura fraude onde a equipe nunca olhou. A amostra aleatória dá exemplos sem esse viés. Sinistro negado (c) mistura fraude com documentação incompleta e falta de cobertura."
+        },
+        {
+          "id": "f1j", "tipo": "texto", "rotulo": "Por que esse alvo",
+          "enunciado": "Em até duas frases: por que não basta usar os sinistros que a equipe já marcou como suspeitos?",
+          "maxChars": 400
+        }
+      ],
+      "dicas": [
+        { "id": "f1d1", "titulo": "Ligar para o cientista de dados", "custo": 10, "_texto": "Perguntem de onde vem o rótulo. Quem decidiu quais sinistros seriam investigados? E o que acontece com as fraudes que ninguém investigou: em que coluna elas aparecem?" },
+        { "id": "f1d2", "titulo": "Conversar com o chefe da equipe antifraude", "custo": 10, "_texto": "A gente investiga o que parece estranho: oficina conhecida, batida na primeira semana de apólice, nenhuma testemunha. Fraude bem feita, que não parece estranha, a gente provavelmente nem vê." }
+      ]
+    },
+
+    {
+      "id": "f2", "titulo": "Monte o dataset", "curto": "Dataset", "duracaoMin": 12,
+      "missao": "O time de dados separou 16 colunas candidatas sobre cada sinistro. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. O dataset que vocês montarem é o que o modelo vai usar.",
+      "itens": [
+        {
+          "id": "f2cartas", "tipo": "cartas", "rotulo": "Colunas",
+          "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
+          "pontosPorCarta": 2, "pontosMax": 32,
+          "cartas": [
+            { "id": "c01", "nome": "dias_desde_inicio_apolice", "descricao": "Dias entre o início da apólice e a data do acidente.", "exemplos": ["4", "611", "93"], "_gabarito": "feature", "_explicacao": "Sinal forte e disponível na abertura: sinistro logo depois da contratação é um padrão clássico de fraude." },
+            { "id": "c02", "nome": "valor_reclamado", "descricao": "Valor pedido pelo segurado na abertura do sinistro.", "exemplos": ["R$ 3.200", "R$ 41.000", "R$ 12.500"], "_gabarito": "feature", "_explicacao": "Conhecido na abertura e relacionado ao incentivo para fraudar." },
+            { "id": "c03", "nome": "sinistros_anteriores_24m", "descricao": "Sinistros do mesmo segurado nos últimos 24 meses.", "exemplos": ["0", "3", "1"], "_gabarito": "feature", "_explicacao": "Histórico disponível e útil." },
+            { "id": "c04", "nome": "horario_ocorrencia", "descricao": "Faixa de horário informada para o acidente.", "exemplos": ["madrugada", "tarde", "noite"], "_gabarito": "feature", "_explicacao": "Informado na abertura; acidentes de madrugada sem testemunha merecem mais atenção." },
+            { "id": "c05", "nome": "tem_boletim_ocorrencia", "descricao": "Se o segurado anexou boletim de ocorrência na abertura.", "exemplos": ["sim", "não", "sim"], "_gabarito": "feature", "_explicacao": "Disponível na abertura e associado à documentação do caso." },
+            { "id": "c06", "nome": "oficina_fora_da_rede", "descricao": "Se o segurado escolheu uma oficina fora da rede credenciada.", "exemplos": ["não", "sim", "não"], "_gabarito": "feature", "_explicacao": "Conhecido na abertura e ligado a esquemas com oficinas." },
+            { "id": "c07", "nome": "dias_entre_acidente_e_aviso", "descricao": "Dias entre a data do acidente e a abertura do sinistro.", "exemplos": ["0", "12", "2"], "_gabarito": "feature", "_explicacao": "Sinal forte: avisos muito tardios são típicos de histórias montadas." },
+            { "id": "c08", "nome": "testemunhas_informadas", "descricao": "Número de testemunhas informadas pelo segurado.", "exemplos": ["0", "2", "1"], "_gabarito": "feature", "_explicacao": "Informação da abertura, útil para separar casos." },
+            { "id": "c09", "nome": "trocas_endereco_12m", "descricao": "Vezes que o segurado mudou o endereço de cadastro nos últimos 12 meses.", "exemplos": ["0", "4", "1"], "_gabarito": "feature", "_explicacao": "Comportamento anterior ao sinistro e associado a fraudes organizadas." },
+            { "id": "c10", "nome": "parecer_perito_final", "descricao": "Conclusão do perito, registrada depois da vistoria completa e da investigação.", "exemplos": ["regular", "inconsistente", "regular"], "_gabarito": "vazamento", "_explicacao": "Só existe depois da investigação, ou seja, depois da decisão que o modelo deveria apoiar." },
+            { "id": "c11", "nome": "pagamento_bloqueado", "descricao": "Se o pagamento foi bloqueado pela equipe antifraude.", "exemplos": ["não", "sim", "não"], "_gabarito": "vazamento", "_explicacao": "É praticamente a própria resposta, registrada depois que a fraude foi descoberta." },
+            { "id": "c12", "nome": "valor_ressarcido", "descricao": "Valor que a seguradora recuperou depois, por processo ou acordo.", "exemplos": ["R$ 0", "R$ 9.800", "R$ 0"], "_gabarito": "vazamento", "_explicacao": "Acontece meses depois do sinistro, só nos casos confirmados como fraude." },
+            { "id": "c13", "nome": "cep_residencial", "descricao": "CEP do endereço do segurado.", "exemplos": ["91350-200", "21040-360", "04571-010"], "_gabarito": "sensivel", "_explicacao": "Funciona como substituto de renda e de raça. Investigar mais quem mora em certos bairros pode virar discriminação." },
+            { "id": "c14", "nome": "nacionalidade_segurado", "descricao": "Nacionalidade informada no cadastro.", "exemplos": ["brasileira", "venezuelana", "brasileira"], "_gabarito": "sensivel", "_explicacao": "Tratar alguém como suspeito pela origem é discriminação, além de risco jurídico." },
+            { "id": "c15", "nome": "numero_sinistro", "descricao": "Número sequencial do sinistro no sistema.", "exemplos": ["2025-0884312", "2024-0102277", "2025-0510983"], "_gabarito": "descartar", "_explicacao": "Identificador sem significado para o comportamento." },
+            { "id": "c16", "nome": "ramo_seguro", "descricao": "Ramo do seguro do sinistro. Esta base só tem seguro de automóvel.", "exemplos": ["automóvel", "automóvel", "automóvel"], "_gabarito": "descartar", "_explicacao": "Mesmo valor em todas as linhas: não distingue ninguém." }
+          ]
+        },
+        {
+          "id": "f2mercado", "tipo": "mercado", "rotulo": "Dados externos comprados",
+          "enunciado": "Mercado de dados: fontes externas que podem ser compradas com créditos. A compra é imediata e não tem devolução.",
+          "pontosMax": 8,
+          "fontes": [
+            { "id": "m1", "nome": "Base compartilhada do setor", "descricao": "Sinistros do mesmo veículo ou CPF em outras seguradoras, mantida pela associação do setor.", "custo": 30, "_gabarito": { "pontos": 4, "auc": 0.03 }, "_explicacao": "Mostra repetições que a Guará sozinha não enxerga, um sinal forte de fraude organizada." },
+            { "id": "m2", "nome": "Cadastro de oficinas com irregularidades", "descricao": "Oficinas com histórico de autuações e processos, por CNPJ.", "custo": 20, "_gabarito": { "pontos": 4, "auc": 0.03 }, "_explicacao": "Esquemas com oficinas são um dos tipos mais comuns de fraude em automóvel." },
+            { "id": "m3", "nome": "Histórico de chuva por cidade", "descricao": "Volume de chuva diário por município nos últimos três anos.", "custo": 15, "_gabarito": { "pontos": 0, "auc": 0 }, "_explicacao": "Explica a quantidade de batidas, não se uma batida é fraude." },
+            { "id": "m4", "nome": "Perfis de redes sociais dos segurados", "descricao": "Postagens públicas e conexões dos segurados, coletadas por uma empresa de dados.", "custo": 25, "_gabarito": { "pontos": -4, "auc": 0.005, "flag": "redes" }, "_explicacao": "Coleta sem consentimento para essa finalidade e com ganho mínimo. Risco alto de LGPD e de imagem." }
+          ]
+        }
+      ],
+      "dicas": [
+        { "id": "f2d1", "titulo": "Perguntar ao engenheiro de dados", "custo": 10, "_texto": "Algumas colunas só são preenchidas depois da investigação. Para cada uma, perguntem: no minuto em que o sinistro é aberto, essa informação já existe?" },
+        { "id": "f2d2", "titulo": "Consultar o Jurídico", "custo": 10, "_texto": "Tratar alguém como suspeito por onde mora ou por de onde veio pode ser discriminação, mesmo que o modelo encontre uma correlação." }
+      ]
+    },
+
+    {
+      "id": "f3", "titulo": "Treine e avalie", "curto": "Treino", "duracaoMin": 8,
+      "missao": "Hora de treinar. Decidam como separar os dados, como medir o modelo e quantos sinistros a equipe deve investigar por mês.",
+      "explicacao": {
+        "titulo": "Como o treino funciona",
+        "passos": [
+          { "titulo": "Separar os dados", "texto": "O modelo aprende com uma parte dos dados (treino) e é testado numa parte que nunca viu (teste). Se o teste for fácil demais, a nota engana." },
+          { "titulo": "Escolher como medir", "texto": "Antes de olhar o resultado, decidam o que significa um modelo bom para este negócio. A medida errada aprova um modelo inútil." },
+          { "titulo": "Treinar e ler o resultado", "texto": "O modelo dá a cada sinistro uma nota de suspeita. O teste mostra o quanto essas notas separam as fraudes dos sinistros legítimos." },
+          { "titulo": "Decidir quantos investigar", "texto": "Com os sinistros em fila, do mais para o menos suspeito, vocês decidem até onde a equipe vai. Cada investigação custa, ache fraude ou não." }
+        ]
+      },
+      "itens": [
+        {
+          "id": "f3q1", "tipo": "escolha", "rotulo": "Divisão dos dados",
+          "enunciado": "A base tem três anos de sinistros. Como separar treino, validação e teste?",
+          "entenda": "O teste precisa imitar a situação real em que o modelo vai ser usado. Pensem: quando a seguradora rodar o modelo, que sinistros ela vai avaliar, os do passado ou os que ainda vão chegar? E lembrem que as quadrilhas fazem vários sinistros parecidos em poucas semanas.",
+          "opcoes": [
+            { "id": "a", "texto": "Sorteio aleatório dos sinistros: 70% treino, 15% validação, 15% teste" },
+            { "id": "b", "texto": "Por tempo: treinar com os meses mais antigos e validar e testar com os mais recentes" },
+            { "id": "c", "texto": "Treinar e testar com todos os dados, para aproveitar ao máximo" },
+            { "id": "d", "texto": "Usar só o último mês, porque é o mais parecido com o futuro" }
+          ],
+          "_gabarito": { "a": 3, "b": 8, "c": 0, "d": 2 }, "pontosMax": 8,
+          "_explicacao": "O modelo vai avaliar sinistros futuros. No sorteio aleatório (a), sinistros da mesma quadrilha caem no treino e no teste, e o resultado fica otimista. Testar com os dados de treino (c) não mede nada, e um mês (d) tem pouquíssimas fraudes."
+        },
+        {
+          "id": "f3q2", "tipo": "escolha", "rotulo": "Como avaliar",
+          "enunciado": "Só cerca de 1,5% dos sinistros são fraude. Como avaliar se o modelo é bom?",
+          "entenda": "Acurácia é o percentual de acertos no total. Precisão responde: dos sinistros que o modelo apontou como suspeitos, quantos eram fraude? Recall responde: das fraudes, quantas o modelo apontou? A AUC resume o quanto o modelo ordena bem os sinistros por suspeita.",
+          "opcoes": [
+            { "id": "a", "texto": "Pela acurácia: o percentual total de acertos" },
+            { "id": "b", "texto": "Pela precisão e pelo recall da classe \"fraude\", olhando a matriz de confusão e a AUC" },
+            { "id": "c", "texto": "Pelo erro médio, em reais" },
+            { "id": "d", "texto": "Pelo tempo que o modelo leva para rodar" }
+          ],
+          "_gabarito": { "a": 0, "b": 7, "c": 0, "d": 0 }, "pontosMax": 7,
+          "_explicacao": "Com 1,5% de fraudes, um modelo que nunca aponta fraude acerta 98,5% e não serve para nada. O que importa é quantas fraudes ele encontra e quantos sinistros legítimos ele faz investigar à toa."
+        },
+        {
+          "id": "f3sim", "tipo": "simulador", "rotulo": "Investigação", "dependeDe": "f3q1",
+          "enunciado": "Treinem o modelo e decidam qual percentual dos sinistros, do mais para o menos suspeito, a equipe vai investigar por mês.",
+          "pontosMax": 10
+        },
+        {
+          "id": "f3j", "tipo": "texto", "rotulo": "Confiança no resultado",
+          "enunciado": "Em até duas frases: vocês confiam no resultado do treino? Por quê?",
+          "maxChars": 400
+        }
+      ],
+      "dicas": [
+        { "id": "f3d1", "titulo": "Ligar para o cientista de dados", "custo": 10, "_texto": "Desconfiem de resultado bom demais: em fraude, AUC acima de 0,90 quase sempre é sintoma de problema nos dados. E lembrem que um bom número no teste só vale se o teste parecer com o uso real." },
+        { "id": "f3d2", "titulo": "Falar com o Financeiro", "custo": 10, "_texto": "Cada investigação custa R$ 380, ache fraude ou não, e atrasa o pagamento de um cliente honesto. Só vale continuar investigando enquanto as fraudes encontradas pagarem essa conta." }
+      ]
+    },
+
+    {
+      "id": "evento", "titulo": "Seis meses em produção", "curto": "Produção", "duracaoMin": 6,
+      "missao": "O modelo de vocês foi para produção. Seis meses depois, a Fernanda chama a equipe para uma conversa difícil.",
+      "itens": [
+        {
+          "id": "evq1", "tipo": "escolha", "rotulo": "Diagnóstico",
+          "enunciado": "Qual é o diagnóstico mais provável?",
+          "opcoes": [
+            { "id": "a", "texto": "Vazamento de dados: o treino usou informação que não existe no momento da previsão" },
+            { "id": "b", "texto": "Rótulo enviesado: o modelo aprendeu com exemplos escolhidos pelo faro da equipe e repete esse faro" },
+            { "id": "c", "texto": "Drift: o jeito de fraudar mudou depois do treino" },
+            { "id": "d", "texto": "Overfitting: o modelo tem camadas demais e decorou o treino" }
+          ],
+          "pontosMax": 6
+        },
+        {
+          "id": "evq2", "tipo": "escolha", "rotulo": "Ação",
+          "enunciado": "O que fazer agora?",
+          "opcoes": [
+            { "id": "a", "texto": "Retreinar só com colunas que existem na abertura do sinistro" },
+            { "id": "b", "texto": "Investigar todo mês uma amostra aleatória de sinistros, para ter exemplos sem viés, e retreinar com eles" },
+            { "id": "c", "texto": "Retreinar com os dados mais recentes e monitorar o desempenho todo mês" },
+            { "id": "d", "texto": "Desligar o modelo e voltar a escolher só pelo faro da equipe" }
+          ],
+          "pontosMax": 4
+        },
+        {
+          "id": "evj", "tipo": "texto", "rotulo": "O que faltou antes",
+          "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de ir para produção?",
+          "maxChars": 400
+        }
+      ],
+      "dicas": []
+    }
+  ],
+
+  "_modelo": {
+    "aucBase": 0.79,
+    "pesoFeature": { "c01": 0.04, "c07": 0.04, "padrao": 0.01 },
+    "ganhoSensivel": 0.005,
+    "ruido": { "validacao": 0.01, "producao": -0.02 },
+    "vazamento": { "aucValidacao": 0.991, "quedaProducao": 0.17 },
+    "divisao": { "item": "f3q1", "inflacao": { "a": 0.03, "b": 0, "c": 0.09, "d": -0.04 } },
+    "rotulo": { "item": "f1q4", "ruins": ["a", "c"], "queda": 0.15 },
+    "drift": 0.05,
+    "aucMin": 0.53,
+    "aucMax": 0.995
+  },
+
+  "_evento": {
+    "vazamento": {
+      "titulo": "O detector que só via o passado",
+      "mensagem": "No treino, o modelo de vocês chegou a AUC de {aucValidacao}. Seis meses depois, em produção, está em {aucProducao}. A equipe investigou milhares de sinistros apontados pelo modelo e quase não encontrou fraude.",
+      "evidencias": [
+        "A taxa de fraude estimada pelo setor continua entre 1% e 2%.",
+        "No monitoramento, {colunasVazamento} chega(m) vazia(s) ou com o mesmo valor em 100% dos sinistros recém-abertos.",
+        "No treino, essa(s) coluna(s) apareciam no topo da lista de importância do modelo.",
+        "O perfil dos sinistros em produção é parecido com o do treino."
+      ],
+      "feed": "{grupo}: em produção, a AUC despencou de {treino} para {producao}",
+      "_gabarito": { "evq1": { "a": 6, "b": 1, "c": 0, "d": 0 }, "evq2": { "a": 4, "b": 1, "c": 1, "d": 0 } },
+      "_explicacao": "Parecer do perito, bloqueio de pagamento e ressarcimento só existem depois da investigação. No treino, o modelo leu a resposta; na abertura do sinistro, ela ainda não existe."
+    },
+    "rotulo": {
+      "titulo": "O modelo aprendeu o faro da equipe",
+      "mensagem": "No treino, o modelo de vocês chegou a AUC de {aucValidacao}, e em produção está em {aucProducao}. Parece razoável, mas a auditoria externa trouxe uma notícia ruim para a Fernanda.",
+      "evidencias": [
+        "90% dos sinistros que o modelo aponta são de oficinas e bairros que a equipe já investigava antes do modelo.",
+        "A auditoria sorteou 500 sinistros pagos e encontrou fraude em 9. O modelo não tinha apontado nenhum deles.",
+        "Nenhuma coluna chega vazia ou com valores fora do padrão.",
+        "A taxa de fraude estimada pelo setor não mudou."
+      ],
+      "feed": "{grupo}: o modelo só repete o faro da equipe. Auditoria achou fraudes que ele não vê",
+      "_gabarito": { "evq1": { "a": 1, "b": 6, "c": 1, "d": 0 }, "evq2": { "a": 0, "b": 4, "c": 1, "d": 0 } },
+      "_explicacao": "Os exemplos de fraude vinham só dos sinistros que a equipe escolheu investigar. O modelo aprendeu o que a equipe já procurava e ficou cego para o resto."
+    },
+    "drift": {
+      "titulo": "O golpe mudou",
+      "mensagem": "No treino, o modelo de vocês chegou a AUC de {aucValidacao}. Seis meses depois, em produção, está em {aucProducao}. Ainda funciona, mas cada vez pior.",
+      "evidencias": [
+        "Desde março, uma quadrilha passou a usar oficinas recém-abertas e boletins de ocorrência online, que a base de treino quase não tinha.",
+        "As fraudes que escaparam têm perfil que o modelo considerava de baixo risco: apólices antigas e aviso no mesmo dia.",
+        "Nenhuma coluna chega vazia ou com valores fora do padrão.",
+        "A auditoria por amostragem confirma que a maior parte das fraudes ainda é apontada."
+      ],
+      "feed": "{grupo}: em produção, a AUC caiu de {treino} para {producao}. O golpe mudou",
+      "tipoFeed": "drift",
+      "_gabarito": { "evq1": { "a": 0, "b": 1, "c": 6, "d": 0 }, "evq2": { "a": 0, "b": 2, "c": 4, "d": 0 } },
+      "_explicacao": "Fraude é uma corrida: quem frauda aprende com o que é barrado. Modelo antifraude precisa de monitoramento e retreino frequentes."
+    }
+  },
+
+  "_revelacao": {
+    "armadilha": "O rótulo enviesado",
+    "resumo": "Os exemplos de fraude vinham só dos 4% de sinistros que a equipe escolheu investigar. Treinar com isso ensina o modelo a repetir o faro da equipe, e as fraudes que ninguém investigava continuam invisíveis.",
+    "secundaria": "O vazamento: parecer do perito, bloqueio de pagamento e ressarcimento só existem depois da investigação. Com eles, o teste mostra AUC perto de 0,99 e a produção, um modelo inútil.",
+    "licoes": [
+      "Antes de treinar, perguntem como o rótulo foi produzido e quem escolheu os exemplos.",
+      "Uma amostra aleatória, mesmo pequena, é o que permite medir e corrigir o viés.",
+      "O modelo prioriza a investigação; a decisão sobre o cliente continua humana."
+    ]
+  }
+}

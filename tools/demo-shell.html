@@ -29,7 +29,7 @@
     <button role="tab" aria-selected="false" data-aba="professor">Professor</button>
     <button role="tab" aria-selected="false" data-aba="telao">Telão</button>
   </div>
-  <span class="info">Grupo 1: <code>DEMO-1</code> (supervisionado). Grupo 2: <code>DEMO-2</code> (clustering). Senha do professor: <code>020271</code>. Grupos 3 a 6 simulados.</span>
+  <span class="info">Você joga como Grupo 1 (<code>DEMO-1</code>, supervisionado) e Grupo 2 (<code>DEMO-2</code>, clustering). Senha do professor: <code>020271</code>. Grupos 3 a 6 simulados.</span>
   <button class="reiniciar" type="button" id="reiniciar">Reiniciar demonstração</button>
 </div>
 <div class="quadros" id="quadros"></div>
@@ -40,9 +40,13 @@
 (function () {
   try { ['desafios.sessao.aluno1', 'desafios.sessao.aluno2', 'desafios.professor'].forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
   var ids = Object.keys(CASOS_COMPLETOS);
-  var SUP = ids.filter(function (id) { return CASOS_COMPLETOS[id]._modelo.tipo !== 'agrupamento'; })[0];
-  var AGR = ids.filter(function (id) { return CASOS_COMPLETOS[id]._modelo.tipo === 'agrupamento'; })[0] || SUP;
-  var grupos = [SUP, AGR, SUP, AGR, SUP, AGR].map(function (caso, i) { return { codigo: 'DEMO-' + (i + 1), nome: 'Grupo ' + (i + 1), caso: caso }; });
+  /* Um caso diferente por grupo, alternando supervisionado e clustering */
+  var preferidos = ['fuga-silenciosa', 'tamanho-unico', 'sinistro-perfeito', 'lojas-sem-perfil', 'patrocinador-fantasma', 'assinantes-invisiveis'];
+  var sup = ids.filter(function (id) { return CASOS_COMPLETOS[id]._modelo.tipo !== 'agrupamento'; });
+  var agr = ids.filter(function (id) { return CASOS_COMPLETOS[id]._modelo.tipo === 'agrupamento'; });
+  var ordem = preferidos.filter(function (id) { return CASOS_COMPLETOS[id]; });
+  for (var i = 0; ordem.length < 6; i++) ordem.push((i % 2 ? agr : sup)[Math.floor(i / 2) % (i % 2 ? agr : sup).length] || ids[0]);
+  var grupos = ordem.slice(0, 6).map(function (caso, i) { return { codigo: 'DEMO-' + (i + 1), nome: 'Grupo ' + (i + 1), caso: caso }; });
   var SENHA = '020271', mem = {};
   var store = { get: function (k) { return mem[k] ? JSON.parse(mem[k]) : null; }, set: function (k, v) { mem[k] = JSON.stringify(v); }, del: function (k) { delete mem[k]; } };
   window.DEMO_CASOS_PUBLICOS = DEMO_CASOS_PUBLICOS;
@@ -52,10 +56,10 @@
 
   /* ----- Grupos simulados ----- */
   var perfis = {
-    'DEMO-3': { p: 0.85, ruim: ['c11'], compra: ['m1', 'm2'], membros: ['Larissa', 'Otávio', 'Beatriz'] },
-    'DEMO-4': { p: 0.6, ruim: [], escalaErrada: true, compra: ['m4'], membros: ['Rafael', 'Júlia', 'Henrique', 'Sofia'] },
-    'DEMO-5': { p: 0.9, ruim: [], compra: ['m1'], membros: ['Camila', 'Diego'] },
-    'DEMO-6': { p: 0.75, ruim: ['c11'], compra: ['m2'], membros: ['Paula', 'Tiago', 'Renata'] }
+    'DEMO-3': { p: 0.85, ruim: true, compra: ['m1', 'm2'], membros: ['Larissa', 'Otávio', 'Beatriz'] },
+    'DEMO-4': { p: 0.6, ruim: false, escalaErrada: true, compra: ['m4'], membros: ['Rafael', 'Júlia', 'Henrique', 'Sofia'] },
+    'DEMO-5': { p: 0.9, ruim: false, compra: ['m1'], membros: ['Camila', 'Diego'] },
+    'DEMO-6': { p: 0.75, ruim: true, compra: ['m2'], membros: ['Paula', 'Tiago', 'Renata'] }
   };
   var agenda = {};
   function casoDe(c) { return CASOS_COMPLETOS[grupos.filter(function (g) { return g.codigo === c; })[0].caso]; }
@@ -79,7 +83,7 @@
       else if (it.tipo === 'cartas') {
         var m = {}, caixas = caso.caixas.map(function (c) { return c.id; });
         it.cartas.forEach(function (c) { m[c.id] = sorte(pf.p) ? c._gabarito : caixas[Math.floor(Math.random() * 4)]; if (c._gabarito === ruins && m[c.id] === bons) m[c.id] = 'descartar'; });
-        pf.ruim.forEach(function (id) { m[id] = bons; });
+        if (pf.ruim) { var armadilha = it.cartas.filter(function (c) { return c._gabarito === ruins; })[0]; if (armadilha) m[armadilha.id] = bons; }
         R[it.id] = m;
       } else if (it.tipo === 'simulador') R[it.id] = { pct: pf.p > 0.7 ? 3 + Math.round(Math.random() * 5) : 10 + Math.round(Math.random() * 12) };
       else if (it.tipo === 'agrupamento') R[it.id] = { k: Number(escolher(it._gabarito, pf.p)) };

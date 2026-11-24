@@ -448,15 +448,15 @@
       el('div.lab-num', null, el('b', { texto: C.fmtAuc(auc) }), el('small', { texto: 'AUC no conjunto de teste' })),
       el('div', null,
         escala(auc, 0.5, 1, [[0.5, 'fraco'], [0.6, 'razoável'], [0.7, 'bom'], [0.85, 'muito bom'], [0.92, 'excepcional']]),
-        el('p', { texto: 'Como ler: sorteando um cliente que ' + t.passado + ' e um que ' + t.passadoNeg + ', em ' + p100 + ' de cada 100 sorteios o modelo dá nota de risco maior a quem ' + t.passado + '. AUC 0,5 é o mesmo que tirar cara ou coroa; 1,0 é acertar sempre.' }))));
+        el('p', { texto: 'Como ler: sorteando um ' + t.um + ' que ' + t.passado + ' e um que ' + t.passadoNeg + ', em ' + p100 + ' de cada 100 sorteios o modelo dá nota de risco maior ' + t.aoPositivo + '. AUC 0,5 é o mesmo que tirar cara ou coroa; 1,0 é acertar sempre.' }))));
     lab.appendChild(el('div.lab-bloco', null,
       el('div.lab-num', null, el('b', { texto: pct(m.acuracia) }), el('small', { texto: 'acurácia do modelo' })),
-      el('p', { texto: 'O modelo acerta ' + pct(m.acuracia) + ' dos ' + t.unidade + '. Parece ótimo, mas compare: quem simplesmente dissesse que ninguém ' + t.verbo + ' acertaria ' + pct(m.acuraciaIngenua) + ', sem modelo nenhum, porque só ' + pct(sim.prevalencia, 0) + ' ' + t.verboPlural + '. Quando um dos lados é raro, a acurácia engana.' })));
+      el('p', { texto: 'O modelo acerta ' + pct(m.acuracia) + ' dos ' + t.unidade + '. Parece ótimo, mas compare: quem simplesmente dissesse que ' + t.ninguem + ' acertaria ' + pct(m.acuraciaIngenua) + ', sem modelo nenhum, porque só ' + pct(sim.prevalencia, sim.prevalencia < 0.02 ? 1 : 0) + ' ' + t.verboPlural + '. Quando um dos lados é raro, a acurácia engana.' })));
     var bonus = Math.max(0, Math.min(15, Math.round((auc - 0.5) * 30)));
     lab.appendChild(el('p.lab-nota', { texto: 'Este resultado vale um bônus provisório de ' + bonus + ' pontos no placar (máximo de 15).' }));
 
-    lab.appendChild(el('h3', { style: 'margin-top:1.5rem', texto: 'Quantos ' + t.unidade + ' a campanha vai alcançar por mês' }));
-    lab.appendChild(el('p', { texto: 'O modelo coloca os ' + C.fmtInt(sim.baseClientes) + ' ' + t.unidade + ' numa fila, do maior para o menor risco. A régua decide até onde da fila a campanha vai. Quanto mais à direita, mais ' + t.unidade + ' que ' + t.positivos + ' a campanha encontra, e mais dinheiro gasta com quem ' + t.negativos + '.' }));
+    lab.appendChild(el('h3', { style: 'margin-top:1.5rem', texto: t.tituloDecisao }));
+    lab.appendChild(el('p', { texto: 'O modelo coloca os ' + C.fmtInt(sim.baseClientes) + ' ' + t.unidade + ' do mês numa fila, ' + t.ordem + '. A régua decide até onde da fila a ' + t.campanha + ' vai. Quanto mais à direita, mais ' + t.positivosCurto + ' a ' + t.campanha + ' encontra, e mais dinheiro gasta com ' + t.negativosCurto + '.' }));
     var val = R[it.id] && R[it.id].pct ? Number(R[it.id].pct) : null;
     var leitura = el('b'), detalhe = el('div');
     var regua = el('input', { type: 'range', min: sim.minPct, max: sim.maxPct, step: 0.5, value: val || sim.minPct, disabled: travado, 'aria-label': 'Percentual da fila que a campanha alcança' });
@@ -464,26 +464,26 @@
       var p = Number(regua.value), s = Stats.simular(auc, sim, p), alcancados = s.vp + s.fp;
       leitura.textContent = String(p).replace('.', ',') + '% da fila';
       C.limpar(detalhe).appendChild(el('div', null,
-        el('p.narrativa', null, 'Indo até ' + String(p).replace('.', ',') + '% da fila, a campanha alcança ', el('b', { texto: C.fmtInt(alcancados) + ' ' + t.unidade }), ' por mês. Destes, ',
-          el('b', { texto: C.fmtInt(s.vp) }), ' ' + t.positivos + ' e ', el('b', { texto: C.fmtInt(s.fp) }), ' ' + t.negativos + '. Outros ', el('b', { texto: C.fmtInt(s.fn) }), ' que ' + t.positivos + ' ficaram fora da campanha.'),
+        el('p.narrativa', null, 'Indo até ' + String(p).replace('.', ',') + '% da fila, a ' + t.campanha + ' ' + t.verboAlcanca + ' ', el('b', { texto: C.fmtInt(alcancados) + ' ' + t.unidade }), ' por mês. Destes, ',
+          el('b', { texto: C.fmtInt(s.vp) }), ' ' + t.positivos + ' e ', el('b', { texto: C.fmtInt(s.fp) }), ' ' + t.negativos + '. Outros ', el('b', { texto: C.fmtInt(s.fn) }), ' que ' + t.positivos + ' ficaram de fora.'),
         el('div.matriz', null,
           el('div.mh'), el('div.mh', { texto: 'Na realidade, ' + t.positivos }), el('div.mh', { texto: 'Na realidade, ' + t.negativos }),
-          el('div.mh', { texto: 'Alcançados' }),
+          el('div.mh', { texto: t.acaoTitulo }),
           el('div.acerto', null, el('b', { texto: C.fmtInt(s.vp) }), t.vp, el('small', { texto: 'verdadeiro positivo' })),
           el('div.erro', null, el('b', { texto: C.fmtInt(s.fp) }), t.fp, el('small', { texto: 'falso positivo' })),
-          el('div.mh', { texto: 'Fora da campanha' }),
+          el('div.mh', { texto: t.naoAcaoTitulo }),
           el('div.erro', null, el('b', { texto: C.fmtInt(s.fn) }), t.fn, el('small', { texto: 'falso negativo' })),
           el('div.acerto', null, el('b', { texto: C.fmtInt(s.vn) }), t.vn, el('small', { texto: 'verdadeiro negativo' }))),
         el('div.contas', null,
-          el('div', null, el('b', { texto: pct(s.precisao, 0) }), el('span', { texto: 'Precisão' }), el('small', { texto: 'De cada 100 alcançados, ' + Math.round(s.precisao * 100) + ' ' + t.positivos + '.' })),
-          el('div', null, el('b', { texto: pct(s.recall, 0) }), el('span', { texto: 'Recall' }), el('small', { texto: 'De cada 100 que ' + t.positivos + ', a campanha alcança ' + Math.round(s.recall * 100) + '.' })),
-          el('div', null, el('b', { texto: C.fmtReais(s.custo) }), el('span', { texto: 'Custo por mês' }), el('small', { texto: C.fmtInt(alcancados) + ' alcançados × ' + C.fmtReais(sim.custoAcao) + ', acertando ou não.' })),
-          el('div', null, el('b', { texto: C.fmtReais(s.receitaSalva) }), el('span', { texto: 'Margem salva' }), el('small', { texto: Math.round(sim.taxaSalvamento * 100) + '% dos ' + C.fmtInt(s.vp) + ' acertos aceitam a oferta: ' + C.fmtInt(s.salvos) + ' ' + t.unidade + ' × ' + C.fmtReais(sim.valorCliente) + '.' })),
-          el('div.destaque', null, el('b', { texto: C.fmtReais(s.valor) }), el('span', { texto: 'Valor esperado por mês' }), el('small', { texto: 'Margem salva menos o custo da campanha.' })))));
+          el('div', null, el('b', { texto: pct(s.precisao, 0) }), el('span', { texto: 'Precisão' }), el('small', { texto: 'De cada 100 ' + t.acao + ', ' + Math.round(s.precisao * 100) + ' ' + t.positivos + '.' })),
+          el('div', null, el('b', { texto: pct(s.recall, 0) }), el('span', { texto: 'Recall' }), el('small', { texto: 'De cada 100 que ' + t.positivos + ', a ' + t.campanha + ' ' + t.verboAlcanca + ' ' + Math.round(s.recall * 100) + '.' })),
+          el('div', null, el('b', { texto: C.fmtReais(s.custo) }), el('span', { texto: 'Custo por mês' }), el('small', { texto: C.fmtInt(alcancados) + ' ' + t.acao + ' × ' + C.fmtReais(sim.custoAcao) + ', acertando ou não.' })),
+          el('div', null, el('b', { texto: C.fmtReais(s.receitaSalva) }), el('span', { texto: t.ganho }), el('small', { texto: Math.round(sim.taxaSalvamento * 100) + '% dos ' + C.fmtInt(s.vp) + ' acertos ' + t.efeito + ': ' + C.fmtInt(s.salvos) + ' × ' + C.fmtReais(sim.valorCliente) + '.' })),
+          el('div.destaque', null, el('b', { texto: C.fmtReais(s.valor) }), el('span', { texto: 'Valor esperado por mês' }), el('small', { texto: t.ganho + ' menos o custo.' })))));
     }
     regua.addEventListener('input', function () { R[it.id] = { pct: Number(regua.value) }; pintar(); mudou(); });
     lab.appendChild(el('div.regua', null, el('div.regua-leitura', null, el('span', { texto: 'Até onde da fila a campanha vai' }), leitura), regua,
-      el('div.regua-pontas', null, el('span', { texto: 'Só os de maior risco' }), el('span', { texto: 'Muita gente' }))));
+      el('div.regua-pontas', null, el('span', { texto: t.pontaEsq }), el('span', { texto: t.pontaDir }))));
     var dicaRegua = !val && !travado ? el('div.contador', { style: 'text-align:left', texto: 'Movam a régua para escolher.' }) : null;
     if (dicaRegua) { lab.appendChild(dicaRegua); regua.addEventListener('input', function () { dicaRegua.remove(); }, { once: true }); }
     lab.appendChild(detalhe);

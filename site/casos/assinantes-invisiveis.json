@@ -1,0 +1,603 @@
+{
+ "id": "assinantes-invisiveis",
+ "exercicio": "ml-nao-supervisionado",
+ "titulo": "Assinantes Invisíveis",
+ "subtitulo": "Oitenta mil alunos, uma única mensagem para todos",
+ "setor": "Educação online, assinaturas",
+ "empresa": "Trilha Cursos Online",
+ "imagem": "img/assinantes-invisiveis.svg",
+ "creditosIniciais": 100,
+ "briefing": {
+  "remetente": "Bianca Torres",
+  "cargo": "Diretora de Produto, Trilha Cursos Online",
+  "assunto": "Precisamos parar de falar com todo mundo do mesmo jeito",
+  "mensagem": [
+   "Olá, pessoal!",
+   "Temos 82 mil assinantes e mandamos a mesma newsletter, as mesmas recomendações e os mesmos lembretes para todo mundo. A taxa de abertura dos e-mails caiu pela metade em um ano.",
+   "Quero que a IA descubra tipos de assinante, para cada tipo ter sua comunicação e sua trilha de cursos. Temos os planos Básico, Plus e Pro, e sabemos quem cancelou depois. Será que dá para usar isso?",
+   "Preciso apresentar um plano ao conselho no fim do trimestre."
+  ],
+  "contexto": [
+   {
+    "titulo": "A empresa",
+    "texto": "A Trilha oferece cursos de tecnologia, negócios e idiomas por assinatura mensal, com mais de 1.200 cursos e certificados."
+   },
+   {
+    "titulo": "Os planos",
+    "texto": "Básico (só vídeos), Plus (vídeos e exercícios) e Pro (tudo, com mentoria). O plano depende de quanto o assinante paga, não de como estuda."
+   },
+   {
+    "titulo": "Os números",
+    "texto": "Há quem estude 2 horas por mês e quem estude 120. Além da assinatura, alguns compram cursos avulsos: de R$ 0 a quase R$ 10 mil por ano."
+   },
+   {
+    "titulo": "Relatório de produto",
+    "texto": "No último ano, 38% dos assinantes passaram mais de 30 dias sem abrir a plataforma pelo menos uma vez. Metade deles cancelou depois."
+   },
+   {
+    "titulo": "A equipe de conteúdo",
+    "texto": "Consegue manter até 5 réguas de comunicação diferentes. Mais do que isso, ninguém dá conta de escrever."
+   }
+  ]
+ },
+ "caixas": [
+  {
+   "id": "agrupar",
+   "nome": "Usar para agrupar",
+   "ajuda": "Comportamento do assinante na plataforma"
+  },
+  {
+   "id": "descrever",
+   "nome": "Só para descrever depois",
+   "ajuda": "Resultado ou rótulo: serve para comparar os grupos, não para formá-los"
+  },
+  {
+   "id": "sensivel",
+   "nome": "Sensível ou proxy",
+   "ajuda": "Dado protegido ou substituto de um dado protegido"
+  },
+  {
+   "id": "descartar",
+   "nome": "Descartar",
+   "ajuda": "Não carrega padrão útil"
+  }
+ ],
+ "agrupamento": {
+  "itens": "assinantes",
+  "item": "assinante",
+  "total": 82000,
+  "kMin": 2,
+  "kMax": 6,
+  "rotuloComparacao": "Cancelaram nos 6 meses seguintes"
+ },
+ "fases": [
+  {
+   "id": "f1",
+   "titulo": "Enquadre o problema",
+   "curto": "Enquadre",
+   "duracaoMin": 6,
+   "missao": "Transformem o pedido da Bianca num problema de machine learning bem formulado. Antes de pensar em dados, decidam que decisão a IA vai apoiar e se existe uma resposta certa para aprender.",
+   "itens": [
+    {
+     "id": "f1q1",
+     "tipo": "escolha",
+     "rotulo": "Decisão apoiada",
+     "enunciado": "Qual decisão de negócio a IA vai apoiar?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Definir tipos de assinante para cada tipo ter sua comunicação e sua trilha de cursos"
+      },
+      {
+       "id": "b",
+       "texto": "Prever quem vai cancelar no mês que vem"
+      },
+      {
+       "id": "c",
+       "texto": "Decidir o preço de cada plano"
+      },
+      {
+       "id": "d",
+       "texto": "Escolher quais cursos tirar do catálogo"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q2",
+     "tipo": "escolha",
+     "rotulo": "Existe rótulo?",
+     "enunciado": "Existe uma resposta certa e confiável sobre o tipo de cada assinante, que a IA possa usar como exemplo?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Sim: o plano de cada um (Básico, Plus ou Pro)"
+      },
+      {
+       "id": "b",
+       "texto": "Não: queremos descobrir tipos de assinante que ainda não conhecemos"
+      },
+      {
+       "id": "c",
+       "texto": "Sim: se o assinante cancelou ou não"
+      },
+      {
+       "id": "d",
+       "texto": "Sim: a nota que deu na última pesquisa"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q3",
+     "tipo": "escolha",
+     "rotulo": "Tipo de problema",
+     "enunciado": "Que tipo de problema é esse?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Classificação: ensinar a IA a colocar cada assinante em Básico, Plus ou Pro"
+      },
+      {
+       "id": "b",
+       "texto": "Regressão: prever um valor numérico, como as horas estudadas"
+      },
+      {
+       "id": "c",
+       "texto": "Agrupamento (clustering): encontrar grupos de assinantes parecidos, sem rótulos"
+      },
+      {
+       "id": "d",
+       "texto": "Aprendizado por reforço: a IA testa mensagens e aprende com cliques"
+      }
+     ],
+     "pontosMax": 5
+    },
+    {
+     "id": "f1q4",
+     "tipo": "escolha",
+     "rotulo": "O que agrupar",
+     "enunciado": "Quem entra na análise, e descrito por quais informações?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Só os assinantes que cancelaram, para entender por que saíram"
+      },
+      {
+       "id": "b",
+       "texto": "Todos os assinantes ativos, descritos pelo comportamento de estudo nos últimos 6 meses"
+      },
+      {
+       "id": "c",
+       "texto": "Os cursos do catálogo, descritos pelas notas que recebem"
+      },
+      {
+       "id": "d",
+       "texto": "Só os assinantes Pro, que dão mais receita"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f1j",
+     "tipo": "texto",
+     "rotulo": "Por que não usar o plano",
+     "enunciado": "Em até duas frases: por que não usar o plano (Básico, Plus, Pro) como tipo de assinante?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f1d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f1d2",
+     "titulo": "Conversar com o time de atendimento",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f2",
+   "titulo": "Monte o dataset",
+   "curto": "Dataset",
+   "duracaoMin": 12,
+   "missao": "O time de dados separou 16 colunas sobre os assinantes. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. As colunas que forem para \"Usar para agrupar\" são as que a IA vai usar para medir o quanto dois assinantes se parecem.",
+   "itens": [
+    {
+     "id": "f2cartas",
+     "tipo": "cartas",
+     "rotulo": "Colunas",
+     "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
+     "pontosPorCarta": 2,
+     "pontosMax": 32,
+     "cartas": [
+      {
+       "id": "c01",
+       "nome": "horas_estudo_mes",
+       "descricao": "Média de horas de vídeo e exercício por mês nos últimos 6 meses.",
+       "exemplos": [
+        "2",
+        "64",
+        "17"
+       ]
+      },
+      {
+       "id": "c02",
+       "nome": "cursos_iniciados_6m",
+       "descricao": "Cursos que o assinante começou nos últimos 6 meses.",
+       "exemplos": [
+        "1",
+        "14",
+        "4"
+       ]
+      },
+      {
+       "id": "c03",
+       "nome": "pct_cursos_concluidos",
+       "descricao": "Parte dos cursos iniciados que o assinante terminou.",
+       "exemplos": [
+        "0%",
+        "86%",
+        "23%"
+       ]
+      },
+      {
+       "id": "c04",
+       "nome": "dias_desde_ultimo_acesso",
+       "descricao": "Dias desde o último acesso à plataforma.",
+       "exemplos": [
+        "1",
+        "52",
+        "9"
+       ]
+      },
+      {
+       "id": "c05",
+       "nome": "pct_acesso_celular",
+       "descricao": "Parte do tempo de estudo feita pelo celular.",
+       "exemplos": [
+        "90%",
+        "10%",
+        "45%"
+       ]
+      },
+      {
+       "id": "c06",
+       "nome": "gasto_cursos_avulsos_12m",
+       "descricao": "Quanto o assinante gastou com cursos avulsos, fora da assinatura, nos últimos 12 meses.",
+       "exemplos": [
+        "R$ 0",
+        "R$ 4.800",
+        "R$ 390"
+       ]
+      },
+      {
+       "id": "c07",
+       "nome": "posts_forum_mes",
+       "descricao": "Média de perguntas e respostas no fórum por mês.",
+       "exemplos": [
+        "0",
+        "12",
+        "2"
+       ]
+      },
+      {
+       "id": "c08",
+       "nome": "horario_predominante",
+       "descricao": "Faixa do dia em que o assinante mais estuda.",
+       "exemplos": [
+        "noite",
+        "manhã",
+        "madrugada"
+       ]
+      },
+      {
+       "id": "c09",
+       "nome": "meses_de_assinatura",
+       "descricao": "Há quantos meses a pessoa é assinante.",
+       "exemplos": [
+        "2",
+        "37",
+        "11"
+       ]
+      },
+      {
+       "id": "c10",
+       "nome": "plano_atual",
+       "descricao": "Plano da assinatura: Básico, Plus ou Pro.",
+       "exemplos": [
+        "Básico",
+        "Pro",
+        "Plus"
+       ]
+      },
+      {
+       "id": "c11",
+       "nome": "cancelou_depois",
+       "descricao": "Se o assinante cancelou nos 6 meses seguintes à extração.",
+       "exemplos": [
+        "não",
+        "sim",
+        "não"
+       ]
+      },
+      {
+       "id": "c12",
+       "nome": "nps_ultima_pesquisa",
+       "descricao": "Nota de 0 a 10 dada na última pesquisa de satisfação. Só 15% responderam.",
+       "exemplos": [
+        "9",
+        "3",
+        "7"
+       ]
+      },
+      {
+       "id": "c13",
+       "nome": "deficiencia_declarada",
+       "descricao": "Tipo de deficiência informado pelo assinante para ativar recursos de acessibilidade.",
+       "exemplos": [
+        "nenhuma",
+        "visual",
+        "auditiva"
+       ]
+      },
+      {
+       "id": "c14",
+       "nome": "cep_residencial",
+       "descricao": "CEP do endereço de cobrança.",
+       "exemplos": [
+        "40140-110",
+        "13087-500",
+        "69050-001"
+       ]
+      },
+      {
+       "id": "c15",
+       "nome": "id_assinante",
+       "descricao": "Identificador do assinante no sistema.",
+       "exemplos": [
+        "u_8812044",
+        "u_1029933",
+        "u_5520177"
+       ]
+      },
+      {
+       "id": "c16",
+       "nome": "idioma_interface",
+       "descricao": "Idioma da interface da plataforma. Hoje ela só existe em português.",
+       "exemplos": [
+        "pt-BR",
+        "pt-BR",
+        "pt-BR"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "f2mercado",
+     "tipo": "mercado",
+     "rotulo": "Dados externos comprados",
+     "enunciado": "Mercado de dados: fontes que podem ser compradas ou liberadas com créditos. A compra é imediata e não tem devolução.",
+     "pontosMax": 8,
+     "fontes": [
+      {
+       "id": "m1",
+       "nome": "Eventos detalhados do player",
+       "descricao": "Pausas, avanços, velocidade de reprodução e abandono por vídeo, já registrados pela plataforma e liberados pelo time de engenharia.",
+       "custo": 30
+      },
+      {
+       "id": "m2",
+       "nome": "Resultados dos exercícios",
+       "descricao": "Taxa de acerto e tentativas por exercício, por assinante.",
+       "custo": 20
+      },
+      {
+       "id": "m3",
+       "nome": "Índice de vagas de tecnologia",
+       "descricao": "Número mensal de vagas de tecnologia anunciadas no país.",
+       "custo": 15
+      },
+      {
+       "id": "m4",
+       "nome": "Perfis profissionais dos assinantes",
+       "descricao": "Cargo, empresa e buscas de emprego dos assinantes, coletados de redes profissionais por uma empresa de dados.",
+       "custo": 25
+      }
+     ]
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f2d1",
+     "titulo": "Perguntar ao analista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f2d2",
+     "titulo": "Consultar o Jurídico",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f3",
+   "titulo": "Agrupe e avalie",
+   "curto": "Agrupamento",
+   "duracaoMin": 8,
+   "missao": "Hora de agrupar. Decidam como preparar as variáveis, como avaliar os grupos e em quantos tipos dividir os assinantes.",
+   "explicacao": {
+    "titulo": "Como o agrupamento funciona",
+    "passos": [
+     {
+      "titulo": "Preparar as variáveis",
+      "texto": "O algoritmo usa as colunas que vocês colocaram em \"Usar para agrupar\". Antes de rodar, é preciso decidir se elas entram como estão ou se passam por algum ajuste."
+     },
+     {
+      "titulo": "Medir semelhança",
+      "texto": "Para o algoritmo, dois assinantes são parecidos quando estão perto um do outro. A distância é calculada somando as diferenças entre os dois em cada variável."
+     },
+     {
+      "titulo": "Escolher quantos grupos",
+      "texto": "O k-means precisa que alguém diga quantos grupos (k) procurar. Ele não sabe sozinho qual é o número certo."
+     },
+     {
+      "titulo": "Avaliar e dar nome",
+      "texto": "Não existe gabarito para conferir. Os grupos são avaliados pela separação entre eles e pelo sentido que fazem para quem vai usá-los."
+     }
+    ]
+   },
+   "itens": [
+    {
+     "id": "f3q1",
+     "tipo": "escolha",
+     "rotulo": "Preparação das variáveis",
+     "enunciado": "O gasto com cursos avulsos vai de R$ 0 a quase R$ 10 mil por ano. As horas de estudo vão de 0 a 120 por mês, e os percentuais vão de 0 a 100. O que fazer antes de agrupar?",
+     "entenda": "Pensem em como a distância entre dois assinantes é calculada. Comparem: dois assinantes que diferem em R$ 2 mil de gasto avulso e em 60 horas de estudo por mês. Qual das duas diferenças pesa mais numa soma simples?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Nada: o algoritmo se ajusta sozinho às unidades de cada coluna"
+      },
+      {
+       "id": "b",
+       "texto": "Colocar todas as variáveis numéricas na mesma escala (padronizar) antes de agrupar"
+      },
+      {
+       "id": "c",
+       "texto": "Excluir o gasto com cursos avulsos, que tem os números maiores"
+      },
+      {
+       "id": "d",
+       "texto": "Converter o gasto de reais para centenas de reais"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f3q2",
+     "tipo": "escolha",
+     "rotulo": "Como avaliar",
+     "enunciado": "Como saber se os tipos de assinante encontrados são bons?",
+     "entenda": "No agrupamento não há resposta certa para conferir, então não existe acurácia. A silhueta, de -1 a 1, mede o quanto cada assinante está mais perto do próprio grupo do que dos outros. Mas grupos só servem se a equipe souber o que dizer a cada um.",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Pela acurácia: o percentual de assinantes colocados no grupo certo"
+      },
+      {
+       "id": "b",
+       "texto": "Pela separação (silhueta) e, principalmente, se cada tipo é claro e pede uma comunicação diferente"
+      },
+      {
+       "id": "c",
+       "texto": "Quanto mais grupos, mais personalizada e melhor a comunicação"
+      },
+      {
+       "id": "d",
+       "texto": "Pela maior silhueta possível, sem olhar o que há dentro dos grupos"
+      }
+     ],
+     "pontosMax": 7
+    },
+    {
+     "id": "f3grupos",
+     "tipo": "agrupamento",
+     "rotulo": "Agrupamento",
+     "dependeDe": "f3q1",
+     "enunciado": "Rodem o agrupamento e escolham em quantos tipos dividir os assinantes. Para cada número de grupos, vejam a silhueta e o perfil de cada grupo.",
+     "pontosMax": 10
+    },
+    {
+     "id": "f3j",
+     "tipo": "texto",
+     "rotulo": "Confiança nos grupos",
+     "enunciado": "Em até duas frases: os tipos encontrados ajudam a Bianca a melhorar a comunicação? Por quê?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f3d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f3d2",
+     "titulo": "Falar com a equipe de conteúdo",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "evento",
+   "titulo": "Seis meses depois",
+   "curto": "Produção",
+   "duracaoMin": 6,
+   "missao": "As réguas de comunicação baseadas nos tipos de vocês estão no ar há seis meses. A Bianca chama a equipe para uma conversa difícil.",
+   "itens": [
+    {
+     "id": "evq1",
+     "tipo": "escolha",
+     "rotulo": "Diagnóstico",
+     "enunciado": "Qual é o diagnóstico mais provável?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Uma variável dominou o cálculo de distância por causa da escala"
+      },
+      {
+       "id": "b",
+       "texto": "O agrupamento usou como entrada o rótulo ou os resultados que deveria explicar"
+      },
+      {
+       "id": "c",
+       "texto": "Os assinantes mudaram: um fato novo alterou o jeito de estudar"
+      },
+      {
+       "id": "d",
+       "texto": "O número de grupos foi pequeno demais"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "evq2",
+     "tipo": "escolha",
+     "rotulo": "Ação",
+     "enunciado": "O que fazer agora?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Padronizar as variáveis e rodar o agrupamento de novo"
+      },
+      {
+       "id": "b",
+       "texto": "Tirar o plano e os resultados das variáveis de agrupamento e usá-los só para comparar os grupos depois"
+      },
+      {
+       "id": "c",
+       "texto": "Refazer o agrupamento periodicamente e acompanhar quem muda de tipo"
+      },
+      {
+       "id": "d",
+       "texto": "Voltar à newsletter única para todos"
+      }
+     ],
+     "pontosMax": 4
+    },
+    {
+     "id": "evj",
+     "tipo": "texto",
+     "rotulo": "O que faltou antes",
+     "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de levar os tipos ao conselho?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": []
+  }
+ ]
+}

@@ -26,6 +26,11 @@ var ServerCore = (function () {
     }
     return lim15(((fase === 'producao' ? m.aucProducao : m.aucValidacao) - 0.5) * 30);
   }
+  function fmtValor(v, formato) {
+    if (formato === 'milhoes') return fmtMilhoes(v);
+    if (formato === 'reais') return 'R$ ' + Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
   function fmtMilhoes(v) {
     if (v < 1) return 'R$ ' + Math.round(v * 1000) + ' mil';
     if (v < 1000) { var r = Math.round(v); return 'R$ ' + r + (r === 1 ? ' milhão' : ' milhões'); }
@@ -115,11 +120,16 @@ var ServerCore = (function () {
       function lim(x) { return Math.round(Math.min(m.aucMax, Math.max(m.aucMin, x)) * 1000) / 1000; }
       var val = vaz.length ? m.vazamento.aucValidacao : lim(honesto + infl + rv);
       var prod = vaz.length ? lim(honesto - m.vazamento.quedaProducao + rp) : lim(honesto - m.drift + rp);
+      var cenario = vaz.length ? 'vazamento' : 'drift';
+      // Rótulo mal escolhido na fase 1: o teste parece bom, mas o modelo aprendeu a coisa errada
+      if (!vaz.length && m.rotulo && m.rotulo.ruins.indexOf(respostasDe(g, 'f1')[m.rotulo.item]) >= 0) {
+        cenario = 'rotulo'; prod = lim(honesto - m.rotulo.queda + rp);
+      }
       return {
         tipo: 'supervisionado', metrica: 'AUC', base: div || null,
         aucValidacao: val, aucProducao: prod, divisao: div || null, valorTreino: val, valorProducao: prod,
         acuracia: Stats.acuraciaPadrao(val, caso.simulador), acuraciaIngenua: 1 - caso.simulador.prevalencia,
-        cenario: vaz.length ? 'vazamento' : 'drift', nFeatures: usadas.length,
+        cenario: cenario, nFeatures: usadas.length,
         flags: { vazamento: vaz, sensivel: sens, ruido: ruido, redes: redes, circular: [] }
       };
     }
@@ -164,21 +174,22 @@ var ServerCore = (function () {
       var m = caso._modelo, ag = caso.agrupamento, out = {};
       for (var k = ag.kMin; k <= ag.kMax; k++) {
         if (cenario === 'escala') {
-          var o = m.orcamento, pesos = [], soma = 0, lista = [];
+          var o = m.escala, pesos = [], soma = 0, lista = [];
           for (var i = 0; i < k; i++) { pesos.push(Math.pow(0.5, i)); soma += pesos[i]; }
           var resto = ag.total;
           for (i = 0; i < k; i++) {
             var de = o.min * Math.pow(o.max / o.min, i / k), ate = o.min * Math.pow(o.max / o.min, (i + 1) / k);
             var n = i === k - 1 ? resto : Math.round(ag.total * pesos[i] / soma); resto -= n;
-            lista.push({ nome: 'Faixa ' + (i + 1) + ' de orçamento', n: n,
-              tracos: ['Orçamento de ' + fmtMilhoes(de) + ' a ' + fmtMilhoes(ate), 'Partes interessadas, exposição regulatória e novidade quase não mudam de um grupo para outro'],
-              desvio: '+' + (17 + (i % 3)) + '%' });
+            lista.push({ nome: 'Faixa ' + (i + 1) + ' de ' + o.rotulo.toLowerCase(), n: n,
+              tracos: [o.rotulo + ' de ' + fmtValor(de, o.formato) + ' a ' + fmtValor(ate, o.formato), o.outras + ' quase não mudam de um grupo para outro'],
+              desvio: o.comparacao[i % o.comparacao.length] });
           }
           out[k] = lista;
         } else {
           out[k] = (m.perfis[k] || []).map(function (p, i) {
             var c = JSON.parse(JSON.stringify(p));
-            if (cenario === 'circular') c.tracos.unshift('Composição: ' + (84 + (i * 3) % 10) + '% dos projetos com porte ' + ['P', 'M', 'G'][i % 3]);
+            var ci = m.circular;
+            if (cenario === 'circular') c.tracos.unshift('Composição: ' + (84 + (i * 3) % 10) + '% com ' + ci.rotulo + ' ' + ci.valores[i % ci.valores.length]);
             return c;
           });
         }
@@ -308,7 +319,7 @@ var ServerCore = (function () {
               linhas.push({ rotulo: 'AUC no treino', valor: fmtAuc(g.modelo.aucValidacao) });
               if (r && r.pct) {
                 var s = Stats.simular(g.modelo.aucValidacao, caso.simulador, Number(r.pct));
-                linhas.push({ rotulo: 'Abordagem mensal', valor: String(r.pct).replace('.', ',') + '% dos clientes (' + fmtInt(s.vp + s.fp) + ')' });
+                linhas.push({ rotulo: 'Alcance por mês', valor: String(r.pct).replace('.', ',') + '% da fila (' + fmtInt(s.vp + s.fp) + ' ' + (caso.simulador.termos ? caso.simulador.termos.unidade : '') + ')' });
                 linhas.push({ rotulo: 'Valor esperado por mês', valor: fmtReais(s.valor) });
               }
             } else linhas.push({ rotulo: 'Modelo', valor: 'Não treinado' });
@@ -378,7 +389,7 @@ var ServerCore = (function () {
               var o = Stats.otimo(g.modelo.aucValidacao, caso.simulador);
               x.sua = r && r.pct ? String(r.pct).replace('.', ',') + '%' : 'Sem resposta';
               x.correta = String(o.pct).replace('.', ',') + '% (valor esperado de ' + fmtReais(o.valor) + ' por mês)';
-              x.explicacao = 'Abordar mais clientes só compensa enquanto a precisão da lista paga o custo de cada abordagem.';
+              x.explicacao = 'Ir mais longe na fila só compensa enquanto a precisão paga o custo de cada ação: depois desse ponto, cada ' + (caso.simulador.termos ? caso.simulador.termos.um : 'item') + ' a mais custa mais do que rende.';
             }
           } else if (it.tipo === 'agrupamento') {
             x.sua = r && r.k ? r.k + ' grupos' + (g.modelo && g.modelo.cenario === 'escala' ? ', com as variáveis sem padronizar' : '') : 'Sem resposta';
@@ -611,8 +622,12 @@ var ServerCore = (function () {
           var caso = casos[g.caso];
           if (!g.modelo) g.modelo = calcularModelo(caso, g);
           g.pontos.desempenho = bonusDesempenho(g.modelo, 'producao');
-          var camp = reavaliarCampanha(caso, g), m = g.modelo, txt, tipo;
-          if (m.tipo === 'agrupamento') {
+          var camp = reavaliarCampanha(caso, g), m = g.modelo, txt, tipo, evc = caso._evento[m.cenario];
+          if (evc && evc.feed) {
+            tipo = evc.tipoFeed || (m.cenario === 'drift' ? 'drift' : 'queda');
+            txt = evc.feed.replace('{grupo}', g.nome).replace('{nota}', fmt1((m.valorProducao || 0) * 10))
+              .replace('{treino}', fmtAuc(m.valorTreino || 0)).replace('{producao}', fmtAuc(m.valorProducao || 0));
+          } else if (m.tipo === 'agrupamento') {
             tipo = m.cenario === 'drift' ? 'drift' : 'queda';
             txt = m.cenario === 'escala' ? g.nome + ': as trilhas eram só faixas de orçamento. O comitê deu nota ' + fmt1(m.valorProducao * 10) + ' de 10'
               : m.cenario === 'circular' ? g.nome + ': os grupos repetiram o P, M e G. O comitê deu nota ' + fmt1(m.valorProducao * 10) + ' de 10'

@@ -959,10 +959,25 @@
         }
       ]
     },
-    "orcamento": {
+    "escala": {
+      "rotulo": "Orçamento",
       "min": 0.08,
       "max": 2100,
-      "unidade": "milhões"
+      "formato": "milhoes",
+      "outras": "Partes interessadas, exposição regulatória e novidade",
+      "comparacao": [
+        "+17%",
+        "+18%",
+        "+19%"
+      ]
+    },
+    "circular": {
+      "rotulo": "porte",
+      "valores": [
+        "P",
+        "M",
+        "G"
+      ]
     }
   },
   "_evento": {
@@ -989,7 +1004,8 @@
           "d": 0
         }
       },
-      "_explicacao": "Sem padronizar, a distância entre dois projetos é quase só a diferença de orçamento. Os grupos ficam muito bem separados, por isso a silhueta alta, mas separados pela única coisa que já se sabia."
+      "_explicacao": "Sem padronizar, a distância entre dois projetos é quase só a diferença de orçamento. Os grupos ficam muito bem separados, por isso a silhueta alta, mas separados pela única coisa que já se sabia.",
+      "feed": "{grupo}: as trilhas eram só faixas de orçamento. O comitê deu nota {nota} de 10"
     },
     "circular": {
       "titulo": "A IA redescobriu o P, M e G",
@@ -1014,7 +1030,8 @@
           "d": 0
         }
       },
-      "_explicacao": "Usar a classificação antiga ou resultados finais para formar os grupos faz a IA reencontrar o que já estava lá. Essas colunas servem para comparar os grupos depois."
+      "_explicacao": "Usar a classificação antiga ou resultados finais para formar os grupos faz a IA reencontrar o que já estava lá. Essas colunas servem para comparar os grupos depois.",
+      "feed": "{grupo}: os grupos repetiram o P, M e G. O comitê deu nota {nota} de 10"
     },
     "drift": {
       "titulo": "Chegou um projeto que não cabe em nenhum grupo",
@@ -1039,7 +1056,8 @@
           "d": 0
         }
       },
-      "_explicacao": "Grupos descrevem o portfólio de quando foram calculados. Quando surge um tipo novo de projeto, é hora de refazer o agrupamento e, enquanto isso, ter uma trilha para os casos fora do padrão."
+      "_explicacao": "Grupos descrevem o portfólio de quando foram calculados. Quando surge um tipo novo de projeto, é hora de refazer o agrupamento e, enquanto isso, ter uma trilha para os casos fora do padrão.",
+      "feed": "{grupo}: as trilhas funcionaram, mas projetos novos não cabem em nenhum grupo"
     }
   },
   "_revelacao": {

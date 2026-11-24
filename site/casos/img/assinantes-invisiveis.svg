@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" role="img" aria-label="Ilustração: um notebook com uma aula em vídeo, um celular e silhuetas de alunos, algumas apagadas">
+  <rect width="640" height="280" fill="#DCE6E0"/>
+  <rect y="232" width="640" height="48" fill="#C9D3CC"/>
+  <g>
+    <rect x="200" y="50" width="240" height="152" rx="10" fill="#172033"/>
+    <rect x="212" y="62" width="216" height="128" rx="4" fill="#EEF1EC"/>
+    <circle cx="320" cy="118" r="30" fill="#F4C430" stroke="#172033" stroke-width="3"/>
+    <path d="M312 102 L338 118 L312 134 Z" fill="#172033"/>
+    <rect x="228" y="166" width="184" height="8" rx="4" fill="#C9D3CC"/>
+    <rect x="228" y="166" width="70" height="8" rx="4" fill="#1E7F6E"/>
+    <path d="M176 202 L464 202 L480 222 L160 222 Z" fill="#172033"/>
+  </g>
+  <g>
+    <rect x="480" y="112" width="58" height="104" rx="10" fill="#172033"/>
+    <rect x="486" y="124" width="46" height="78" rx="3" fill="#EEF1EC"/>
+    <rect x="492" y="134" width="34" height="22" rx="2" fill="#2F5DA8"/>
+    <g fill="#C9D3CC"><rect x="492" y="164" width="34" height="5" rx="2"/><rect x="492" y="174" width="24" height="5" rx="2"/><rect x="492" y="184" width="30" height="5" rx="2"/></g>
+  </g>
+  <g>
+    <g fill="#1E7F6E"><circle cx="70" cy="118" r="16"/><path d="M44 170 Q48 138 70 138 Q92 138 96 170 Z"/></g>
+    <g fill="#6A4C9C"><circle cx="128" cy="150" r="16"/><path d="M102 202 Q106 170 128 170 Q150 170 154 202 Z"/></g>
+    <g fill="none" stroke="#172033" stroke-width="2.5" stroke-dasharray="5 5" opacity=".5"><circle cx="70" cy="190" r="14"/><path d="M48 232 Q52 206 70 206 Q88 206 92 232"/></g>
+    <g fill="#2F5DA8"><circle cx="584" cy="96" r="16"/><path d="M558 148 Q562 116 584 116 Q606 116 610 148 Z"/></g>
+    <g fill="none" stroke="#172033" stroke-width="2.5" stroke-dasharray="5 5" opacity=".5"><circle cx="590" cy="176" r="14"/><path d="M568 218 Q572 192 590 192 Q608 192 612 218"/></g>
+  </g>
+  <path d="M96 64 L128 52 L160 64 L128 76 Z" fill="#172033"/><path d="M110 70 v12 q18 10 36 0 v-12" fill="#172033"/><line x1="160" y1="64" x2="160" y2="84" stroke="#F4C430" stroke-width="3"/>
+</svg>

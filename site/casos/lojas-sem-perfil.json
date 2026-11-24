@@ -1,0 +1,603 @@
+{
+ "id": "lojas-sem-perfil",
+ "exercicio": "ml-nao-supervisionado",
+ "titulo": "Lojas Sem Perfil",
+ "subtitulo": "Cada loja vende de um jeito, mas todas recebem o mesmo sortimento",
+ "setor": "Varejo, supermercados",
+ "empresa": "Rede Sabiá Supermercados",
+ "imagem": "img/lojas-sem-perfil.svg",
+ "creditosIniciais": 100,
+ "briefing": {
+  "remetente": "Cláudia Rocha",
+  "cargo": "Diretora Comercial, Rede Sabiá Supermercados",
+  "assunto": "Nossas lojas não são todas iguais",
+  "mensagem": [
+   "Oi, pessoal.",
+   "Temos 120 lojas e todas recebem o mesmo sortimento, o mesmo layout e as mesmas promoções. Resultado: falta pão fresco na loja de bairro e sobra pão na loja da rodovia.",
+   "Quero que a IA defina perfis de loja para cada perfil ter seu sortimento. Já temos a classificação A, B e C da diretoria, que todo mundo conhece, e a margem de cada loja. Talvez dê para partir daí.",
+   "Preciso de uma proposta para o comitê de expansão no próximo mês."
+  ],
+  "contexto": [
+   {
+    "titulo": "A empresa",
+    "texto": "A Rede Sabiá tem 120 supermercados em três estados: lojas de bairro, lojas em centros comerciais, lojas grandes à beira de rodovias e algumas que vendem muito por delivery."
+   },
+   {
+    "titulo": "Classificação atual",
+    "texto": "A diretoria classifica as lojas em A, B e C pelo faturamento. As lojas A ganham mais espaço para lançamentos; as C, menos."
+   },
+   {
+    "titulo": "Os números",
+    "texto": "O movimento vai de 8 mil a 420 mil clientes por mês, dependendo da loja. O ticket médio vai de R$ 28 a R$ 410."
+   },
+   {
+    "titulo": "O problema",
+    "texto": "A quebra de perecíveis (produtos que estragam antes de vender) passou de 4% para 7% em dois anos, concentrada em lojas que vendem pouco perecível, mas recebem o mesmo volume das outras."
+   },
+   {
+    "titulo": "Operação",
+    "texto": "A logística consegue montar até 5 sortimentos diferentes. Mais do que isso fica caro demais para o centro de distribuição."
+   }
+  ]
+ },
+ "caixas": [
+  {
+   "id": "agrupar",
+   "nome": "Usar para agrupar",
+   "ajuda": "Característica da loja que descreve como ela vende"
+  },
+  {
+   "id": "descrever",
+   "nome": "Só para descrever depois",
+   "ajuda": "Resultado ou rótulo: serve para comparar os grupos, não para formá-los"
+  },
+  {
+   "id": "sensivel",
+   "nome": "Sensível ou proxy",
+   "ajuda": "Dado protegido ou substituto de um dado protegido"
+  },
+  {
+   "id": "descartar",
+   "nome": "Descartar",
+   "ajuda": "Não carrega padrão útil"
+  }
+ ],
+ "agrupamento": {
+  "itens": "lojas",
+  "item": "loja",
+  "total": 120,
+  "kMin": 2,
+  "kMax": 6,
+  "rotuloComparacao": "Quebra média de perecíveis"
+ },
+ "fases": [
+  {
+   "id": "f1",
+   "titulo": "Enquadre o problema",
+   "curto": "Enquadre",
+   "duracaoMin": 6,
+   "missao": "Transformem o pedido da Cláudia num problema de machine learning bem formulado. Antes de pensar em dados, decidam que decisão a IA vai apoiar e se existe uma resposta certa para aprender.",
+   "itens": [
+    {
+     "id": "f1q1",
+     "tipo": "escolha",
+     "rotulo": "Decisão apoiada",
+     "enunciado": "Qual decisão de negócio a IA vai apoiar?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Definir perfis de loja para adaptar sortimento, layout e promoções a cada perfil"
+      },
+      {
+       "id": "b",
+       "texto": "Prever o faturamento de cada loja no mês que vem"
+      },
+      {
+       "id": "c",
+       "texto": "Escolher quais lojas fechar"
+      },
+      {
+       "id": "d",
+       "texto": "Ranquear os gerentes de loja por desempenho"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q2",
+     "tipo": "escolha",
+     "rotulo": "Existe rótulo?",
+     "enunciado": "Existe uma resposta certa e confiável para cada loja, que a IA possa usar como exemplo?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Sim: a classificação A, B e C da diretoria"
+      },
+      {
+       "id": "b",
+       "texto": "Não: queremos descobrir perfis de loja que ainda não conhecemos"
+      },
+      {
+       "id": "c",
+       "texto": "Sim: a margem de cada loja"
+      },
+      {
+       "id": "d",
+       "texto": "Sim: a nota da última auditoria de qualidade"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "f1q3",
+     "tipo": "escolha",
+     "rotulo": "Tipo de problema",
+     "enunciado": "Que tipo de problema é esse?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Classificação: ensinar a IA a colocar cada loja em A, B ou C"
+      },
+      {
+       "id": "b",
+       "texto": "Regressão: prever um valor numérico, como a margem"
+      },
+      {
+       "id": "c",
+       "texto": "Agrupamento (clustering): encontrar grupos de lojas parecidas, sem rótulos"
+      },
+      {
+       "id": "d",
+       "texto": "Aprendizado por reforço: a IA testa sortimentos e aprende com recompensas"
+      }
+     ],
+     "pontosMax": 5
+    },
+    {
+     "id": "f1q4",
+     "tipo": "escolha",
+     "rotulo": "O que agrupar",
+     "enunciado": "O que entra na análise, e descrito por quais informações?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Só as 20 lojas mais lucrativas, que servem de exemplo"
+      },
+      {
+       "id": "b",
+       "texto": "As 120 lojas, descritas pelo padrão de vendas e pelo entorno dos últimos 12 meses"
+      },
+      {
+       "id": "c",
+       "texto": "Os clientes do programa de fidelidade, descritos pelo que compram"
+      },
+      {
+       "id": "d",
+       "texto": "Os produtos, para descobrir quais vendem juntos"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f1j",
+     "tipo": "texto",
+     "rotulo": "Por que não usar A, B e C",
+     "enunciado": "Em até duas frases: por que não usar a classificação A, B e C como resposta certa?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f1d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f1d2",
+     "titulo": "Conversar com um gerente de loja",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f2",
+   "titulo": "Monte o dataset",
+   "curto": "Dataset",
+   "duracaoMin": 12,
+   "missao": "O time de dados separou 16 colunas sobre as lojas. Classifiquem cada uma numa das quatro caixas e decidam se vale comprar dados externos. As colunas que forem para \"Usar para agrupar\" são as que a IA vai usar para medir o quanto duas lojas se parecem.",
+   "itens": [
+    {
+     "id": "f2cartas",
+     "tipo": "cartas",
+     "rotulo": "Colunas",
+     "enunciado": "Arrastem cada coluna para uma caixa (ou cliquem na coluna e depois na caixa).",
+     "pontosPorCarta": 2,
+     "pontosMax": 32,
+     "cartas": [
+      {
+       "id": "c01",
+       "nome": "clientes_por_mes",
+       "descricao": "Média de clientes que passaram no caixa por mês nos últimos 12 meses.",
+       "exemplos": [
+        "8.400",
+        "212.000",
+        "57.300"
+       ]
+      },
+      {
+       "id": "c02",
+       "nome": "area_venda_m2",
+       "descricao": "Área de vendas da loja em metros quadrados.",
+       "exemplos": [
+        "380",
+        "6.200",
+        "1.450"
+       ]
+      },
+      {
+       "id": "c03",
+       "nome": "ticket_medio",
+       "descricao": "Valor médio de cada compra nos últimos 12 meses.",
+       "exemplos": [
+        "R$ 31",
+        "R$ 388",
+        "R$ 96"
+       ]
+      },
+      {
+       "id": "c04",
+       "nome": "pct_vendas_pereciveis",
+       "descricao": "Parte das vendas que vem de pães, frutas, carnes e frios.",
+       "exemplos": [
+        "41%",
+        "12%",
+        "28%"
+       ]
+      },
+      {
+       "id": "c05",
+       "nome": "pct_vendas_delivery",
+       "descricao": "Parte das vendas feita por entrega em casa.",
+       "exemplos": [
+        "3%",
+        "31%",
+        "8%"
+       ]
+      },
+      {
+       "id": "c06",
+       "nome": "pct_marca_propria",
+       "descricao": "Parte das vendas de produtos da marca própria Sabiá.",
+       "exemplos": [
+        "9%",
+        "22%",
+        "14%"
+       ]
+      },
+      {
+       "id": "c07",
+       "nome": "horario_pico",
+       "descricao": "Faixa do dia com mais vendas.",
+       "exemplos": [
+        "noite",
+        "almoço",
+        "manhã"
+       ]
+      },
+      {
+       "id": "c08",
+       "nome": "concorrentes_1km",
+       "descricao": "Supermercados concorrentes num raio de 1 km.",
+       "exemplos": [
+        "0",
+        "6",
+        "2"
+       ]
+      },
+      {
+       "id": "c09",
+       "nome": "tipo_entorno",
+       "descricao": "Entorno predominante da loja.",
+       "exemplos": [
+        "residencial",
+        "rodovia",
+        "comercial"
+       ]
+      },
+      {
+       "id": "c10",
+       "nome": "classe_abc_diretoria",
+       "descricao": "Classificação A, B ou C da loja, definida pela diretoria pelo faturamento.",
+       "exemplos": [
+        "A",
+        "C",
+        "B"
+       ]
+      },
+      {
+       "id": "c11",
+       "nome": "margem_liquida_ano",
+       "descricao": "Margem líquida da loja no último ano.",
+       "exemplos": [
+        "2,1%",
+        "4,8%",
+        "-0,6%"
+       ]
+      },
+      {
+       "id": "c12",
+       "nome": "nota_cliente_oculto",
+       "descricao": "Nota da última visita de cliente oculto, de 0 a 10.",
+       "exemplos": [
+        "8,5",
+        "6,0",
+        "9,2"
+       ]
+      },
+      {
+       "id": "c13",
+       "nome": "pct_populacao_negra_entorno",
+       "descricao": "Percentual da população autodeclarada preta ou parda no bairro da loja, segundo o Censo.",
+       "exemplos": [
+        "62%",
+        "18%",
+        "41%"
+       ]
+      },
+      {
+       "id": "c14",
+       "nome": "cpfs_clientes_fidelidade",
+       "descricao": "Lista de CPFs dos clientes do programa de fidelidade de cada loja.",
+       "exemplos": [
+        "[1.204 CPFs]",
+        "[8.877 CPFs]",
+        "[3.150 CPFs]"
+       ]
+      },
+      {
+       "id": "c15",
+       "nome": "codigo_loja",
+       "descricao": "Código interno da loja.",
+       "exemplos": [
+        "SB-017",
+        "SB-102",
+        "SB-064"
+       ]
+      },
+      {
+       "id": "c16",
+       "nome": "bandeira",
+       "descricao": "Nome comercial da loja. Todas operam com a bandeira Sabiá.",
+       "exemplos": [
+        "Sabiá",
+        "Sabiá",
+        "Sabiá"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "f2mercado",
+     "tipo": "mercado",
+     "rotulo": "Dados externos comprados",
+     "enunciado": "Mercado de dados: fontes externas que podem ser compradas com créditos. A compra é imediata e não tem devolução.",
+     "pontosMax": 8,
+     "fontes": [
+      {
+       "id": "m1",
+       "nome": "Mobilidade anonimizada",
+       "descricao": "Fluxo de pessoas por quadra e por horário, a partir de dados agregados de celulares, sem identificar ninguém.",
+       "custo": 30
+      },
+      {
+       "id": "m2",
+       "nome": "Mapa atualizado de concorrentes",
+       "descricao": "Supermercados, atacarejos e lojas de conveniência abertos nos últimos 12 meses, com área e formato.",
+       "custo": 20
+      },
+      {
+       "id": "m3",
+       "nome": "Cotação de commodities agrícolas",
+       "descricao": "Preços diários de soja, milho, café e boi gordo.",
+       "custo": 15
+      },
+      {
+       "id": "m4",
+       "nome": "Lista de compradores de um banco parceiro",
+       "descricao": "Nome, renda estimada e gastos com cartão de clientes que moram perto das lojas, vendidos por um banco parceiro.",
+       "custo": 25
+      }
+     ]
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f2d1",
+     "titulo": "Perguntar ao analista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f2d2",
+     "titulo": "Consultar o Jurídico",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "f3",
+   "titulo": "Agrupe e avalie",
+   "curto": "Agrupamento",
+   "duracaoMin": 8,
+   "missao": "Hora de agrupar. Decidam como preparar as variáveis, como avaliar os grupos e em quantos perfis dividir as lojas.",
+   "explicacao": {
+    "titulo": "Como o agrupamento funciona",
+    "passos": [
+     {
+      "titulo": "Preparar as variáveis",
+      "texto": "O algoritmo usa as colunas que vocês colocaram em \"Usar para agrupar\". Antes de rodar, é preciso decidir se elas entram como estão ou se passam por algum ajuste."
+     },
+     {
+      "titulo": "Medir semelhança",
+      "texto": "Para o algoritmo, duas lojas são parecidas quando estão perto uma da outra. A distância é calculada somando as diferenças entre as duas lojas em cada variável."
+     },
+     {
+      "titulo": "Escolher quantos grupos",
+      "texto": "O k-means precisa que alguém diga quantos grupos (k) procurar. Ele não sabe sozinho qual é o número certo."
+     },
+     {
+      "titulo": "Avaliar e dar nome",
+      "texto": "Não existe gabarito para conferir. Os grupos são avaliados pela separação entre eles e pelo sentido que fazem para quem vai usá-los."
+     }
+    ]
+   },
+   "itens": [
+    {
+     "id": "f3q1",
+     "tipo": "escolha",
+     "rotulo": "Preparação das variáveis",
+     "enunciado": "O movimento vai de 8 mil a 420 mil clientes por mês. Os percentuais de venda vão de 0 a 100, e o número de concorrentes vai de 0 a 12. O que fazer antes de agrupar?",
+     "entenda": "Pensem em como a distância entre duas lojas é calculada. Comparem: duas lojas que diferem em 50 mil clientes por mês e em 30 pontos percentuais de perecíveis. Qual das duas diferenças pesa mais numa soma simples?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Nada: o algoritmo se ajusta sozinho às unidades de cada coluna"
+      },
+      {
+       "id": "b",
+       "texto": "Colocar todas as variáveis numéricas na mesma escala (padronizar) antes de agrupar"
+      },
+      {
+       "id": "c",
+       "texto": "Excluir o número de clientes, que é a variável com os números maiores"
+      },
+      {
+       "id": "d",
+       "texto": "Contar os clientes em milhares em vez de unidades"
+      }
+     ],
+     "pontosMax": 8
+    },
+    {
+     "id": "f3q2",
+     "tipo": "escolha",
+     "rotulo": "Como avaliar",
+     "enunciado": "Como saber se os perfis de loja encontrados são bons?",
+     "entenda": "No agrupamento não há resposta certa para conferir, então não existe acurácia. A silhueta, de -1 a 1, mede o quanto cada loja está mais perto do próprio grupo do que dos outros. Mas grupos só servem se a operação souber o que fazer com cada um.",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Pela acurácia: o percentual de lojas colocadas no grupo certo"
+      },
+      {
+       "id": "b",
+       "texto": "Pela separação (silhueta) e, principalmente, se cada perfil é claro e pede um sortimento diferente"
+      },
+      {
+       "id": "c",
+       "texto": "Quanto mais grupos, mais personalizado e melhor"
+      },
+      {
+       "id": "d",
+       "texto": "Pela maior silhueta possível, sem olhar o que há dentro dos grupos"
+      }
+     ],
+     "pontosMax": 7
+    },
+    {
+     "id": "f3grupos",
+     "tipo": "agrupamento",
+     "rotulo": "Agrupamento",
+     "dependeDe": "f3q1",
+     "enunciado": "Rodem o agrupamento e escolham em quantos perfis dividir as lojas. Para cada número de grupos, vejam a silhueta e o perfil de cada grupo.",
+     "pontosMax": 10
+    },
+    {
+     "id": "f3j",
+     "tipo": "texto",
+     "rotulo": "Confiança nos grupos",
+     "enunciado": "Em até duas frases: os perfis encontrados ajudam a Cláudia a reduzir a quebra de perecíveis? Por quê?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": [
+    {
+     "id": "f3d1",
+     "titulo": "Ligar para o cientista de dados",
+     "custo": 10
+    },
+    {
+     "id": "f3d2",
+     "titulo": "Falar com a logística",
+     "custo": 10
+    }
+   ]
+  },
+  {
+   "id": "evento",
+   "titulo": "Seis meses depois",
+   "curto": "Produção",
+   "duracaoMin": 6,
+   "missao": "Os sortimentos baseados nos perfis de vocês estão em uso há seis meses. A Cláudia chama a equipe para uma conversa difícil.",
+   "itens": [
+    {
+     "id": "evq1",
+     "tipo": "escolha",
+     "rotulo": "Diagnóstico",
+     "enunciado": "Qual é o diagnóstico mais provável?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Uma variável dominou o cálculo de distância por causa da escala"
+      },
+      {
+       "id": "b",
+       "texto": "O agrupamento usou como entrada a classificação ou os resultados que deveria explicar"
+      },
+      {
+       "id": "c",
+       "texto": "As lojas mudaram: um fato novo alterou o jeito de vender"
+      },
+      {
+       "id": "d",
+       "texto": "O número de grupos foi pequeno demais"
+      }
+     ],
+     "pontosMax": 6
+    },
+    {
+     "id": "evq2",
+     "tipo": "escolha",
+     "rotulo": "Ação",
+     "enunciado": "O que fazer agora?",
+     "opcoes": [
+      {
+       "id": "a",
+       "texto": "Padronizar as variáveis e rodar o agrupamento de novo"
+      },
+      {
+       "id": "b",
+       "texto": "Tirar a classificação e os resultados das variáveis de agrupamento e usá-los só para comparar os grupos depois"
+      },
+      {
+       "id": "c",
+       "texto": "Refazer o agrupamento periodicamente e acompanhar as lojas que mudam de perfil"
+      },
+      {
+       "id": "d",
+       "texto": "Voltar ao sortimento único, que era mais simples"
+      }
+     ],
+     "pontosMax": 4
+    },
+    {
+     "id": "evj",
+     "tipo": "texto",
+     "rotulo": "O que faltou antes",
+     "enunciado": "Em até duas frases: o que a equipe deveria ter verificado antes de levar os perfis ao comitê?",
+     "maxChars": 400
+    }
+   ],
+   "dicas": []
+  }
+ ]
+}

@@ -72,12 +72,27 @@
     "maxPct": 40,
     "termos": {
       "unidade": "clientes",
+      "um": "cliente",
       "positivos": "iam fugir",
       "negativos": "iam ficar",
       "passado": "fugiu",
       "passadoNeg": "ficou",
-      "verbo": "vai fugir",
+      "aoPositivo": "a quem fugiu",
+      "ninguem": "ninguém vai fugir",
       "verboPlural": "fogem",
+      "campanha": "campanha",
+      "verboAlcanca": "alcança",
+      "acao": "alcançados",
+      "acaoTitulo": "Alcançados pela campanha",
+      "naoAcaoTitulo": "Fora da campanha",
+      "tituloDecisao": "Quantos clientes a campanha vai alcançar por mês",
+      "ordem": "do maior para o menor risco",
+      "positivosCurto": "clientes que iam fugir",
+      "negativosCurto": "clientes que iam ficar",
+      "efeito": "aceitam a oferta",
+      "ganho": "Margem salva",
+      "pontaEsq": "Só os de maior risco",
+      "pontaDir": "Muita gente",
       "vp": "Acerto: a oferta chegou a quem ia fugir",
       "fp": "Desperdício: oferta para quem ia ficar",
       "fn": "Perda: foram embora sem receber oferta",
@@ -674,7 +689,7 @@
             },
             {
               "id": "d",
-              "texto": "Erro de rotulagem: o time de dados marcou os rótulos errados"
+              "texto": "Alvo mal definido: o modelo aprendeu a prever só quem cancela formalmente"
             }
           ],
           "pontosMax": 6
@@ -695,7 +710,7 @@
             },
             {
               "id": "c",
-              "texto": "Trocar por um modelo mais complexo, com mais camadas"
+              "texto": "Redefinir o alvo como parar de usar o cartão e retreinar"
             },
             {
               "id": "d",
@@ -742,7 +757,15 @@
     },
     "drift": 0.05,
     "aucMin": 0.53,
-    "aucMax": 0.995
+    "aucMax": 0.995,
+    "rotulo": {
+      "item": "f1q4",
+      "ruins": [
+        "a",
+        "c"
+      ],
+      "queda": 0.13
+    }
   },
   "_evento": {
     "vazamento": {
@@ -768,7 +791,8 @@
           "d": 0
         }
       },
-      "_explicacao": "As colunas de vazamento só são preenchidas depois que o cliente decidiu sair. No treino, o modelo aprendeu a ler a resposta. Em produção, a resposta ainda não existe."
+      "_explicacao": "As colunas de vazamento só são preenchidas depois que o cliente decidiu sair. No treino, o modelo aprendeu a ler a resposta. Em produção, a resposta ainda não existe.",
+      "feed": "{grupo}: em produção, a AUC despencou de {treino} para {producao}"
     },
     "drift": {
       "titulo": "O mercado mudou",
@@ -793,7 +817,35 @@
           "d": 0
         }
       },
-      "_explicacao": "O modelo aprendeu um mundo que mudou: o concorrente passou a atrair justamente os bons clientes. Modelo em produção precisa de monitoramento e retreino periódico."
+      "_explicacao": "O modelo aprendeu um mundo que mudou: o concorrente passou a atrair justamente os bons clientes. Modelo em produção precisa de monitoramento e retreino periódico.",
+      "feed": "{grupo}: em produção, a AUC caiu de {treino} para {producao}. O mercado mudou",
+      "tipoFeed": "drift"
+    },
+    "rotulo": {
+      "titulo": "O modelo só enxerga quem liga para cancelar",
+      "mensagem": "No treino, o modelo de vocês chegou a AUC de {aucValidacao}, e em produção está em {aucProducao}. Parece razoável, mas a Marina continua perdendo clientes no mesmo ritmo.",
+      "evidencias": [
+        "Dos clientes que pararam de usar o cartão nos últimos seis meses, só um em cada três estava na lista da campanha.",
+        "Quase todos os clientes da lista já tinham ligado para o atendimento reclamando de algo.",
+        "Nenhuma coluna chega vazia ou com valores fora do padrão.",
+        "A taxa de clientes que param de usar o cartão continua em torno de 4% ao mês."
+      ],
+      "feed": "{grupo}: o modelo só vê quem pede para cancelar. A maioria some em silêncio",
+      "_gabarito": {
+        "evq1": {
+          "a": 0,
+          "b": 1,
+          "c": 0,
+          "d": 6
+        },
+        "evq2": {
+          "a": 0,
+          "b": 1,
+          "c": 4,
+          "d": 0
+        }
+      },
+      "_explicacao": "O alvo era o cancelamento formal, mas dois em cada três clientes perdidos nunca cancelam: só param de usar. O modelo aprendeu a reconhecer a minoria que avisa."
     }
   },
   "_revelacao": {

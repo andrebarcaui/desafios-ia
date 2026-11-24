@@ -4,10 +4,16 @@ Jogo de casos para aulas de IA aplicada (FGV, prof. André Barcaui). Cada grupo 
 
 Exercício atual: **machine learning**, misturando na mesma aula casos de aprendizado supervisionado e de agrupamento (clustering). Casos prontos:
 
-| Caso | Tipo | Empresa (fictícia) | Armadilha principal |
+| Caso (id) | Tipo | Empresa (fictícia) | Armadilha principal |
 |---|---|---|---|
-| A Fuga Silenciosa | Supervisionado (classificação) | Banco Arandu | Vazamento de dados |
-| Tamanho Único | Não supervisionado (clustering) | Corrente Viva Energia (PMO) | Escala que engana |
+| A Fuga Silenciosa (`fuga-silenciosa`) | Supervisionado | Banco Arandu, cartão de crédito | Vazamento de dados |
+| O Sinistro Perfeito (`sinistro-perfeito`) | Supervisionado | Guará Seguros, fraude em automóvel | Rótulo enviesado |
+| O Patrocinador Fantasma (`patrocinador-fantasma`) | Supervisionado | Ponte Alta Engenharia, stakeholders (PMBOK 8) | Rótulo subjetivo e monitoramento invasivo |
+| Tamanho Único (`tamanho-unico`) | Clustering | Corrente Viva Energia, PMO e governança | Escala que engana |
+| Lojas Sem Perfil (`lojas-sem-perfil`) | Clustering | Rede Sabiá Supermercados | Agrupamento circular |
+| Assinantes Invisíveis (`assinantes-invisiveis`) | Clustering | Trilha Cursos Online | Silhueta alta, grupos inúteis |
+
+Todos os casos têm a mesma estrutura e a mesma pontuação máxima, então o placar é justo mesmo com casos diferentes. Além da armadilha principal, todo caso supervisionado tem vazamento de dados e todo caso de clustering tem escala e agrupamento circular; o evento "Seis meses depois" muda conforme a armadilha em que o grupo caiu.
 
 ## Como funciona
 
@@ -56,13 +62,13 @@ Para jogar de novo com outra turma: menu **Desafios de IA > Reiniciar jogo** na 
 
 Roteiro de 60 minutos: abertura 3 min, Enquadre 6, Dataset 12, Modelagem 8, Produção 6, pitches 15 (6 × 2 min + pergunta), revelação 7.
 
-Por padrão, `configurar()` alterna os casos entre os grupos (supervisionado, clustering, supervisionado...). Para mudar, edite a coluna Caso da aba Grupos com o id do caso (`fuga-silenciosa`, `tamanho-unico`).
+Por padrão, `configurar()` dá um caso diferente a cada um dos 6 grupos, alternando supervisionado e clustering. Para mudar, edite a coluna Caso da aba Grupos com o id do caso (tabela acima).
 
 ## Alterar ou criar casos
 
 1. Edite ou crie um JSON em `casos-fonte/<exercicio>/`. Campos que começam com `_` são privados (gabarito, explicações, modelo, evento, revelação). A ilustração do caso fica em `casos-fonte/img/` (SVG).
 2. Rode `node tools/build.js`. Ele gera `site/casos/`, `backend/Codigo.gs` e `demo/demo.html`.
-3. Rode `node tools/teste-core.js` para uma partida simulada completa.
+3. Rode `node tools/validar-casos.js` (confere estrutura e pontuação de todos os casos) e `node tools/teste-core.js` (partida simulada completa).
 4. Envie ao GitHub (o site se atualiza) e cole o novo `backend/Codigo.gs` no Apps Script. Depois: **Implantar > Gerenciar implantações > Editar > Versão: nova versão > Implantar**. Sem esse passo, o servidor continua com a versão antiga.
 
 ## Demonstração local

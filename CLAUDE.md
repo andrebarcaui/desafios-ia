@@ -19,6 +19,7 @@ Jogo de casos em sala de aula (FGV). Leia o README para a visão geral e a insta
 ```
 node tools/build.js       # sempre depois de mudar casos, shared/ ou site/assets
 node tools/teste-core.js  # teste rápido do núcleo
+node tools/validar-casos.js  # estrutura e pontuação de todos os casos
 ```
 
 ## Formato de um caso
@@ -27,10 +28,11 @@ Todos os casos de um exercício têm o mesmo esqueleto, para serem equivalentes 
 - Dois tipos de caso, definidos em `_modelo.tipo`: supervisionado (padrão) e `agrupamento`. Os dois podem ser misturados na mesma aula: a pontuação máxima é a mesma.
 - 4 fases jogáveis com ids `f1`, `f2`, `f3`, `evento` (o núcleo assume esses ids para status e durações).
 - Tipos de item: `escolha` (com `_gabarito` {opção: pontos} e, opcional, `entenda`), `texto` (corrigido pelo professor), `cartas` (16 colunas: 9 da primeira caixa, 3 da segunda, 2 sensíveis, 2 descartar), `mercado` (fontes com `_gabarito` {pontos, auc, flag}), `simulador` (supervisionado, com `dependeDe` e `simulador.termos`) ou `agrupamento` (clustering, com `dependeDe`, `_gabarito` {k: pontos} e o bloco `agrupamento`).
-- Supervisionado: caixas `feature`, `vazamento`, `sensivel`, `descartar`; eventos `vazamento` e `drift`. Agrupamento: caixas `agrupar`, `descrever`, `sensivel`, `descartar`; eventos `escala`, `circular` e `drift`.
+- Supervisionado: caixas `feature`, `vazamento`, `sensivel`, `descartar`; eventos `vazamento`, `rotulo` (quando `_modelo.rotulo` diz que o alvo escolhido na fase 1 é ruim) e `drift`. Agrupamento: caixas `agrupar`, `descrever`, `sensivel`, `descartar`; eventos `escala`, `circular` e `drift`.
 - Uma fase pode ter `explicacao` (passos numerados exibidos no topo). Todo caso tem `imagem` (SVG em `casos-fonte/img/`).
 - Todo item tem `rotulo` (curto, usado na Ficha do Modelo e na exportação). Toda fase tem `curto` (trilha do topo).
-- `_modelo` define o AUC simulado; `_evento` tem os cenários `vazamento` e `drift` com gabarito próprio; `_revelacao` alimenta a tela final.
+- `_modelo` define a métrica simulada; cada cenário de `_evento` tem gabarito próprio e `feed` (mensagem do telão); `_revelacao` alimenta a tela final.
+- Depois de mexer em casos: `node tools/validar-casos.js`.
 - Pontuação máxima: 25 (f1) + 40 (f2) + 25 (f3) + 10 (evento) + bônus de desempenho (até 15), velocidade (2 por fase) e créditos (1 por 10 que sobrarem).
 
 ## Convenções

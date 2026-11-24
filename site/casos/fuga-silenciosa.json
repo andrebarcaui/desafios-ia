@@ -72,12 +72,27 @@
   "maxPct": 40,
   "termos": {
    "unidade": "clientes",
+   "um": "cliente",
    "positivos": "iam fugir",
    "negativos": "iam ficar",
    "passado": "fugiu",
    "passadoNeg": "ficou",
-   "verbo": "vai fugir",
+   "aoPositivo": "a quem fugiu",
+   "ninguem": "ninguém vai fugir",
    "verboPlural": "fogem",
+   "campanha": "campanha",
+   "verboAlcanca": "alcança",
+   "acao": "alcançados",
+   "acaoTitulo": "Alcançados pela campanha",
+   "naoAcaoTitulo": "Fora da campanha",
+   "tituloDecisao": "Quantos clientes a campanha vai alcançar por mês",
+   "ordem": "do maior para o menor risco",
+   "positivosCurto": "clientes que iam fugir",
+   "negativosCurto": "clientes que iam ficar",
+   "efeito": "aceitam a oferta",
+   "ganho": "Margem salva",
+   "pontaEsq": "Só os de maior risco",
+   "pontaDir": "Muita gente",
    "vp": "Acerto: a oferta chegou a quem ia fugir",
    "fp": "Desperdício: oferta para quem ia ficar",
    "fn": "Perda: foram embora sem receber oferta",
@@ -573,7 +588,7 @@
       },
       {
        "id": "d",
-       "texto": "Erro de rotulagem: o time de dados marcou os rótulos errados"
+       "texto": "Alvo mal definido: o modelo aprendeu a prever só quem cancela formalmente"
       }
      ],
      "pontosMax": 6
@@ -594,7 +609,7 @@
       },
       {
        "id": "c",
-       "texto": "Trocar por um modelo mais complexo, com mais camadas"
+       "texto": "Redefinir o alvo como parar de usar o cartão e retreinar"
       },
       {
        "id": "d",
