@@ -116,8 +116,10 @@
           el('div', { style: 'color:var(--grafite);font-size:.8rem', texto: g.casoTitulo }),
           el('div', { style: 'font-size:.8rem', texto: g.membros.join(', ') || 'Sem nomes' })),
         el('td', null, el('div.chips', null, status)),
-        el('td.num', null, el('b', { texto: g.total }), el('div', { style: 'font-size:.72rem;color:var(--grafite)', texto: 'desemp. ' + g.pontos.desempenho + ', veloc. ' + g.pontos.velocidade + ', créd. ' + g.bonusCreditos })),
-        el('td.num', null, g.resumo && g.resumo.curtoTreino ? g.resumo.curtoTreino : '', g.resumo && g.resumo.curtoProducao ? el('div', { texto: 'prod.: ' + g.resumo.curtoProducao }) : null),
+        el('td.pontos', null, el('b', { texto: g.total }),
+          el('span', { texto: 'Desempenho ' + g.pontos.desempenho }), el('span', { texto: 'Velocidade ' + g.pontos.velocidade }), el('span', { texto: 'Créditos ' + g.bonusCreditos })),
+        el('td.metrica', null, g.resumo && g.resumo.curtoTreino ? el('div', { texto: 'Treino: ' + g.resumo.curtoTreino }) : el('span.vazio', { texto: 'Ainda sem modelo' }),
+          g.resumo && g.resumo.curtoProducao ? el('div', { texto: 'Produção: ' + g.resumo.curtoProducao }) : null),
         el('td', null, bandeiras.length ? bandeiras : el('span', { style: 'color:var(--grafite)', texto: m ? 'Nenhuma' : '' })),
         el('td' + (suspeito ? '.alerta-tel' : ''), { style: 'font-size:.8rem' },
           el('div', { texto: t.saidas + ' saídas, ' + minutos(t.tempoForaMs) + ' fora' }),
@@ -130,8 +132,10 @@
           fase >= 5 ? el('button.btn.btn-pequeno', { type: 'button', texto: 'Sortear quem responde', onclick: function () { acao('prof_sortear', { codigo: g.codigo }, 'Sorteio no telão.'); } }) : null,
           fase >= 5 ? el('button.btn.btn-pequeno' + (est.global.projetar === g.codigo ? '.btn-marca' : ''), { type: 'button', texto: est.global.projetar === g.codigo ? 'Ficha no telão' : 'Projetar ficha', onclick: function () { acao('prof_projetar', { codigo: est.global.projetar === g.codigo ? null : g.codigo }); } }) : null)));
     });
+    var colunas = [['Grupo', 'c-grupo'], ['Fases', 'c-fases'], ['Pontos', 'c-pontos'], ['Métrica', 'c-metrica'], ['Sinais para o pitch', 'c-sinais'], ['Comportamento', 'c-comp'], ['Ações', 'c-acoes']];
     C.limpar(nos.tabela).appendChild(el('table.tabela-prof', null,
-      el('thead', null, el('tr', null, ['Grupo', 'Fases', 'Pontos', 'Métrica', 'Sinais para o pitch', 'Comportamento', ''].map(function (h) { return el('th', { texto: h }); }))),
+      el('colgroup', null, colunas.map(function (c) { return el('col.' + c[1]); })),
+      el('thead', null, el('tr', null, colunas.map(function (c) { return el('th.' + c[1], { texto: c[0] }); }))),
       el('tbody', null, linhas.length ? linhas : el('tr', null, el('td', { colspan: 7, texto: 'Nenhum grupo entrou ainda.' })))));
     nos.tabela.insertBefore(el('p', { style: 'color:var(--grafite);font-size:.85rem;margin:0 0 .6rem', texto: 'Cada grupo só enxerga o próprio caso. Daqui você vê todos: respostas, tela de cada grupo e o telão.' }), nos.tabela.firstChild);
     if (est.global.sorteio) nos.tabela.appendChild(el('div.aviso', { texto: 'Sorteio: ' + est.global.sorteio.membro + ' (' + est.global.sorteio.nome + ') responde.' }));

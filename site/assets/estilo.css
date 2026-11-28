@@ -240,7 +240,17 @@ body.arrastando-carta, body.arrastando-carta * { cursor: grabbing !important; }
 .tabela-prof { width: 100%; border-collapse: collapse; background: var(--cartao); border-radius: var(--raio); overflow: hidden; font-size: .88rem; }
 .tabela-prof th { text-align: left; background: var(--papel-2); padding: .55rem .6rem; font-size: .78rem; color: var(--grafite); }
 .tabela-prof td { padding: .55rem .6rem; border-top: 1px solid var(--papel-2); vertical-align: top; }
-.tabela-prof td.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
+.tabela-prof { table-layout: fixed; }
+.tabela-prof col.c-grupo { width: 18%; } .tabela-prof col.c-fases { width: 14%; } .tabela-prof col.c-pontos { width: 10%; }
+.tabela-prof col.c-metrica { width: 14%; } .tabela-prof col.c-sinais { width: 17%; } .tabela-prof col.c-comp { width: 14%; } .tabela-prof col.c-acoes { width: 13%; }
+.tabela-prof .chips { gap: .15rem; }
+.tabela-prof .chip { padding: .05rem .3rem; }
+.tabela-prof .acoes-linha .btn { font-size: .76rem; padding: .35rem .45rem; white-space: nowrap; width: 100%; text-align: center; box-sizing: border-box; }
+.tabela-prof td { overflow-wrap: anywhere; }
+.tabela-prof td.pontos b { display: block; font-family: var(--mono); font-size: 1.25rem; line-height: 1.2; }
+.tabela-prof td.pontos span { display: block; font-size: .74rem; color: var(--grafite); }
+.tabela-prof td.metrica { font-family: var(--mono); font-size: .8rem; }
+.tabela-prof td.metrica .vazio { font-family: var(--sans); color: var(--grafite); }
 .ponto-on { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; background: var(--descartar); margin-right: .35rem; }
 .ponto-on.on { background: #2BB673; }
 .chips { display: flex; gap: .2rem; flex-wrap: wrap; }
