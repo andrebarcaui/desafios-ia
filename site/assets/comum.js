@@ -120,6 +120,7 @@ var Comum = (function () {
   }
 
   function fmtAuc(x) { return x == null ? '' : (Math.round(x * 100) / 100).toFixed(2).replace('.', ','); }
+  function fmtAuc3(x) { return x == null ? '' : Math.abs(x) < 0.01 ? x.toFixed(3).replace('.', ',') : fmtAuc(x); }
   function fmtPct(x, casas) { return (x * 100).toFixed(casas == null ? 1 : casas).replace('.', ',') + '%'; }
   function fmtInt(x) { return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
   function fmtReais(x) { return (x < 0 ? '-R$ ' : 'R$ ') + fmtInt(Math.abs(x)); }
@@ -139,6 +140,6 @@ var Comum = (function () {
   return {
     demo: demo, pai: pai, urlImagem: urlImagem, areaProfessor: areaProfessor, senhaProfessor: senhaProfessor, sairProfessor: sairProfessor, chamar: chamar, carregarCaso: carregarCaso, el: el, limpar: limpar, toast: toast,
     guardar: guardar, ler: ler, sincronizar: sincronizar, restante: restante, fmtRelogio: fmtRelogio, pintarRelogio: pintarRelogio,
-    fmtAuc: fmtAuc, fmtPct: fmtPct, fmtInt: fmtInt, fmtReais: fmtReais, renderFicha: renderFicha
+    fmtAuc: fmtAuc, fmtAuc3: fmtAuc3, fmtPct: fmtPct, fmtInt: fmtInt, fmtReais: fmtReais, renderFicha: renderFicha
   };
 })();

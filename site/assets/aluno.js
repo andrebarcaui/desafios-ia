@@ -81,6 +81,21 @@
     for (var i = 0; i < 90; i++) marcas.push(el('span', { texto: textoMarca }));
     raiz.appendChild(el('div.protegido', null, topo, nos.palco, nos.rodape));
     raiz.appendChild(el('div.marca-dagua', { 'aria-hidden': 'true' }, el('div', null, marcas)));
+    medirFaixas(topo, nos.rodape);
+  }
+
+  /* O topo e o rodapé de envio ficam fixos na tela e mudam de altura (quebra de linha, telas estreitas).
+     As áreas com rolagem própria (dossiê, monte de colunas, missão) descontam essas alturas pelas variáveis CSS. */
+  function medirFaixas(topo, rodape) {
+    var doc = document.documentElement.style;
+    function medir() {
+      doc.setProperty('--topo-h', topo.offsetHeight + 'px');
+      doc.setProperty('--rodape-h', (rodape.classList.contains('oculto') ? 0 : rodape.offsetHeight) + 'px');
+    }
+    medir();
+    if (window.ResizeObserver) { var ro = new ResizeObserver(medir); ro.observe(topo); ro.observe(rodape); }
+    window.addEventListener('resize', medir);
+    new MutationObserver(medir).observe(rodape, { attributes: true, attributeFilter: ['class'] });
   }
 
   function alternarDossie() {
@@ -205,6 +220,7 @@
           pintarTopo(); pintarDicas();
           if (nos.palco.classList.contains('dossie-fechado')) alternarDossie();
           b.disabled = true; b.textContent = d.titulo + ' (no dossiê)';
+          var nova = nos.dicas.lastChild; if (nova && nova.scrollIntoView) setTimeout(function () { nova.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 60);
           C.toast('Dica adicionada ao dossiê.');
         });
       });
@@ -379,11 +395,20 @@
 
   /* Mercado de dados */
   function pintarMercado(it, travado) {
-    var box = C.limpar(nos.mercado), compras = est.grupo.compras;
+    var box = C.limpar(nos.mercado), compras = est.grupo.compras, agrup = !!caso.agrupamento;
+    var quando = agrup ? 'quando vocês rodarem o agrupamento, na fase 3' : 'quando vocês treinarem o modelo, na fase 3';
+    box.appendChild(el('div.mercado-regras', null,
+      el('b', { texto: 'Vale a pena comprar?' }),
+      el('ul', null,
+        el('li', { texto: 'Cada compra sai dos créditos, e crédito que sobra vira ponto no final: 1 ponto a cada 10 créditos.' }),
+        el('li', { texto: 'Uma fonte que traz informação nova sobre a decisão melhora o ' + (agrup ? 'agrupamento' : 'modelo') + ' e rende pontos nesta fase: vale mais do que custa.' }),
+        el('li', { texto: 'Uma fonte que nada tem a ver com a decisão não melhora nada: só gasta créditos.' }),
+        el('li', { texto: 'Uma fonte sem base legal para este uso tira pontos, mesmo que ajude o ' + (agrup ? 'agrupamento' : 'modelo') + '. O comitê de dados avalia a origem de tudo o que entra.' })),
+      el('p', { texto: 'O ganho de cada fonte comprada aparece ' + quando + '.' })));
     box.appendChild(el('div.fontes', null, it.fontes.map(function (f) {
       var comprada = compras.indexOf(f.id) >= 0;
       var acao;
-      if (comprada) acao = el('span.selo', { texto: 'Comprada' });
+      if (comprada) acao = el('span.selo', { texto: 'Comprada', title: 'Entra no ' + (agrup ? 'agrupamento' : 'modelo') + ' da fase 3' });
       else if (travado) acao = el('span', { texto: '' });
       else {
         acao = el('button.btn.btn-pequeno', { type: 'button', texto: 'Comprar', disabled: est.grupo.creditos < f.custo });
@@ -452,6 +477,7 @@
     lab.appendChild(el('div.lab-bloco', null,
       el('div.lab-num', null, el('b', { texto: pct(m.acuracia) }), el('small', { texto: 'acurácia do modelo' })),
       el('p', { texto: 'O modelo acerta ' + pct(m.acuracia) + ' dos ' + t.unidade + '. Parece ótimo, mas compare: quem simplesmente dissesse que ' + t.ninguem + ' acertaria ' + pct(m.acuraciaIngenua) + ', sem modelo nenhum, porque só ' + pct(sim.prevalencia, sim.prevalencia < 0.02 ? 1 : 0) + ' ' + t.verboPlural + '. Quando um dos lados é raro, a acurácia engana.' })));
+    lab.appendChild(blocoFontes(m, 'AUC', 'modelo'));
     var bonus = Math.max(0, Math.min(15, Math.round((auc - 0.5) * 30)));
     lab.appendChild(el('p.lab-nota', { texto: 'Este resultado vale um bônus provisório de ' + bonus + ' pontos no placar (máximo de 15).' }));
 
@@ -491,6 +517,19 @@
   }
 
   /* Agrupamento: silhueta por número de grupos e perfil de cada grupo */
+  /* O que cada fonte comprada no mercado acrescentou ao modelo (ou ao agrupamento) */
+  function blocoFontes(m, metrica, oque) {
+    var fontes = m.fontes || [];
+    if (!fontes.length) return el('div.lab-fontes', null, el('h4', { texto: 'Dados comprados no mercado' }),
+      el('p', { texto: 'Vocês não compraram dados externos. O ' + oque + ' usa só as colunas internas, e os créditos guardados viram pontos no final.' }));
+    return el('div.lab-fontes', null, el('h4', { texto: 'O que os dados comprados acrescentaram' }),
+      el('ul', null, fontes.map(function (f) {
+        var g = f.ganho > 0.0005;
+        return el('li', null, el('span.ganho' + (g ? '.sim' : ''), { texto: g ? '+' + C.fmtAuc3(f.ganho) + ' de ' + metrica : 'nenhum ganho' }), el('b', { texto: f.nome }));
+      })),
+      el('p', { texto: 'O ganho já está ' + (metrica === 'AUC' ? 'na AUC acima' : 'nas silhuetas acima') + '. Uma fonte sem ganho não trouxe informação nova para a decisão: só custou créditos.' }));
+  }
+
   function pintarAgrupamento(it, R, travado, fase) {
     var lab = C.limpar(nos.lab), m = est.grupo.modelo, ag = caso.agrupamento;
     var base = itemBase(fase), desatualizado = m && base && R[base.id] && m.base !== R[base.id];
@@ -527,6 +566,7 @@
       el('div', null,
         escala(m.silhuetas[atual || ag.kMin], 0, 1, [[0, 'fraca'], [0.25, 'razoável'], [0.5, 'boa'], [0.7, 'muito forte']]),
         el('p', { texto: 'Como ler: a silhueta vai de -1 a 1. Perto de 1, cada ' + ag.item + ' está muito mais perto dos ' + ag.itens + ' do próprio grupo do que dos outros grupos. Perto de 0, os grupos se misturam. A silhueta mede separação, não utilidade: quem diz se um grupo serve é o negócio.' }))));
+    lab.appendChild(blocoFontes(m, 'silhueta', 'agrupamento'));
     lab.appendChild(el('h3', { style: 'margin-top:1.5rem', texto: 'Em quantos grupos dividir' }));
     lab.appendChild(el('div.regua', null, el('div.regua-leitura', null, el('span', { texto: 'Número de grupos (k)' }), leitura), regua));
     lab.appendChild(nota);

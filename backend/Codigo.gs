@@ -1,7 +1,7 @@
 /*
  * Desafios de IA: servidor do jogo (Google Apps Script).
  * ARQUIVO GERADO por tools/build.js. Não edite aqui: edite shared/, backend/adaptador.gs.js e casos-fonte/.
- * Gerado em 2026-11-28T14:12:37.323Z
+ * Gerado em 2026-11-28T14:22:20.837Z
  */
 
 /* Estatística do simulador. Usado no navegador e no Apps Script. */
@@ -178,10 +178,10 @@ var ServerCore = (function () {
         if (ehFeature && c._gabarito === 'descartar') { rv += m.ruido.validacao; rp += m.ruido.producao; ruido.push(c.nome); }
         if (ehFeature && c._gabarito === 'vazamento') vaz.push(c.nome);
       });
-      var redes = false;
+      var redes = false, fontes = [];
       if (merc) g.compras.forEach(function (id) {
         var f = achar(merc.item.fontes, id);
-        if (f) { honesto += f._gabarito.auc || 0; if (f._gabarito.flag === 'redes') redes = true; }
+        if (f) { honesto += f._gabarito.auc || 0; fontes.push({ nome: f.nome, ganho: f._gabarito.auc || 0 }); if (f._gabarito.flag === 'redes') redes = true; }
       });
       var div = m.divisao ? respostasDe(g, 'f3')[m.divisao.item] : null;
       var infl = div && m.divisao.inflacao[div] != null ? m.divisao.inflacao[div] : 0;
@@ -197,7 +197,7 @@ var ServerCore = (function () {
         tipo: 'supervisionado', metrica: 'AUC', base: div || null,
         aucValidacao: val, aucProducao: prod, divisao: div || null, valorTreino: val, valorProducao: prod,
         acuracia: Stats.acuraciaPadrao(val, caso.simulador), acuraciaIngenua: 1 - caso.simulador.prevalencia,
-        cenario: cenario, nFeatures: usadas.length,
+        cenario: cenario, nFeatures: usadas.length, fontes: fontes,
         flags: { vazamento: vaz, sensivel: sens, ruido: ruido, redes: redes, circular: [] }
       };
     }
@@ -214,19 +214,21 @@ var ServerCore = (function () {
         if (ag && c._gabarito === 'sensivel') sens.push(c.nome);
         if (ag && c._gabarito === 'descartar') { ajuste += m.ruido; ruido.push(c.nome); }
       });
+      var fontes = [];
       if (merc) g.compras.forEach(function (id) {
         var f = achar(merc.item.fontes, id);
-        if (f) { ajuste += f._gabarito.auc || 0; if (f._gabarito.flag === 'redes') redes = true; }
+        if (f) { ajuste += f._gabarito.auc || 0; fontes.push({ nome: f.nome, ganho: f._gabarito.auc || 0 }); if (f._gabarito.flag === 'redes') redes = true; }
       });
       var base = respostasDe(g, lab.fase.id)[m.padroniza.item] || null;
       var padronizado = m.padroniza.respostas.indexOf(base) >= 0;
       var cenario = !padronizado ? 'escala' : (circ.length ? 'circular' : 'drift');
       var fator = cenario === 'escala' ? 0.25 : 1, sil = {};
+      fontes.forEach(function (x) { x.ganho = Math.round(x.ganho * fator * 1000) / 1000; });
       for (var k in m.silhueta[cenario]) sil[k] = Math.round(Math.min(0.95, Math.max(0.05, m.silhueta[cenario][k] + ajuste * fator)) * 100) / 100;
       var k0 = (respostasDe(g, lab.fase.id)[lab.item.id] || {}).k;
       var mod = {
         tipo: 'agrupamento', metrica: 'Silhueta', base: base, cenario: cenario, silhuetas: sil, perfis: perfisAgrupamento(caso, cenario),
-        nFeatures: usadas.length, k: null, valorTreino: null, valorProducao: null,
+        nFeatures: usadas.length, fontes: fontes, k: null, valorTreino: null, valorProducao: null,
         flags: { vazamento: [], circular: circ, sensivel: sens, ruido: ruido, redes: redes }
       };
       if (k0) definirK(caso, mod, k0);
@@ -592,11 +594,11 @@ var ServerCore = (function () {
     function visaoModelo(m, comProducao) {
       if (!m) return null;
       if (m.tipo === 'agrupamento') {
-        var v = { tipo: m.tipo, base: m.base, silhuetas: m.silhuetas, perfis: m.perfis, nFeatures: m.nFeatures, k: m.k, valorTreino: m.valorTreino };
+        var v = { tipo: m.tipo, base: m.base, silhuetas: m.silhuetas, perfis: m.perfis, nFeatures: m.nFeatures, fontes: m.fontes || [], k: m.k, valorTreino: m.valorTreino };
         if (comProducao) v.valorProducao = m.valorProducao;
         return v;
       }
-      var s = { tipo: 'supervisionado', base: m.base, aucValidacao: m.aucValidacao, acuracia: m.acuracia, acuraciaIngenua: m.acuraciaIngenua, divisao: m.divisao, nFeatures: m.nFeatures };
+      var s = { tipo: 'supervisionado', base: m.base, aucValidacao: m.aucValidacao, acuracia: m.acuracia, acuraciaIngenua: m.acuraciaIngenua, divisao: m.divisao, nFeatures: m.nFeatures, fontes: m.fontes || [] };
       if (comProducao) s.aucProducao = m.aucProducao;
       return s;
     }
