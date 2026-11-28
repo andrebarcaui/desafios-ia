@@ -1,7 +1,7 @@
 /*
  * Desafios de IA: servidor do jogo (Google Apps Script).
  * ARQUIVO GERADO por tools/build.js. Não edite aqui: edite shared/, backend/adaptador.gs.js e casos-fonte/.
- * Gerado em 2026-11-28T14:03:35.760Z
+ * Gerado em 2026-11-28T14:12:37.323Z
  */
 
 /* Estatística do simulador. Usado no navegador e no Apps Script. */
@@ -471,6 +471,118 @@ var ServerCore = (function () {
       return { armadilha: caso._revelacao, fases: fases, modelo: g.modelo };
     }
 
+    /* Roteiro do pitch (só para o professor): o que um pitch bom diria para este caso,
+       cruzado com as escolhas que o grupo fez até agora, enviadas ou em rascunho. */
+    var PARTES_PITCH = { f1: 'O problema', f2: 'Os dados', f3: 'O resultado', evento: 'O que aprenderam em produção' };
+    function maxGab(gab) { var m = 0; for (var k in gab) if (gab[k] > m) m = gab[k]; return m; }
+    function frase(s) { s = String(s || '').trim(); return s && !/[.!?]$/.test(s) ? s + '.' : s; }
+    function situacao(pts, max, vazio) { return vazio ? 'vazio' : pts >= max ? 'ok' : pts > 0 ? 'parcial' : 'erro'; }
+
+    function roteiroPitch(caso, g) {
+      var m = g.modelo, projetado = false;
+      if (!m && Object.keys(respostasDe(g, 'f2')).length) { m = calcularModelo(caso, g); projetado = true; }
+      var ev = m && caso._evento ? caso._evento[m.cenario] : null;
+      var agrup = caso._modelo.tipo === 'agrupamento';
+      var partes = [], perguntas = [];
+
+      function pergunta(peso, texto, esperado) { perguntas.push({ peso: peso, texto: texto, esperado: esperado }); }
+
+      caso.fases.forEach(function (f) {
+        if (!PARTES_PITCH[f.id]) return;
+        var resp = respostasDe(g, f.id), ideal = [], pontos = [];
+        f.itens.forEach(function (it) {
+          var r = resp[it.id];
+          if (it.tipo === 'escolha') {
+            var gab = gabaritoEscolha(caso, f.id, it, g);
+            if (!gab) { ideal.push(it.rotulo + ': depende do que aconteceu com o modelo, que ainda não foi treinado.'); return; }
+            var max = maxGab(gab), pts = r != null ? (gab[r] || 0) : 0, correta = textoOpcao(it, melhorOpcao(gab));
+            var porque = it._explicacao || (!it._gabarito && ev ? ev._explicacao : '');
+            ideal.push(it.rotulo + ': ' + correta);
+            pontos.push({ rotulo: it.rotulo, situacao: situacao(pts, max, r == null), sua: textoOpcao(it, r) || 'Sem resposta', correta: correta, porque: porque });
+            if (r != null && pts < max) pergunta(max - pts, it.rotulo + ': por que o grupo escolheu "' + textoOpcao(it, r) + '"? Que alternativa descartaram, e por quê?', frase(correta) + (porque ? ' ' + porque : ''));
+            else if (r != null) pergunta(0.5, it.rotulo + ': o grupo acertou. Peça para quem foi sorteado explicar o porquê com as próprias palavras.', frase(correta) + (porque ? ' ' + porque : ''));
+          } else if (it.tipo === 'cartas') {
+            caso.caixas.forEach(function (cx) {
+              var nomes = it.cartas.filter(function (c) { return c._gabarito === cx.id; }).map(function (c) { return c.nome; });
+              if (nomes.length) ideal.push(cx.nome + ': ' + nomes.join(', '));
+            });
+            var certas = 0, erradas = [], entrada = agrup ? 'agrupar' : 'feature';
+            it.cartas.forEach(function (c) {
+              var sua = r && r[c.id];
+              if (sua === c._gabarito) { certas++; return; }
+              var cxSua = achar(caso.caixas, sua), cxCerta = achar(caso.caixas, c._gabarito);
+              // Peso: o que entra como entrada sem poder (vazamento, circular, sensível) pesa mais que um descarte errado
+              var grave = sua === entrada && c._gabarito !== 'descartar';
+              erradas.push({ nome: c.nome, sua: cxSua ? cxSua.nome : 'Sem caixa', correta: cxCerta.nome, porque: c._explicacao, grave: grave });
+              if (sua) pergunta((grave ? 6 : 1) + it.pontosPorCarta, 'Por que a coluna ' + c.nome + ' foi para "' + (cxSua ? cxSua.nome : 'nenhuma caixa') + '"?', cxCerta.nome + '. ' + (c._explicacao || ''));
+            });
+            erradas.sort(function (a, b) { return (b.grave ? 1 : 0) - (a.grave ? 1 : 0); });
+            pontos.push({ rotulo: 'Colunas', situacao: situacao(certas, it.cartas.length, !r || !Object.keys(r).length), sua: certas + ' de ' + it.cartas.length + ' colunas na caixa certa', erradas: erradas });
+          } else if (it.tipo === 'mercado') {
+            var boas = it.fontes.filter(function (fo) { return fo._gabarito.pontos > 0; }).map(function (fo) { return fo.nome; });
+            var ruins = it.fontes.filter(function (fo) { return fo._gabarito.pontos < 0; }).map(function (fo) { return fo.nome; });
+            ideal.push('Dados externos que valem o preço: ' + (boas.join(', ') || 'nenhum'));
+            if (ruins.length) ideal.push('Dados externos a evitar: ' + ruins.join(', '));
+            it.fontes.forEach(function (fo) {
+              var comprou = g.compras.indexOf(fo.id) >= 0, p = fo._gabarito.pontos;
+              if (comprou && p < 0) {
+                pontos.push({ rotulo: fo.nome, situacao: 'erro', sua: 'Comprou', correta: 'Não comprar', porque: fo._explicacao });
+                pergunta(4 - p, 'Por que o grupo comprou ' + fo.nome + '?', fo._explicacao);
+              } else if (comprou) pontos.push({ rotulo: fo.nome, situacao: p > 0 ? 'ok' : 'parcial', sua: 'Comprou', correta: p > 0 ? 'Comprar' : 'Indiferente', porque: fo._explicacao });
+              else if (p > 0) pontos.push({ rotulo: fo.nome, situacao: 'parcial', sua: 'Não comprou', correta: 'Comprar', porque: fo._explicacao });
+            });
+          } else if (it.tipo === 'simulador') {
+            if (!m) { ideal.push('Campanha: depende do modelo, que ainda não foi treinado.'); return; }
+            // Com vazamento, a AUC do treino é ilusória: o alcance certo é o que a AUC real (de produção) sustenta
+            var vazou = m.flags.vazamento.length > 0, aucRef = vazou ? m.aucProducao : m.aucValidacao;
+            var o = Stats.otimo(aucRef, caso.simulador);
+            if (vazou) {
+              ideal.push('Honestidade sobre a métrica: AUC de ' + fmtAuc(m.aucValidacao) + ' é boa demais para ser verdade. O pitch deveria desconfiar dela, e não vendê-la.');
+              ideal.push('Alcance da campanha: qualquer número calculado com essa AUC é ilusório. ' + (o.valor > 0
+                ? 'Com a AUC real do modelo (' + fmtAuc(aucRef) + '), o ótimo seria cerca de ' + String(o.pct).replace('.', ',') + '% da fila, com valor esperado de ' + fmtReais(o.valor) + ' por mês.'
+                : 'Com a AUC real do modelo (' + fmtAuc(aucRef) + '), nenhum alcance paga o custo das ações: a campanha não deveria rodar com esse modelo.'));
+            } else if (o.valor <= 0) ideal.push('Alcance da campanha: com AUC de ' + fmtAuc(aucRef) + ', nenhum alcance paga o custo das ações. O pitch deveria dizer que o modelo ainda não está pronto para a campanha.');
+            else ideal.push('Alcance da campanha: cerca de ' + String(o.pct).replace('.', ',') + '% da fila por mês, com valor esperado de ' + fmtReais(o.valor) + '. Mais do que isso, cada ação custa mais do que rende.');
+            if (r && r.pct) {
+              var v = Stats.simular(aucRef, caso.simulador, Number(r.pct)).valor, razao = o.valor > 0 ? v / o.valor : 0;
+              pontos.push({ rotulo: it.rotulo, situacao: razao >= 0.95 ? 'ok' : razao >= 0.6 ? 'parcial' : 'erro', sua: String(r.pct).replace('.', ',') + '% da fila (' + fmtReais(v) + ' por mês)', correta: String(o.pct).replace('.', ',') + '% (' + fmtReais(o.valor) + ' por mês)', porque: (vazou ? 'Valores calculados com a AUC real (' + fmtAuc(aucRef) + '), não com a do treino. ' : '') + 'O ponto ótimo é onde o ganho de mais um ' + (caso.simulador.termos ? caso.simulador.termos.um : 'item') + ' abordado deixa de pagar o custo da ação.' });
+              if (razao < 0.95) pergunta(3, 'Por que abordar ' + String(r.pct).replace('.', ',') + '% da fila, e não mais nem menos?', 'Perto de ' + String(o.pct).replace('.', ',') + '%: dali em diante, cada ' + (caso.simulador.termos ? caso.simulador.termos.um : 'item') + ' a mais abordado custa mais do que rende.');
+            } else pontos.push({ rotulo: it.rotulo, situacao: 'vazio', sua: 'Sem resposta', correta: String(o.pct).replace('.', ',') + '% da fila' });
+          } else if (it.tipo === 'agrupamento') {
+            var kBom = melhorOpcao(it._gabarito), maxK = maxGab(it._gabarito);
+            ideal.push('Agrupamento: ' + kBom + ' grupos, com as variáveis na mesma escala, cada grupo com um perfil claro e uma ação diferente.');
+            if (m && m.cenario === 'escala') ideal.push('Honestidade sobre a métrica: a silhueta alta veio da escala de uma única variável (' + (caso._modelo.escala ? caso._modelo.escala.rotulo.toLowerCase() : 'a maior delas') + '), e não de grupos úteis. Os grupos são só faixas dessa variável.');
+            var k = r && r.k, ptsK = k ? (it._gabarito[String(k)] || 0) : 0;
+            pontos.push({ rotulo: it.rotulo, situacao: situacao(ptsK, maxK, !k), sua: k ? k + ' grupos' + (m && m.cenario === 'escala' ? ', sem padronizar as variáveis' : '') : 'Sem resposta', correta: kBom + ' grupos, com as variáveis padronizadas', porque: it._explicacao });
+            if (k && ptsK < maxK) pergunta(maxK - ptsK, 'Por que ' + k + ' grupos? Que ação diferente a empresa tomaria em cada um?', kBom + ' grupos. ' + (it._explicacao || ''));
+          }
+        });
+        if (f.id === 'f3' && m && !projetado) {
+          var rm = resumoModelo(m, false);
+          ideal.unshift('Resultado no treino: ' + rm.rotuloTreino + ' de ' + rm.treino + (agrup && m.k ? ', com ' + m.k + ' grupos' : '') + '.');
+        }
+        if (f.id === 'evento' && m && g.enviadas.evento && m.valorProducao != null) {
+          var rp = resumoModelo(m, true), c = campanha(caso, g);
+          ideal.unshift('Números de produção: ' + rp.rotuloProducao + ', ' + rp.producao + (c ? '. A campanha prometia ' + fmtReais(c.prometido) + ' por mês e entregou ' + fmtReais(c.real) : '') + '.');
+        }
+        partes.push({ id: f.id, titulo: PARTES_PITCH[f.id], fase: f.titulo, enviada: !!g.enviadas[f.id], ideal: ideal, pontos: pontos });
+      });
+
+      var central;
+      if (!m) central = 'O grupo ainda não montou o dataset. O roteiro abaixo mostra o pitch ideal para o caso e o que o grupo marcou até agora.';
+      else if (m.cenario === 'drift') central = 'O grupo evitou as armadilhas de dados. Um bom pitch defende o modelo com números e mostra que o problema em produção era previsível e tem remédio. ' + (ev ? ev._explicacao : '');
+      else central = 'O modelo do grupo caiu numa armadilha ("' + (ev ? ev.titulo : m.cenario) + '"). Um bom pitch reconhece o erro com clareza e explica a causa. ' + (ev ? ev._explicacao : '');
+      if (projetado) central += ' (Previsão feita com as respostas atuais: o grupo ainda não treinou o modelo.)';
+
+      perguntas.sort(function (a, b) { return b.peso - a.peso; });
+      return {
+        grupo: g.nome, caso: caso.titulo, empresa: caso.empresa, membros: g.membros,
+        cenario: m ? m.cenario : null, armadilhaCaso: caso._revelacao, central: central, partes: partes,
+        perguntas: perguntas.slice(0, 4).map(function (p) { return { texto: p.texto, esperado: p.esperado }; }),
+        licoes: caso._revelacao ? caso._revelacao.licoes : []
+      };
+    }
+
     function ranking() {
       var gs = todosGrupos();
       gs.sort(function (a, b) { return total(b) - total(a); });
@@ -673,6 +785,11 @@ var ServerCore = (function () {
         v.espiando = true;
         return v;
       },
+      prof_roteiro: function (req) {
+        var g = lerGrupo(req.codigo);
+        if (!g) throw new Error('Este grupo ainda não entrou no jogo.');
+        return roteiroPitch(casos[g.caso], g);
+      },
       prof_fase: function (req) {
         var glob = lerGlobal(), antiga = glob.fase, nova = Math.max(0, Math.min(6, parseInt(req.fase, 10) || 0));
         if (nova === antiga) return visaoProfessor(glob);
@@ -752,7 +869,7 @@ var ServerCore = (function () {
         var a = acoes[req.acao];
         if (!a) throw new Error('Ação desconhecida.');
         if (req.acao.indexOf('prof_') === 0 && !senhaConfere(req.chave, cfg.chaveProfessor)) throw new Error('Senha do professor incorreta.');
-        var leitura = { estado: 1, prof_estado: 1, prof_placar: 1, prof_grupo: 1, prof_exportar: 1 }[req.acao];
+        var leitura = { estado: 1, prof_estado: 1, prof_placar: 1, prof_grupo: 1, prof_roteiro: 1, prof_exportar: 1 }[req.acao];
         return leitura ? a(req) : comTrava(function () { return a(req); });
       } catch (e) {
         return { erro: e && e.message ? e.message : String(e) };

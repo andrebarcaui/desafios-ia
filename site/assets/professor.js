@@ -127,6 +127,7 @@
           el('div', { texto: t.insercoesGrandes + ' inserções grandes' })),
         el('td', null, el('div.acoes-linha', null,
           el('button.btn.btn-pequeno', { type: 'button', texto: 'Ver respostas', onclick: function () { abrirRespostas(g); } }),
+          el('button.btn.btn-pequeno', { type: 'button', texto: 'Roteiro do pitch', onclick: function () { abrirRoteiro(g); } }),
           C.demo ? el('button.btn.btn-pequeno', { type: 'button', texto: 'Ver tela do grupo', onclick: function () { C.pai.DEMO_ESPIAR(g.codigo, g.nome); } })
             : el('a.btn.btn-pequeno', { href: 'grupo.html#' + encodeURIComponent(g.codigo), target: '_blank', rel: 'noopener', texto: 'Ver tela do grupo' }),
           fase >= 5 ? el('button.btn.btn-pequeno', { type: 'button', texto: 'Sortear quem responde', onclick: function () { acao('prof_sortear', { codigo: g.codigo }, 'Sorteio no telão.'); } }) : null,
@@ -176,6 +177,77 @@
         el('div.modal-cab', null, el('h2', { style: 'margin:0', texto: g.nome + ', ' + g.casoTitulo }), el('button.btn.btn-pequeno', { type: 'button', texto: 'Fechar', onclick: function () { fundo.remove(); } })),
         corpo));
     document.body.appendChild(fundo);
+  }
+
+
+  /* Roteiro do pitch: o que um pitch bom diria, cruzado com as escolhas do grupo.
+     As marcações (o que o grupo já citou) ficam só neste navegador. */
+  var CHAVE_MARCAS = 'desafios.roteiro';
+  var marcas = (function () { try { return JSON.parse(localStorage.getItem(CHAVE_MARCAS)) || {}; } catch (e) { return {}; } })();
+  function guardarMarcas() { try { localStorage.setItem(CHAVE_MARCAS, JSON.stringify(marcas)); } catch (e) {} }
+  var NOMES_SITUACAO = { ok: 'Acertou', parcial: 'Em parte', erro: 'Errou', vazio: 'Sem resposta' };
+
+  function abrirRoteiro(g) {
+    var corpo = el('div', null, el('p', { style: 'color:var(--grafite)', texto: 'Montando o roteiro...' }));
+    var fundo = el('div.modal-fundo', { onclick: function (e) { if (e.target === fundo) fundo.remove(); } },
+      el('div.modal.modal-largo', { role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Roteiro do pitch de ' + g.nome },
+        el('div.modal-cab', null, el('div', null, el('small', { style: 'color:var(--grafite)', texto: 'Roteiro do pitch' }), el('h2', { style: 'margin:0', texto: g.nome + ', ' + g.casoTitulo })),
+          el('div', { style: 'display:flex;gap:.4rem' },
+            el('button.btn.btn-pequeno', { type: 'button', texto: 'Atualizar', onclick: carregar }),
+            el('button.btn.btn-pequeno', { type: 'button', texto: 'Imprimir', onclick: function () { window.print(); } }),
+            el('button.btn.btn-pequeno', { type: 'button', texto: 'Fechar', onclick: function () { fundo.remove(); } }))),
+        corpo));
+    document.body.appendChild(fundo);
+    function carregar() { chamar('prof_roteiro', { codigo: g.codigo }).then(function (r) { pintarRoteiro(C.limpar(corpo), r, g.codigo); }).catch(function (e) { C.toast(e.message, true); }); }
+    carregar();
+  }
+
+  function pintarRoteiro(corpo, r, codigo) {
+    var mk = marcas[codigo] = marcas[codigo] || {};
+    corpo.appendChild(el('div.roteiro-central', null, el('b', { texto: 'A mensagem que o pitch precisa passar' }), el('p', { texto: r.central })));
+
+    if (r.perguntas.length) corpo.appendChild(el('section.roteiro-perguntas', null,
+      el('h3', { texto: 'Perguntas para quem for sorteado' }),
+      el('p.roteiro-nota', { texto: 'Em ordem de prioridade: primeiro o que mais custou pontos ao grupo.' }),
+      el('ol', null, r.perguntas.map(function (p) {
+        return el('li', null, el('div', { texto: p.texto }), el('div.roteiro-esperado', null, el('b', { texto: 'Resposta esperada: ' }), p.esperado));
+      }))));
+
+    r.partes.forEach(function (pt, i) {
+      var contador = el('span.roteiro-contador');
+      function contar() {
+        var n = pt.ideal.filter(function (_, j) { return mk[pt.id + ':' + j]; }).length;
+        contador.textContent = n + ' de ' + pt.ideal.length + ' citados';
+      }
+      var lista = el('ul.roteiro-ideal', null, pt.ideal.map(function (linha, j) {
+        var id = 'rt-' + codigo + '-' + pt.id + '-' + j, chave = pt.id + ':' + j;
+        var cx = el('input', { type: 'checkbox', id: id });
+        cx.checked = !!mk[chave];
+        cx.addEventListener('change', function () { mk[chave] = cx.checked; guardarMarcas(); contar(); });
+        return el('li', null, cx, el('label', { for: id, texto: linha }));
+      }));
+      contar();
+      var grupo = el('ul.roteiro-grupo', null, pt.pontos.length ? pt.pontos.map(function (p) {
+        var li = el('li', null, el('span.situacao.' + p.situacao, { texto: NOMES_SITUACAO[p.situacao] }), el('b', { texto: p.rotulo + ': ' }), p.sua);
+        if (p.situacao !== 'ok' && p.correta) li.appendChild(el('div.roteiro-melhor', { texto: 'Melhor: ' + p.correta }));
+        if (p.erradas && p.erradas.length) li.appendChild(el('table.roteiro-cartas', null,
+          el('thead', null, el('tr', null, el('th', { texto: 'Coluna' }), el('th', { texto: 'O grupo pôs em' }), el('th', { texto: 'Deveria ir para' }))),
+          el('tbody', null, p.erradas.map(function (c) {
+            return el('tr' + (c.grave ? '.grave' : ''), { title: c.porque || '' }, el('td.mono', { texto: c.nome }), el('td', { texto: c.sua }), el('td', { texto: c.correta }));
+          }))));
+        if (p.porque && p.situacao !== 'ok') li.appendChild(el('details', null, el('summary', { texto: 'Por quê' }), el('p', { texto: p.porque })));
+        return li;
+      }) : el('li.roteiro-nota', { texto: 'Nada marcado nesta fase ainda.' }));
+      corpo.appendChild(el('section.roteiro-parte', null,
+        el('div.roteiro-parte-cab', null, el('h3', { texto: (i + 1) + '. ' + pt.titulo }),
+          el('span.roteiro-nota', { texto: pt.fase + (pt.enviada ? ', enviada' : ', em rascunho') })),
+        el('div.roteiro-colunas', null,
+          el('div', null, el('div.roteiro-subtitulo', null, el('b', { texto: 'O pitch deveria dizer' }), contador), lista),
+          el('div', null, el('div.roteiro-subtitulo', null, el('b', { texto: 'O que o grupo marcou' })), grupo))));
+    });
+
+    if (r.licoes && r.licoes.length) corpo.appendChild(el('section.roteiro-parte', null, el('h3', { texto: 'Lições que fecham o caso' }),
+      el('ul', null, r.licoes.map(function (l) { return el('li', { texto: l }); }))));
   }
 
   function exportar() {

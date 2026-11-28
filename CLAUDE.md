@@ -9,6 +9,7 @@ Jogo de casos em sala de aula (FGV). Leia o README para a visão geral e a insta
 - `backend/adaptador.gs.js`: liga o núcleo ao Apps Script (PropertiesService, planilha, LockService).
 - `backend/Codigo.gs`: GERADO. Nunca edite à mão.
 - `site/index.html`: tela do grupo (link dos alunos). `site/professor/`: painel (com o telão como uma segunda vista na mesma aba, `telao.js`) e visão de qualquer grupo, todos com senha (o servidor exige a senha nas ações `prof_*`). `site/casos/` é GERADO.
+- O Roteiro do pitch (`prof_roteiro`, função `roteiroPitch` do núcleo) é montado no servidor porque usa os gabaritos. As quatro partes seguem as fases (`f1` problema, `f2` dados, `f3` resultado, `evento` produção). As perguntas para o sorteado vêm dos itens que mais custaram pontos, e as marcações do professor ficam só no navegador dele.
 - `site/assets/aluno.js` serve à tela do grupo e, com `DESAFIOS_ESPIAR`, à visão só leitura do professor.
 - `casos-fonte/<exercicio>/<caso>.json`: casos completos. Chaves começando com `_` são privadas e o build as remove do site (e falha se alguma vazar).
 - `tools/build.js`: gera os arquivos acima e `demo/demo.html` (a partir de `tools/demo-shell.html`).

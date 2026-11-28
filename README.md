@@ -55,7 +55,7 @@ A partir daí, todo envio ao GitHub republica o site sozinho.
 3. Entregue a cada grupo o seu código. Eles entram em `index.html` com o código e os nomes dos integrantes (até 10 por grupo).
 4. No painel, abra uma fase de cada vez. Quando você abre a fase seguinte, o que estiver marcado na anterior é enviado automaticamente.
 5. A qualquer momento, **Ver tela do grupo** mostra exatamente o que aquele grupo está vendo, com o rascunho atualizado a cada 5 segundos.
-6. No pitch, use **Projetar ficha** e **Sortear quem responde** em cada grupo.
+6. No pitch, use **Projetar ficha** e **Sortear quem responde** em cada grupo. Deixe aberto o **Roteiro do pitch** do grupo: ele mostra a mensagem que o pitch precisa passar, o que um pitch bom diria em cada parte (com caixas para marcar o que o grupo citou), o que o grupo marcou em cada item e as perguntas para quem for sorteado, com a resposta esperada. Funciona em qualquer fase, com as respostas que o grupo tiver até ali, e pode ser impresso.
 7. Ao final, **Baixar respostas (CSV)** traz respostas, justificativas, pontos e sinais de comportamento de cada grupo. A aba **Respostas** da planilha guarda cada fase enviada.
 
 Para jogar de novo com outra turma: menu **Desafios de IA > Reiniciar jogo** na planilha (ou o botão no painel).
